@@ -200,6 +200,5 @@ exports.loadCommonFunctions = ({ socket, webMessage }) => {
     sendWaitReply,
     sendWarningReact,
     sendWarningReply,
-    setTimeout;
   };
 };
