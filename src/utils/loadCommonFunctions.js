@@ -65,6 +65,22 @@ exports.loadCommonFunctions = ({ socket, webMessage }) => {
       },
     });
   };
+  
+   const sendTagReact = async () => {
+    return await sendReact("📌");
+  };
+  
+  const sendOpenReact = async () => {
+    return await sendReact("🚯");
+  };
+  
+  const sendOpenReact = async () => {
+    return await sendReact("🔓");
+  };
+  
+   const sendCloseReact = async () => {
+    return await sendReact("🔒");
+  };
 
   const sendSuccessReact = async () => {
     return await sendReact("✅");
