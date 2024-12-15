@@ -70,7 +70,7 @@ exports.loadCommonFunctions = ({ socket, webMessage }) => {
     return await sendReact("📌");
   };
   
-  const sendOpenReact = async () => {
+  const sendDirtReact = async () => {
     return await sendReact("🚯");
   };
   
