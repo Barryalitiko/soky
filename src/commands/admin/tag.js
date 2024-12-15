@@ -6,17 +6,22 @@ module.exports = {
   description: "Para fijar mensajes",
   commands: ["tag", "t"],
   usage: `${PREFIX}hidetag motivo`,
- handle: async ({ fullArgs, sendText, socket, remoteJid, sendReact }) => {
+  handle: async ({
+    fullArgs,
+    sendText,
+    sendImageFromFile,
+    socket,
+    remoteJid,
+    sendReact,
+  }) => {
     const { participants } = await socket.groupMetadata(remoteJid);
-
     const mentions = participants.map(({ id }) => id);
 
     await sendReact("📌");
 
     await sendImageFromFile(
       path.join(ASSETS_DIR, "images", "tag.jpg"),
-      `Operacion Marshall
-      > ╚════ KrampusBot ═════╝
-     \n\n${fullArgs}`, mentions);
+      `> ╚════ KrampusBot ═════╝\n\n${fullArgs}`
+    );
   },
 };
