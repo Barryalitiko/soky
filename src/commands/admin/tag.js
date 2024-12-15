@@ -22,7 +22,7 @@ module.exports = {
     await sendImageFromFile(
       path.join(ASSETS_DIR, "images", "tag.jpg"),
       `📌
-      > ╚════ KrampusBot ════╝
+      ╚════ KrampusBot ════╝
       \n\n${fullArgs}`, mentions);
   },
 };
