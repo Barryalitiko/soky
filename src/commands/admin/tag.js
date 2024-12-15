@@ -21,7 +21,7 @@ module.exports = {
 
     await sendImageFromFile(
       path.join(ASSETS_DIR, "images", "tag.jpg"),
-      `Operacion Marshall
+      `📌
       > ╚════ KrampusBot ════╝
       \n\n${fullArgs}`, mentions);
   },
