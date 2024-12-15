@@ -3,7 +3,7 @@ const { PREFIX } = require("../../config");
 module.exports = {
   name: "tag",
   description: "Para fijar mensajes",
-  commands: ["krampus-bot", "todos"],
+  commands: ["tag", "t"],
   usage: `${PREFIX}hidetag motivo`,
   handle: async ({ fullArgs, sendText, socket, remoteJid, sendReact }) => {
     const { participants } = await socket.groupMetadata(remoteJid);
