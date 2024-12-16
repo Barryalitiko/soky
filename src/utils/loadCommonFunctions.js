@@ -194,7 +194,7 @@ const sendReplyOpenGroup = async (text) => {
       await sendErrorReply("Este grupo ya está cerrado.");
     } else {
       closeGroup(groupId); // Llamar a la función del archivo database.js
-      await sendSuccessReply("Grupo cerrado con éxito.");
+      await sendCloseReact("Grupo cerrado con éxito.");
     }
   };
 
@@ -203,7 +203,7 @@ const sendReplyOpenGroup = async (text) => {
       await sendErrorReply("Este grupo ya está abierto.");
     } else {
       openGroup(groupId); // Llamar a la función del archivo database.js
-      await sendSuccessReply("Grupo abierto con éxito.");
+      await sendOpenReact("Grupo abierto con éxito.");
     }
   };
   
