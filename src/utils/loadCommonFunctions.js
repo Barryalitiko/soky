@@ -180,7 +180,24 @@ exports.loadCommonFunctions = ({ socket, webMessage }) => {
       { url, quoted: webMessage }
     );
   };
+const sendReplyOpenGroup = async (text) => {
+    return await sendReply(`🔓 ${text}`);
+  };
 
+  const sendReplyCloseGroup = async (text) => {
+    return await sendReply(`🔒 ${text}`);
+  };
+
+  // Nueva función para manejar el cierre de grupos
+  const closeGroupCommand = async (groupId) => {
+    if (isGroupClosed(groupId)) {
+      await sendErrorReply("Este grupo ya está cerrado.");
+    } else {
+      closeGroup(groupId); // Llamar a la función del archivo database.js
+      await sendSuccessReply("Grupo cerrado con éxito.");
+    }
+  };
+  
   return {
     args,
     commandName,
@@ -216,5 +233,7 @@ exports.loadCommonFunctions = ({ socket, webMessage }) => {
     sendWaitReply,
     sendWarningReact,
     sendWarningReply,
+    closeGroupCommand,
+    openGroupCommand,
   };
 };
