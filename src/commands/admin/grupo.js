@@ -48,6 +48,6 @@ module.exports = {
       throw new InvalidParameterError("👻 Krampus.bot 👻 Comando inválido. Usa 'abrir' o 'cerrar'.");
     }
 
-    await sendReplyCloseGroup();
+    await sendSuccessReact();
   },
 };
