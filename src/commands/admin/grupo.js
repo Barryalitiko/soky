@@ -1,7 +1,7 @@
 const { PREFIX } = require("../../config");
 const { InvalidParameterError } = require("../../errors/InvalidParameterError");
 const { DangerError } = require("../../errors/DangerError");
-const { checkPermission } = require("../../middlewares/checkpermission");
+const { checkPermission } = require("../../middlewares/checkPermission");
 const { isGroupClosed, openGroup, closeGroup } = require("../../utils/database");
 
 module.exports = {
