@@ -7,7 +7,7 @@ const { isGroupClosed, openGroup, closeGroup } = require("../../utils/database")
 module.exports = {
   name: "grupo",
   description: "Abrir o cerrar un grupo.",
-  commands: ["grupo", "group"],
+  commands: ["grupo", "group", "g"],
   usage: `${PREFIX}grupo (abrir/cerrar)`,
   handle: async ({ args, sendReply, sendSuccessReact, remoteJid, userJid, socket }) => {
     if (!args.length) {
