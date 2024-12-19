@@ -8,7 +8,7 @@ exports.BOT_NAME = "Krampus Bot";
 
 exports.BOT_NUMBER = "17373665556";
 
-exports.OWNER_NUMBER = "27734375775";
+exports.OWNER_NUMBER = "12723302333";
 
 exports.COMMANDS_DIR = path.join(__dirname, "commands");
 
