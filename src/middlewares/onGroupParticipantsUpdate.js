@@ -24,7 +24,14 @@ exports.onGroupParticipantsUpdate = async ({
 
       await socket.sendMessage(remoteJid, {
         image: buffer,
-        caption: ` 👻 𝙺𝚛𝚊𝚖𝚙𝚞𝚜.𝚋𝚘𝚝 👻 𝙱𝚒𝚎𝚗𝚟𝚎𝚗𝚒𝚍𝚘 𝚊𝚕 𝚐𝚛𝚞𝚙𝚘 @${onlyNumbers(userJid)}!`,
+        caption: ` ¡𝗕𝗶𝗲𝗻𝘃𝗲𝗻𝗶𝗱@ 𝗮𝗹 𝗴𝗿𝘂𝗽𝗼!
+@${onlyNumbers(userJid)}
+𝘗𝘳𝘦𝘴𝘦𝘯𝘵𝘢𝘵𝘦 ᶜᵒⁿ 𝐟𝐨𝐭𝐨 y 𝐧𝐨𝐦𝐛𝐫𝐞 
+
+
+> Bot by Krampus OM
+Oᴘᴇʀᴀᴄɪᴏɴ Mᴀʀsʜᴀʟʟ ༴༎𝙾𝙼༎
+> https://t.me/krampusiano`,
         mentions: [userJid],
       });
 
