@@ -21,13 +21,13 @@ module.exports = {
         await sendReply(`> Krampus Bot👻
           procesando...`);
         await sendReact("📸");
-        await socket.sendMessage(remoteJid, { image: { url: profilePicUrl }, caption: `Foto de perfil de cargada...` });
+        await socket.sendMessage(remoteJid, { image: { url: profilePicUrl }, caption: `Foto de perfil cargada...` });
       } else {
         await sendReply(`No se pudo obtener la foto de perfil de @${args[0]}.`);
       }
     } catch (error) {
       console.error("Error al obtener la foto de perfil:", error);
-      await sendReply("Hubo un error al intentar obtener la foto de perfil.");
+      await sendReply("No tiene foto de perfil o es inaccesible.");
     }
   },
 };
