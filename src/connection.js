@@ -121,9 +121,9 @@ async function connect() {
         load(newSocket);
       }
     } else if (connection === "open") {
-      successLog("Krampus ha sido conectado");
+      successLog("Operacion Marshall");
     } else {
-      infoLog("Actualizando conexion...");
+      infoLog("Procesando datos...");
     }
   });
 
