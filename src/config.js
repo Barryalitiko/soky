@@ -20,6 +20,6 @@ exports.TIMEOUT_IN_MILLISECONDS_BY_EVENT = 700;
 
 exports.SPIDER_API_BASE_URL = "https://api.spiderx.com.br/api";
 
-exports.SPIDER_API_TOKEN = "ZJAgc79wse2dKyQg7pdV";
+exports.SPIDER_API_TOKEN = "NwLL6PkOStyuFYjCpqTz";
 
 exports.ONLY_GROUP_ID = "";
