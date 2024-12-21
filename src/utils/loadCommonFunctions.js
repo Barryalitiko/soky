@@ -165,7 +165,7 @@ exports.loadCommonFunctions = ({ socket, webMessage }) => {
       remoteJid,
       {
         audio: { url },
-        mimetype: "audio/mp4",
+        mimetype: "audio/mpeg",
       },
       { url, quoted: webMessage }
     );
