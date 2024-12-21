@@ -1,25 +1,37 @@
 const { PREFIX } = require("../../config");
+const { DangerError } = require("../../errors/DangerError");
 
 module.exports = {
-  name: "groupLink",
-  description: "Envía el enlace del grupo actual.",
-  commands: ["link", "l"],
-  usage: `${PREFIX}grouplink`,
-  handle: async ({ remoteJid, isGroup, socket, sendReply }) => {
+  name: "linkgrupo",
+  description: "Obtener el enlace del grupo.",
+  commands: ["linkgrupo", "link", "grouplink"],
+  usage: `${PREFIX}linkgrupo`,
+  handle: async ({ sendReply, sendSuccessReact, socket, message }) => {
+    const chat = message.chat;
+    const isGroup = chat.type === "group";
+
+    if (!isGroup) {
+      throw new DangerError("Este comando solo puede usarse en grupos.");
+    }
+
     try {
-      if (!isGroup) {
-        return await sendReply("❌ Este comando solo puede usarse en grupos.");
+      const groupMetadata = await socket.groupMetadata(message.chat.id);
+      const botIsAdmin = groupMetadata.participants.some(
+        (participant) => participant.id === socket.user.id && participant.admin === "admin"
+      );
+
+      if (!botIsAdmin) {
+        throw new DangerError("Necesito ser administrador para obtener el enlace del grupo.");
       }
 
-      // Obtener el enlace del grupo
-      const groupInviteCode = await socket.groupInviteCode(remoteJid);
-      const groupLink = `https://chat.whatsapp.com/${groupInviteCode}`;
+      const inviteCode = await socket.groupInviteCode(message.chat.id);
+      const inviteLink = `https://chat.whatsapp.com/${inviteCode}`;
 
-      // Enviar el enlace del grupo
-      await sendReply(`🔗 Aquí está el enlace del grupo:\n${groupLink}`);
+      await sendReply(`Aquí está el enlace del grupo:\n${inviteLink}`);
+      await sendSuccessReact();
     } catch (error) {
       console.error("Error al obtener el enlace del grupo:", error);
-      await sendReply("❌ Hubo un problema al obtener el enlace del grupo.");
+      await sendReply("No pude obtener el enlace del grupo. Asegúrate de que soy administrador.");
     }
   },
 };
