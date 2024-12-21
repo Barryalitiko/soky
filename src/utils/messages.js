@@ -17,7 +17,7 @@ exports.menuMessage = () => {
 
 ━━━━━━━⛥ 𝗢𝗠 ༴༎👻༎ ⛦━━━━━━━
 
-𝙾 𝙿 𝙴 𝚁 𝙰 𝙲 𝙸 𝙾 𝙽  𝙼 𝙰 𝚁 𝚂 𝙷 𝙰 𝙻 𝙻
+> 𝙾 𝙿 𝙴 𝚁 𝙰 𝙲 𝙸 𝙾 𝙽  𝙼 𝙰 𝚁 𝚂 𝙷 𝙰 𝙻 𝙻
 
 ╧╤╧╤╧╤╧╤ 𝐊 𝐑 𝐀 𝐌 ╧╤╧╤╧╤╧╤
 
@@ -26,11 +26,12 @@ exports.menuMessage = () => {
 
 ╭━─━─━─≪ 𝗔𝗗𝗠𝗜𝗡𝗦 ≫─━─━─━╮
 
-⌠⅏⌡➟ ${PREFIX}nolink (s/n)
-⌠⅏⌡➟ ${PREFIX}auto-responder (s/n)
+⌠⅏⌡➟ ${PREFIX}antilink 1/0
 ⌠⅏⌡➟ ${PREFIX}ban
 ⌠⅏⌡➟ ${PREFIX}todos
-⌠⅏⌡➟ ${PREFIX}bienvenida (s/n)
+⌠⅏⌡➟ ${PREFIX}bienvenida 1/0
+⌠⅏⌡➟ ${PREFIX}tag
+⌠⅏⌡➟ ${PREFIX}grupo cerrar/abrir
 
 ╰━─━─━─≪       👻       ≫─━─━─━╯
 
@@ -38,16 +39,16 @@ exports.menuMessage = () => {
 
 ╭━─━─━─≪   𝗠𝗘𝗡𝗨   ≫─━─━─━╮
 
-⌠⅏⌡➟ ${PREFIX}attp
-⌠⅏⌡➟ ${PREFIX}cep
-⌠⅏⌡➟ ${PREFIX}krampus 
-⌠⅏⌡➟ ${PREFIX}jpg
+⌠⅏⌡➟ ${PREFIX}attp (texto sticker)
+⌠⅏⌡➟ ${PREFIX}krampus (chat gpt)
+⌠⅏⌡➟ ${PREFIX}jpg (imagen generada con IA)
 ⌠⅏⌡➟ ${PREFIX}menu
-⌠⅏⌡➟ ${PREFIX}om
-⌠⅏⌡➟ ${PREFIX}music
-⌠⅏⌡➟ ${PREFIX}video
-⌠⅏⌡➟ ${PREFIX}sticker 
+⌠⅏⌡➟ ${PREFIX}om (para comprobar)
+⌠⅏⌡➟ ${PREFIX}music/m
+⌠⅏⌡➟ ${PREFIX}video/v
+⌠⅏⌡➟ ${PREFIX}sticker/s
 ⌠⅏⌡➟ ${PREFIX}img
+⌠⅏⌡➟ ${PREFIX}pfp (para enviar foto del perfil)
 
 ╰━─━─━─≪       👻       ≫─━─━─━╯`;
 };
