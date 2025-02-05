@@ -1,44 +1,32 @@
 const path = require("path");
 const fs = require("fs");
 
-const databasePath = path.resolve(__dirname, "..", "..", "database");
+const databasePath = path.resolve(process.cwd(), "assets");
 
 const INACTIVE_GROUPS_FILE = "inactive-groups";
 const ANTI_LINK_GROUPS_FILE = "anti-link-groups";
 const WELCOME_GROUPS_FILE = "welcome-groups";
 
-// Crear las carpetas necesarias si no existen
 function createIfNotExists(fullPath) {
-    const dirPath = path.dirname(fullPath);
-    if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true }); // Crear las carpetas necesarias
-    }
-    if (!fs.existsSync(fullPath)) {
-        fs.writeFileSync(fullPath, JSON.stringify({})); // Crear archivo vacío si no existe
-    }
+  if (!fs.existsSync(fullPath)) {
+    fs.writeFileSync(fullPath, JSON.stringify([]));
+  }
 }
 
-// Leer un archivo JSON
 function readJSON(jsonFile) {
-    const fullPath = path.resolve(databasePath, `${jsonFile}.json`);
-    createIfNotExists(fullPath);
-    try {
-        return JSON.parse(fs.readFileSync(fullPath, "utf8"));
-    } catch (err) {
-        console.error(`Error al leer el archivo ${jsonFile}:`, err);
-        return {}; // Retornar un objeto vacío en caso de error
-    }
+  const fullPath = path.resolve(databasePath, `${jsonFile}.json`);
+
+  createIfNotExists(fullPath);
+
+  return JSON.parse(fs.readFileSync(fullPath, "utf8"));
 }
 
-// Escribir datos en un archivo JSON
 function writeJSON(jsonFile, data) {
-    const fullPath = path.resolve(databasePath, `${jsonFile}.json`);
-    createIfNotExists(fullPath);
-    try {
-        fs.writeFileSync(fullPath, JSON.stringify(data, null, 2));
-    } catch (err) {
-        console.error(`Error al escribir en el archivo ${jsonFile}:`, err);
-    }
+  const fullPath = path.resolve(databasePath, `${jsonFile}.json`);
+
+  createIfNotExists(fullPath);
+
+  fs.writeFileSync(fullPath, JSON.stringify(data));
 }
 
 // Manejo del estado general de los grupos
