@@ -94,6 +94,18 @@ exports.loadCommonFunctions = ({ socket, webMessage }) => {
     return await sendReact("✅");
   };
   
+  const sendWelcomeReact = async () => {
+    return await sendReact("🫂");
+  };
+  
+  const sendBasuraReact = async () => {
+    return await sendReact("🗑️");
+  };
+  
+  const sendLinkReact = async () => {
+    return await sendReact("🔗");
+  };
+  
     const sendPuzzleReact = async () => {
     return await sendReact("🧩");
   };
@@ -274,7 +286,10 @@ exports.loadCommonFunctions = ({ socket, webMessage }) => {
     sendVideoFromURL,
     sendStickerFromFile,
     sendStickerFromURL,
+    sendLinkReact,
     sendMessage,
+    sendWelcomeReact,
+    sendBasuraReact,
     sendVideoFromFile,
   };
 };
