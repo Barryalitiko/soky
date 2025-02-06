@@ -15,7 +15,7 @@ module.exports = {
 
       if (inviteCode) {
         const groupLink = `https://chat.whatsapp.com/${inviteCode}`;
-        await sendReply(`Aquí tienes el enlace del grupo:\n${groupLink}\n\n> Krampus OM bot`);
+        await sendReply(`𝙻𝚒𝚗𝚔 𝚍𝚎𝚕 𝚐𝚛𝚞𝚙𝚘:\n\n${groupLink}\n\n> Krampus OM bot`);
       } else {
         await sendReply("No se pudo obtener el enlace del grupo.");
       }
