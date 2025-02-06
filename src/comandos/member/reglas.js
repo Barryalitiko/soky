@@ -3,7 +3,7 @@ const { PREFIX } = require("../../krampus");
 module.exports = {
   name: "descripcion",
   description: "Envía la descripción del grupo.",
-  commands: ["descripcion", "desc", "description"],
+  commands: ["descripcion", "reglas", "regla"],
   usage: `${PREFIX}descripcion`,
   handle: async ({ remoteJid, socket, sendReply }) => {
     try {
