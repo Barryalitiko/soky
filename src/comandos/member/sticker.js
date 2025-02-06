@@ -2,7 +2,7 @@ const { PREFIX, TEMP_DIR } = require("../../krampus");
 const { InvalidParameterError } = require("../../errors/InvalidParameterError");
 const path = require("path");
 const fs = require("fs");
-const { Sticker } = require("wa-sticker-formatter");
+const { Sticker, createSticker, StickerTypes } = require("wa-sticker-formatter");
 
 module.exports = {
   name: "sticker",
@@ -19,67 +19,65 @@ module.exports = {
     sendPuzzleReact,
     sendStickerFromFile,
   }) => {
-    if (!isImage && !isVideo) {
-      throw new InvalidParameterError(
-        "ummm...Debes indicarme lo que quieres que convierta a sticker\n> Krampus OM bot"
-      );
-    }
-
-    const outputPath = path.resolve(TEMP_DIR, "output.webp");
-
-    if (isImage) {
-      const inputPath = await downloadImage(webMessage, "input");
-      const imageBuffer = fs.readFileSync(inputPath);
-
-      // Crear sticker desde imagen
-      const sticker = new Sticker(imageBuffer, {
-        type: "full",
-        pack: "Operacion Marshall", // Nombre del pack
-        author: "Krampus OM bot", // Autor del sticker
-      });
-
-      await sticker.toFile(outputPath);
-
-      await sendPuzzleReact();
-      await sendStickerFromFile(outputPath);
-
-      fs.unlinkSync(inputPath);
-      fs.unlinkSync(outputPath);
-    } else {
-      const inputPath = await downloadVideo(webMessage, "input");
-
-      const sizeInSeconds = 10;
-
-      const seconds =
-        webMessage.message?.videoMessage?.seconds ||
-        webMessage.message?.extendedTextMessage?.contextInfo?.quotedMessage
-          ?.videoMessage?.seconds;
-
-      const haveSecondsRule = seconds <= sizeInSeconds;
-
-      if (!haveSecondsRule) {
-        fs.unlinkSync(inputPath);
-
-        await sendErrorReply(`¡ABUSADOR! Este video tiene más de ${sizeInSeconds} segundos.Envía un video más corto.`);
-        return;
+    try {
+      if (!isImage && !isVideo) {
+        throw new InvalidParameterError(
+          "ummm...Debes indicarme lo que quieres que convierta a sticker\n> Krampus OM bot"
+        );
       }
 
-      const videoBuffer = fs.readFileSync(inputPath);
+      if (!fs.existsSync(TEMP_DIR)) {
+        fs.mkdirSync(TEMP_DIR, { recursive: true });
+      }
 
-      // Crear sticker desde video
-      const sticker = new Sticker(videoBuffer, {
-        type: "full",
-        pack: "Operacion Marshall",
-        author: "Krampus OM bot",
-      });
+      const outputPath = path.resolve(TEMP_DIR, "output.webp");
 
-      await sticker.toFile(outputPath);
+      if (isImage) {
+        const inputPath = await downloadImage(webMessage, "input");
+        const imageBuffer = fs.readFileSync(inputPath);
 
-      await sendPuzzleReact();
-      await sendStickerFromFile(outputPath);
+        // Crear sticker directamente en buffer
+        const stickerBuffer = await createSticker(imageBuffer, {
+          pack: "Operacion Marshall",
+          author: "Krampus OM bot",
+          type: StickerTypes.FULL,
+        });
 
-      fs.unlinkSync(inputPath);
-      fs.unlinkSync(outputPath);
+        await sendPuzzleReact();
+        await sendStickerFromFile(stickerBuffer);
+
+        fs.unlinkSync(inputPath);
+      } else {
+        const inputPath = await downloadVideo(webMessage, "input");
+        const sizeInSeconds = 10;
+
+        const seconds =
+          webMessage.message?.videoMessage?.seconds ||
+          webMessage.message?.extendedTextMessage?.contextInfo?.quotedMessage?.videoMessage?.seconds;
+
+        if (seconds > sizeInSeconds) {
+          fs.unlinkSync(inputPath);
+          await sendErrorReply(`¡ABUSADOR! Este video tiene más de ${sizeInSeconds} segundos. Envía un video más corto.`);
+          return;
+        }
+
+        const videoBuffer = fs.readFileSync(inputPath);
+
+        // Crear sticker desde video en buffer
+        const stickerBuffer = await createSticker(videoBuffer, {
+          pack: "Operacion Marshall",
+          author: "Krampus OM bot",
+          type: StickerTypes.FULL,
+        });
+
+        await sendPuzzleReact();
+        await sendStickerFromFile(stickerBuffer);
+
+        fs.unlinkSync(inputPath);
+      }
+    } catch (error) {
+      console.error("Error al crear sticker:", error);
+      await sendErrorReply("Hubo un error al crear el sticker. Intenta de nuevo.");
     }
   },
 };
