@@ -2,7 +2,6 @@ const { PREFIX, TEMP_DIR } = require("../../krampus");
 const { InvalidParameterError } = require("../../errors/InvalidParameterError");
 const path = require("path");
 const fs = require("fs");
-const { Sticker } = require("pino-animated-sticker");
 
 module.exports = {
   name: "sticker",
@@ -10,6 +9,8 @@ module.exports = {
   commands: ["s", "sticker"],
   usage: `${PREFIX}sticker (etiqueta imagen/gif/vídeo) o ${PREFIX}sticker (responde a imagen/gif/vídeo)`,
   handle: async ({
+    socket,
+    remoteJid,
     isImage,
     isVideo,
     downloadImage,
@@ -17,7 +18,6 @@ module.exports = {
     webMessage,
     sendErrorReply,
     sendPuzzleReact,
-    sendStickerFromFile,
   }) => {
     if (!isImage && !isVideo) {
       throw new InvalidParameterError(
@@ -31,20 +31,14 @@ module.exports = {
       const inputPath = await downloadImage(webMessage, "input");
       const imageBuffer = fs.readFileSync(inputPath);
 
-      // Crear sticker desde imagen
-      const stickerBuffer = await new Sticker(imageBuffer, {
-        pack: "Operacion Marshall",
-        author: "Krampus OM bot",
-        type: "full",
-      }).toBuffer();
-
-      fs.writeFileSync(outputPath, stickerBuffer);
-
       await sendPuzzleReact();
-      await sendStickerFromFile(outputPath);
+
+      // Enviar sticker con Baileys
+      await socket.sendMessage(remoteJid, { 
+        sticker: imageBuffer 
+      });
 
       fs.unlinkSync(inputPath);
-      fs.unlinkSync(outputPath);
     } else {
       const inputPath = await downloadVideo(webMessage, "input");
 
@@ -64,20 +58,14 @@ module.exports = {
 
       const videoBuffer = fs.readFileSync(inputPath);
 
-      // Crear sticker desde video
-      const stickerBuffer = await new Sticker(videoBuffer, {
-        pack: "Operacion Marshall",
-        author: "Krampus OM bot",
-        type: "full",
-      }).toBuffer();
-
-      fs.writeFileSync(outputPath, stickerBuffer);
-
       await sendPuzzleReact();
-      await sendStickerFromFile(outputPath);
+
+      // Enviar sticker animado con Baileys
+      await socket.sendMessage(remoteJid, { 
+        sticker: videoBuffer 
+      });
 
       fs.unlinkSync(inputPath);
-      fs.unlinkSync(outputPath);
     }
   },
 };
