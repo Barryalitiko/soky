@@ -8,6 +8,6 @@ exports.TEMP_DIR = path.resolve(__dirname, "..", "assets", "temp");
 
 exports.TIMEOUT_IN_MILLISECONDS_BY_EVENT = 700;
 
-exports.BOT_EMOJI = "";
+exports.BOT_EMOJI = " ";
 
 exports.ASSETS_DIR = path.resolve(__dirname, "..", "assets");
