@@ -9,33 +9,27 @@ description: "Envía la imagen indicada",
 commands: ["i", "imagen"],
 usage: `${PREFIX}imagen (etiqueta imagen)`,
 handle: async ({
-socket,
-remoteJid,
 isImage,
+isVideo,
 downloadImage,
+downloadVideo,
 webMessage,
-sendErrorReply,
+sendReply,
+sendImageFromFile,
 }) => {
-console.log("Ejecutando comando imagen");
-
 if (!isImage) {
-  console.log("No es imagen");
-  throw new InvalidParameterError(
-    "ummm...Debes indicarme la imagen que quieres que envíe\n> Krampus OM bot"
-  );
+throw new InvalidParameterError(
+"ummm...Debes indicarme la imagen que quieres que envíe > Krampus OM bot"
+);
 }
 
 const inputPath = await downloadImage(webMessage, "input");
-console.log("Imagen descargada:", inputPath);
 const imageBuffer = fs.readFileSync(inputPath);
-console.log("Imagen leída");
 
-await socket.sendMessage(remoteJid, {
-  image: imageBuffer,
-  caption: "Imagen enviada",
-});
-console.log("Imagen enviada");
+await sendReply("", { react: "" });
+await sendImageFromFile(inputPath);
 
 fs.unlinkSync(inputPath);
 },
 };
+
