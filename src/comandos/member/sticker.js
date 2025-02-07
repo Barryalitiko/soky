@@ -27,12 +27,13 @@ if (!fs.existsSync(tempPath)) fs.mkdirSync(tempPath, { recursive: true });
 const filePath = path.join(tempPath, `sticker_${Date.now()}.webp`);
 let buffer;
 if (isImage) {
-buffer = fs.readFileSync(await downloadImage(webMessage, "sticker_input"));
+buffer = await downloadImage(webMessage, "sticker_input");
 } else {
-buffer = fs.readFileSync(await downloadVideo(webMessage, "sticker_input"));
+buffer = await downloadVideo(webMessage, "sticker_input");
 }
+fs.writeFileSync(filePath, buffer);
 await sendPuzzleReact();
-await socket.sendMessage(remoteJid, { sticker: buffer });
+await socket.sendMessage(remoteJid, { sticker: fs.readFileSync(filePath) });
 fs.unlinkSync(filePath);
 },
 };
