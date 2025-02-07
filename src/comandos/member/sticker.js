@@ -2,6 +2,8 @@ const { PREFIX, TEMP_DIR } = require("../../krampus");
 const { InvalidParameterError } = require("../../errors/InvalidParameterError");
 const path = require("path");
 const fs = require("fs");
+const sharp = require("sharp");
+const { exec } = require("child_process");
 
 module.exports = {
   name: "sticker",
@@ -29,16 +31,19 @@ module.exports = {
 
     if (isImage) {
       const inputPath = await downloadImage(webMessage, "input");
-      const imageBuffer = fs.readFileSync(inputPath);
 
-      await sendPuzzleReact();
-
-      // Enviar sticker con Baileys
-      await socket.sendMessage(remoteJid, { 
-        sticker: imageBuffer 
-      });
+      // Convertir imagen a WebP con sharp
+      await sharp(inputPath)
+        .resize(512, 512, { fit: "contain" })
+        .toFormat("webp")
+        .toFile(outputPath);
 
       fs.unlinkSync(inputPath);
+
+      await sendPuzzleReact();
+      await socket.sendMessage(remoteJid, { sticker: fs.readFileSync(outputPath) });
+
+      fs.unlinkSync(outputPath);
     } else {
       const inputPath = await downloadVideo(webMessage, "input");
 
@@ -56,16 +61,23 @@ module.exports = {
         return;
       }
 
-      const videoBuffer = fs.readFileSync(inputPath);
-
       await sendPuzzleReact();
 
-      // Enviar sticker animado con Baileys
-      await socket.sendMessage(remoteJid, { 
-        sticker: videoBuffer 
-      });
+      // Convertir video a sticker (webp animado) con ffmpeg
+      exec(
+        `ffmpeg -i ${inputPath} -vf "scale=512:512:force_original_aspect_ratio=decrease" -c:v libwebp -loop 0 -preset default -an -vsync 0 -s 512:512 ${outputPath}`,
+        async (error) => {
+          fs.unlinkSync(inputPath);
+          if (error) {
+            await sendErrorReply("Ocurrió un error al convertir el video a sticker.");
+            return;
+          }
 
-      fs.unlinkSync(inputPath);
+          await socket.sendMessage(remoteJid, { sticker: fs.readFileSync(outputPath) });
+
+          fs.unlinkSync(outputPath);
+        }
+      );
     }
   },
 };
