@@ -39,5 +39,3 @@ console.log("Imagen enviada");
 fs.unlinkSync(inputPath);
 },
 };
-
-Con este comando, en lugar de enviar un sticker, se enviará la imagen original que se indicó. Esto nos permitirá verificar si el comando está procesando correctamente la imagen que se le indica.
