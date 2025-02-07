@@ -1,60 +1,35 @@
-const { PREFIX, TEMP_DIR } = require("../../krampus");
+const { PREFIX } = require("../../krampus");
 const { InvalidParameterError } = require("../../errors/InvalidParameterError");
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
 
 module.exports = {
-name: "sticker",
-description: "Crea stickers de imagen/gif/vídeo",
-commands: ["s", "sticker"],
-usage: `${PREFIX}sticker (etiqueta imagen/gif/vídeo) o ${PREFIX}sticker (responde a imagen/gif/vídeo)`,
-handle: async ({
-socket,
-remoteJid,
-isImage,
-isVideo,
-downloadImage,
-downloadVideo,
-webMessage,
-sendErrorReply,
-sendPuzzleReact,
-}) => {
-if (!isImage && !isVideo) {
-throw new InvalidParameterError(
-"ummm...Debes indicarme lo que quieres que convierta a sticker\n> Krampus OM bot"
-);
-}
+  name: "sticker",
+  description: "Convierte imágenes o videos en stickers",
+  commands: ["s", "sticker"],
+  usage: `${PREFIX}sticker (responde a imagen/gif/vídeo)`,
+  handle: async ({ socket, remoteJid, isImage, isVideo, downloadImage, downloadVideo, webMessage, sendErrorReply, sendPuzzleReact }) => {
+    if (!isImage && !isVideo) {
+      throw new InvalidParameterError("Debes responder a una imagen, GIF o video.");
+    }
 
-const tempPath = path.resolve(TEMP_DIR, `temp_${Date.now()}`);
+    const tempPath = path.resolve(__dirname, "../../assets/temp");
+    if (!fs.existsSync(tempPath)) fs.mkdirSync(tempPath, { recursive: true });
 
-if (isImage) {
-  const inputPath = await downloadImage(webMessage, "input");
-  const imageBuffer = fs.readFileSync(inputPath);
-  fs.writeFileSync(tempPath, imageBuffer);
-  fs.unlinkSync(inputPath);
-} else {
-  const inputPath = await downloadVideo(webMessage, "input");
-  const sizeInSeconds = 10;
-  const seconds =
-    webMessage.message?.videoMessage?.seconds ||
-    webMessage.message?.extendedTextMessage?.contextInfo?.quotedMessage
-      ?.videoMessage?.seconds;
-  if (seconds > sizeInSeconds) {
-    fs.unlinkSync(inputPath);
-    await sendErrorReply(
-      `¡ABUSADOR! Este video tiene más de ${sizeInSeconds} segundos. Envía un video más corto.`
-    );
-    return;
-  }
-  const videoBuffer = fs.readFileSync(inputPath);
-  fs.writeFileSync(tempPath, videoBuffer);
-  fs.unlinkSync(inputPath);
-}
+    const filePath = path.join(tempPath, `sticker_${Date.now()}.webp`);
 
-const stickerBuffer = fs.readFileSync(tempPath);
-await sendPuzzleReact();
-await socket.sendMessage(remoteJid, { sticker: stickerBuffer });
-fs.unlinkSync(tempPath);
-},
+    let buffer;
+    if (isImage) {
+      buffer = fs.readFileSync(await downloadImage(webMessage, "sticker_input"));
+    } else {
+      buffer = fs.readFileSync(await downloadVideo(webMessage, "sticker_input"));
+    }
+
+    // Enviar el sticker directamente con Baileys
+    await sendPuzzleReact();
+    await socket.sendMessage(remoteJid, { sticker: buffer });
+
+    // Eliminar archivos temporales después de enviarlo
+    fs.unlinkSync(filePath);
+  },
 };
-
