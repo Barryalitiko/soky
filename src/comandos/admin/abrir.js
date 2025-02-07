@@ -15,7 +15,7 @@ module.exports = {
 
       // Intentar abrir el grupo
       await socket.groupSettingUpdate(remoteJid, "not_announcement");
-      await sendReply("🔓 El grupo ha sido abierto. Todos los miembros pueden enviar mensajes.");
+      await sendReply("Grupo abierto,todos los miembros pueden enviar mensajes.\n> Krampus OM bot");
     } catch (error) {
       console.error("Error al intentar abrir el grupo:", error);
       await sendReply("❌ No se pudo abrir el grupo. Asegúrate de que el bot es administrador.");
