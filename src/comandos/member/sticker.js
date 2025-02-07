@@ -7,7 +7,7 @@ const { exec } = require("child_process");
 module.exports = {
 name: "sticker",
 description: "Faço figurinhas de imagem/gif/vídeo",
-commands: ["s", "sticker"],
+commands: ["s", "sticker", "fig", "f"],
 usage: `${PREFIX}sticker (etiqueta imagen/gif/vídeo) o ${PREFIX}sticker (responde a imagen/gif/vídeo)`,
 handle: async ({
 isImage,
@@ -30,7 +30,7 @@ const outputPath = path.resolve(TEMP_DIR, "output.webp");
 if (isImage) {
   const inputPath = await downloadImage(webMessage, "input");
   exec(
-    `ffmpeg -i ${inputPath} -vf scale=-1:512 -metadata:s:Author="Krampus OM bot" -metadata:s:Pack="Operacion Marshall" ${outputPath}`,
+    `ffmpeg -i ${inputPath} -vf scale=-1:512 -metadata "Author=Krampus OM bot" -metadata "Pack=Operacion Marshall" ${outputPath}`,
     async (error) => {
       if (error) {
         console.log(error);
@@ -59,7 +59,7 @@ if (isImage) {
     return;
   }
   exec(
-    `ffmpeg -i ${inputPath} -y -vcodec libwebp -fs 0.99M -filter_complex "[0:v] scale=-1:512,fps=12,pad=512:512:-1:-1:color=white@0.0,split[a][b];[a]palettegen=reserve_transparent=on:transparency_color=ffffff[p];[b][p]paletteuse" -metadata:s:Author="Krampus OM bot" -metadata:s:Pack="Operacion Marshall" -f webp ${outputPath}`,
+    `ffmpeg -i ${inputPath} -y -vcodec libwebp -fs 0.99M -filter_complex "[0:v] scale=-1:512,fps=12,pad=512:512:-1:-1:color=white@0.0,split[a][b];[a]palettegen=reserve_transparent=on:transparency_color=ffffff[p];[b][p]paletteuse" -metadata "Author=Krampus OM bot" -metadata "Pack=Operacion Marshall" -f webp ${outputPath}`,
     async (error) => {
       if (error) {
         console.log(error);
@@ -75,4 +75,3 @@ if (isImage) {
 }
 },
 };
-
