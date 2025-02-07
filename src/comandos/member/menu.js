@@ -45,6 +45,7 @@ COMANDOS:
 𝗖𝗢𝗠𝗔𝗡𝗗𝗢𝗦 𝗦𝗫
 ⌠⅏⌡➟ ${PREFIX}tijera
 ⌠⅏⌡➟ ${PREFIX}beso
+⌠⅏⌡➟ ${PREFIX}cuerno
 ⌠⅏⌡➟ ${PREFIX}penetrar
 ⌠⅏⌡➟ ${PREFIX}tocar
 ⌠⅏⌡➟ ${PREFIX}haiti
