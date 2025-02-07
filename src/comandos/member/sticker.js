@@ -2,7 +2,7 @@ const { PREFIX, TEMP_DIR } = require("../../krampus");
 const { InvalidParameterError } = require("../../errors/InvalidParameterError");
 const path = require("path");
 const fs = require("fs");
-const { toSticker } = require("@bochilteam/scraper");
+const { writeExifImg, writeExifVid } = require("@bochilteam/scraper");
 
 module.exports = {
   name: "sticker",
@@ -31,8 +31,8 @@ module.exports = {
       const inputPath = await downloadImage(webMessage, "input");
       const imageBuffer = fs.readFileSync(inputPath);
 
-      // Convertir a sticker
-      const stickerBuffer = await toSticker(imageBuffer, {
+      // Convertir a sticker con metadatos
+      const stickerBuffer = await writeExifImg(imageBuffer, {
         packname: "Operacion Marshall",
         author: "Krampus OM bot",
       });
@@ -63,8 +63,8 @@ module.exports = {
 
       const videoBuffer = fs.readFileSync(inputPath);
 
-      // Convertir video a sticker
-      const stickerBuffer = await toSticker(videoBuffer, {
+      // Convertir a sticker animado con metadatos
+      const stickerBuffer = await writeExifVid(videoBuffer, {
         packname: "Operacion Marshall",
         author: "Krampus OM bot",
       });
