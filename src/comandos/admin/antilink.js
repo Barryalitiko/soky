@@ -14,7 +14,7 @@ usage: `${PREFIX}anti-link (0/1/2)`,
 handle: async ({ args, sendReply, sendLinkReact, remoteJid }) => {
 if (!args.length) {
 throw new InvalidParameterError(
-"👻 Krampus.bot 👻 Activa con 1, 2 o 0 (conectar, conectar completo o desconectar)!"
+"Activa el `antilink` con 1, 2 o 0.\n* #antilink 1: permite cualquier link excepto de otros grupos\n* #antilink 2: ningun link es permitido en el grupo\n* #antilink 0: apaga el antilink\n> Krampus OM bot"
 );
 }
 
