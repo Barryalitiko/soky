@@ -2,7 +2,7 @@ const { PREFIX, TEMP_DIR } = require("../../krampus");
 const { InvalidParameterError } = require("../../errors/InvalidParameterError");
 const path = require("path");
 const fs = require("fs");
-const sharp = require("sharp");
+const { exec } = require("child_process");
 
 module.exports = {
 name: "sticker",
@@ -30,12 +30,21 @@ const outputPath = path.resolve(TEMP_DIR, "output.webp");
 
 if (isImage) {
 const inputPath = await downloadImage(webMessage, "input");
-const imageBuffer = await sharp(inputPath)
-.webp()
-.toBuffer();
+exec(
+`ffmpeg -i ${inputPath} -vf "scale=512:512:force_original_aspect_ratio=decrease" -q:v 80 ${outputPath}`,
+async (error) => {
+if (error) {
+await sendErrorReply("Ocurrió un error al convertir la imagen a sticker.");
+return;
+}
 await sendPuzzleReact();
-await socket.sendMessage(remoteJid, { sticker: imageBuffer });
+await socket.sendMessage(remoteJid, {
+sticker: fs.readFileSync(outputPath),
+});
 fs.unlinkSync(inputPath);
+fs.unlinkSync(outputPath);
+}
+);
 } else {
 const inputPath = await downloadVideo(webMessage, "input");
 const sizeInSeconds = 10;
@@ -50,12 +59,21 @@ await sendErrorReply(
 );
 return;
 }
-const videoBuffer = await sharp(inputPath)
-.webp()
-.toBuffer();
+exec(
+`ffmpeg -i ${inputPath} -vf "scale=512:512:force_original_aspect_ratio=decrease,fps=10" -loop 0 -preset default -an -vsync 0 ${outputPath}`,
+async (error) => {
+if (error) {
+await sendErrorReply("Ocurrió un error al convertir el video a sticker.");
+return;
+}
 await sendPuzzleReact();
-await socket.sendMessage(remoteJid, { sticker: videoBuffer });
+await socket.sendMessage(remoteJid, {
+sticker: fs.readFileSync(outputPath),
+});
 fs.unlinkSync(inputPath);
+fs.unlinkSync(outputPath);
+}
+);
 }
 },
 };
