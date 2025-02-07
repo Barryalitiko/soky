@@ -20,7 +20,7 @@ module.exports = {
   }) => {
     if (!args.length && !isReply) {
       throw new InvalidParameterError(
-        "Tienes que decirme a quien quieres que elimine \nKrampusOMbot"
+        "Tienes que decirme a quien quieres que elimine \n> Krampus OM bot"
       );
     }
 
@@ -28,17 +28,17 @@ module.exports = {
     const memberToRemoveNumber = onlyNumbers(memberToRemoveJid);
 
     if (memberToRemoveNumber.length < 7 || memberToRemoveNumber.length > 15) {
-      throw new InvalidParameterError("𝙽𝚞́𝚖𝚎𝚛𝚘 𝚗𝚘 in𝚟𝚊𝚕𝚒𝚍𝚘\n> KrampusOMbot");
+      throw new InvalidParameterError("𝙽𝚞́𝚖𝚎𝚛𝚘 in𝚟𝚊𝚕𝚒𝚍𝚘\n> Krampus OM bot");
     }
 
     if (memberToRemoveJid === userJid) {
-      throw new DangerError("𝙽𝚘 𝚜𝚎 𝚙𝚞𝚎𝚍𝚎 𝚛𝚎𝚊𝚕𝚒𝚣𝚊𝚛 𝚕𝚊 𝚊𝚌𝚌𝚒𝚘́𝚗\n> KrampusOMbot");
+      throw new DangerError("𝙽𝚘 𝚜𝚎 𝚙𝚞𝚎𝚍𝚎 𝚛𝚎𝚊𝚕𝚒𝚣𝚊𝚛 𝚕𝚊 𝚊𝚌𝚌𝚒𝚘́𝚗\n> Krampus OM bot");
     }
 
     const botJid = toUserJid(BOT_NUMBER);
 
     if (memberToRemoveJid === botJid) {
-      throw new DangerError("𝙽𝚘 𝚜𝚎 𝚙𝚞𝚎𝚍𝚎 𝚛𝚎𝚊𝚕𝚒𝚣𝚊𝚛 𝚕𝚊 𝚊𝚌𝚌𝚒𝚘́𝚗\n> KrampusOMbot");
+      throw new DangerError("𝙽𝚘 𝚜𝚎 𝚙𝚞𝚎𝚍𝚎 𝚛𝚎𝚊𝚕𝚒𝚣𝚊𝚛 𝚕𝚊 𝚊𝚌𝚌𝚒𝚘́𝚗\n> Krampus OM bot");
     }
 
     await socket.groupParticipantsUpdate(
