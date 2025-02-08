@@ -63,7 +63,7 @@ module.exports = {
 
       await sendReact("🎬", webMessage.key);
 
-      const videoCaption = `> Krampus OM bot\n\nTítulo: ${title}\n\nCanal: ${channelName}\n\nDuración: ${duration}`;
+      const videoCaption = `> Krampus OM bot\n\n`Título:` ${title}\n\n`Canal:` ${channelName}\n\n`Duración:` ${duration}`;
 
       await sendMessage({
         messageType: "video",
