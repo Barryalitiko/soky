@@ -43,7 +43,7 @@ description: 'Registrar un nuevo usuario',
 commands: ['registrar'],
 usage: `${PREFIX}registrar <nombre>`,
 handle: async ({ socket, remoteJid, msg }) => {
-const argumentos = msg.conversation.trim().split(' ').slice(1);
+const argumentos = msg.text.trim().split(' ').slice(1);
 
 if (argumentos.length === 0) {
   return 'Debes proporcionar un nombre para registrarte';
