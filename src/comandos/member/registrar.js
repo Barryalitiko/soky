@@ -1,3 +1,5 @@
+Aquí te dejo el comando completo actualizado:
+
 const fs = require('fs');
 const path = require('path');
 const { PREFIX } = require('../../krampus');
@@ -43,7 +45,8 @@ description: 'Registrar un nuevo usuario',
 commands: ['registrar'],
 usage: `${PREFIX}registrar <nombre>`,
 handle: async ({ socket, remoteJid, msg }) => {
-const argumentos = msg.text.trim().split(' ').slice(1);
+const texto = (msg.message.conversation || msg.message.extendedTextMessage.text);
+const argumentos = texto.trim().split(' ').slice(1);
 
 if (argumentos.length === 0) {
   return 'Debes proporcionar un nombre para registrarte';
