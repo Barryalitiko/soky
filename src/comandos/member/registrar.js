@@ -43,14 +43,22 @@ description: 'Registrar un nuevo usuario',
 commands: ['registrar'],
 usage: `${PREFIX}registrar <nombre>`,
 handle: async ({ socket, remoteJid, msg }) => {
-const message = msg.message;
-const argumentos = message.conversation.trim().split(' ').slice(1);
+const argumentos = msg.conversation.trim().split(' ').slice(1);
 
 if (argumentos.length === 0) {
   return 'Debes proporcionar un nombre para registrarte';
 }
 
-const nombre = argumentos.join(' ');
+const nombre = argumentos.join('');
+
+if (nombre.includes(' ')) {
+  return 'El nombre de usuario no puede contener espacios';
+}
+
+if (nombre.length > 10) {
+  return 'El nombre de usuario no puede tener más de 10 letras';
+}
+
 const nombreCompleto = `kr.${nombre}.om`;
 
 if (verificarNombre(nombreCompleto)) {
@@ -61,4 +69,3 @@ registrarUsuario(nombre);
 return `¡Felicidades! Te acabas de registrar como ${nombreCompleto}.`;
 },
 };
-
