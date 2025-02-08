@@ -1,5 +1,3 @@
-Aquí te dejo el comando completo actualizado:
-
 const fs = require('fs');
 const path = require('path');
 const { PREFIX } = require('../../krampus');
