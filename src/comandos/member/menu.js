@@ -25,6 +25,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}despedida 0-1
 ⌠⅏⌡➟ ${PREFIX}cambiarenlace
 ⌠⅏⌡➟ ${PREFIX}reaccion on-off
+⌠⅏⌡➟ ${PREFIX}spam on-off
 ⌠⅏⌡➟ ${PREFIX}tag
 ⌠⅏⌡➟ ${PREFIX}todos
 ⌠⅏⌡➟ ${PREFIX}reglas
