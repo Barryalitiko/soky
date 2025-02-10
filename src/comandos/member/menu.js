@@ -22,6 +22,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}promote
 ⌠⅏⌡➟ ${PREFIX}demote
 ⌠⅏⌡➟ ${PREFIX}bienvenida 0-1-2
+⌠⅏⌡➟ ${PREFIX}despedida 0-1
 ⌠⅏⌡➟ ${PREFIX}cambiarenlace
 ⌠⅏⌡➟ ${PREFIX}reaccion on-off
 ⌠⅏⌡➟ ${PREFIX}tag
