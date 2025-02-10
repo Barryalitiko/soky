@@ -35,6 +35,8 @@ COMANDOS:
   ↳ con la opcion 1 envia un saludo a los nuevos en el grupo, con la opcion 2 envia el saludo junto a su foto de perfil. Con la opcion 0 se apaga
 ⌠⅏⌡➟ ${PREFIX}cambiarenlace
   ↳ cambia el link del grupo
+  ⌠⅏⌡➟ ${PREFIX}despedida
+  ↳ para avisar cuando una persona salga del grupo. 0 para desactivar, 1 para activar
 ⌠⅏⌡➟ ${PREFIX}reaccion on-off
   ↳ para apagar las reacciones del bot con emojis a ciertas palabras
 ⌠⅏⌡➟ ${PREFIX}tag
