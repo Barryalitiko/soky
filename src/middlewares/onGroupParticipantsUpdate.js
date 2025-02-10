@@ -52,7 +52,7 @@ exports.onGroupParticipantsUpdate = async ({ groupParticipantsUpdate, socket }) 
     if (isActiveGoodbyeGroup(remoteJid)) {
         if (groupParticipantsUpdate.action === "remove") {
             try {
-                const goodbyeMessage = `¡𝗚𝗿𝗮𝗰𝗶𝗮𝘀 𝗽𝗼𝗿 𝗽𝗮𝗿𝘁𝗶𝗰𝗶𝗽𝗮𝗿 𝗲𝗻 𝗲𝘀𝘁𝗲 𝗴𝗿𝘂𝗽𝗼, @${userJid ? onlyNumbers(userJid) : ''}! Esperamos verte pronto. 🖤`;
+                const goodbyeMessage = `> ¿Que esta pasando aqui?\nDe tanto llorar @${userJid ? onlyNumbers(userJid) : ''} salio del grupo 💔😞`;
 
                 // Solo enviamos el mensaje de texto, sin imágenes
                 await socket.sendMessage(remoteJid, {
