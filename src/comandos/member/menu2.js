@@ -45,6 +45,8 @@ COMANDOS:
   ↳ etiqueta a todos con un mensaje predeterminado
 ⌠⅏⌡➟ ${PREFIX}reglas
   ↳ envia las reglas del grupo
+  ⌠⅏⌡➟ ${PREFIX}spam on-off
+  ↳ apaga o enciende el sistema anti-spam
 
 ═════════.K.═
 
