@@ -41,6 +41,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}sticker/s
 ⌠⅏⌡➟ ${PREFIX}reporte/r
 ⌠⅏⌡➟ ${PREFIX}ping
+⌠⅏⌡➟ ${PREFIX}minivideo
 ⌠⅏⌡➟ ${PREFIX}pfp/perfil
 ⌠⅏⌡➟ ${PREFIX}fotogrupo
 ═.K.═════════
