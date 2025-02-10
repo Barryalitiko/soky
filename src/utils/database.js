@@ -6,27 +6,40 @@ const databasePath = path.resolve(process.cwd(), "assets");
 const INACTIVE_GROUPS_FILE = "inactive-groups";
 const ANTI_LINK_GROUPS_FILE = "anti-link-groups";
 const WELCOME_GROUPS_FILE = "welcome-groups";
+const GOODBYE_GROUPS_FILE = "goodbye-groups"; // Archivo para gestionar la despedida
 
+// Crear las carpetas necesarias si no existen
 function createIfNotExists(fullPath) {
-  if (!fs.existsSync(fullPath)) {
-    fs.writeFileSync(fullPath, JSON.stringify([]));
-  }
+    const dirPath = path.dirname(fullPath);
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true }); // Crear las carpetas necesarias
+    }
+    if (!fs.existsSync(fullPath)) {
+        fs.writeFileSync(fullPath, JSON.stringify({})); // Crear archivo vacío si no existe
+    }
 }
 
+// Leer un archivo JSON
 function readJSON(jsonFile) {
-  const fullPath = path.resolve(databasePath, `${jsonFile}.json`);
-
-  createIfNotExists(fullPath);
-
-  return JSON.parse(fs.readFileSync(fullPath, "utf8"));
+    const fullPath = path.resolve(databasePath, `${jsonFile}.json`);
+    createIfNotExists(fullPath);
+    try {
+        return JSON.parse(fs.readFileSync(fullPath, "utf8"));
+    } catch (err) {
+        console.error(`Error al leer el archivo ${jsonFile}:`, err);
+        return {}; // Retornar un objeto vacío en caso de error
+    }
 }
 
+// Escribir datos en un archivo JSON
 function writeJSON(jsonFile, data) {
-  const fullPath = path.resolve(databasePath, `${jsonFile}.json`);
-
-  createIfNotExists(fullPath);
-
-  fs.writeFileSync(fullPath, JSON.stringify(data));
+    const fullPath = path.resolve(databasePath, `${jsonFile}.json`);
+    createIfNotExists(fullPath);
+    try {
+        fs.writeFileSync(fullPath, JSON.stringify(data, null, 2));
+    } catch (err) {
+        console.error(`Error al escribir en el archivo ${jsonFile}:`, err);
+    }
 }
 
 // Manejo del estado general de los grupos
@@ -81,6 +94,37 @@ exports.getWelcomeMode = (groupId) => {
 exports.isActiveWelcomeGroup = (groupId) => {
     const welcomeGroups = readJSON(WELCOME_GROUPS_FILE);
     return welcomeGroups[groupId] && welcomeGroups[groupId].enabled;
+};
+
+// Manejo de la configuración de despedida
+exports.activateGoodbyeGroup = (groupId) => {
+    const goodbyeGroups = readJSON(GOODBYE_GROUPS_FILE); // Crear archivo goodbye-groups si no existe
+    goodbyeGroups[groupId] = { enabled: true, mode: "1" };
+    writeJSON(GOODBYE_GROUPS_FILE, goodbyeGroups);
+};
+
+exports.deactivateGoodbyeGroup = (groupId) => {
+    const goodbyeGroups = readJSON(GOODBYE_GROUPS_FILE);
+    delete goodbyeGroups[groupId];
+    writeJSON(GOODBYE_GROUPS_FILE, goodbyeGroups);
+};
+
+exports.setGoodbyeMode = (groupId, mode) => {
+    const goodbyeGroups = readJSON(GOODBYE_GROUPS_FILE);
+    if (goodbyeGroups[groupId]) {
+        goodbyeGroups[groupId].mode = mode;
+        writeJSON(GOODBYE_GROUPS_FILE, goodbyeGroups);
+    }
+};
+
+exports.getGoodbyeMode = (groupId) => {
+    const goodbyeGroups = readJSON(GOODBYE_GROUPS_FILE);
+    return goodbyeGroups[groupId] ? goodbyeGroups[groupId].mode : null;
+};
+
+exports.isActiveGoodbyeGroup = (groupId) => {
+    const goodbyeGroups = readJSON(GOODBYE_GROUPS_FILE);
+    return goodbyeGroups[groupId] && goodbyeGroups[groupId].enabled;
 };
 
 // Manejo del anti-link
