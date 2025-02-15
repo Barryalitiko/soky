@@ -84,7 +84,7 @@ try {
             await sendReact("🌈");
             await socket.sendMessage(remoteJid, {
               video: { url: videoWithAudioPath },
-              caption: `El *DICRIM* te ha capturado @${userJid.split("@")[0]}\nTe espera un largo tiempo en la carcel. . .\n> Krampus OM bot`,
+              caption: `> EEEEEEEEEEH?\nComenzaron a salir del armario\n> Krampus OM bot`,
             });
             resolve();
           })
