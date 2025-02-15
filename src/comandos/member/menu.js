@@ -41,10 +41,10 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}sticker/s
 ⌠⅏⌡➟ ${PREFIX}reporte/r
 ⌠⅏⌡➟ ${PREFIX}ping
-⌠⅏⌡➟ ${PREFIX}minivideo
 ⌠⅏⌡➟ ${PREFIX}pfp/perfil
 ⌠⅏⌡➟ ${PREFIX}fotogrupo
 ═.K.═════════
+
 𝗖𝗢𝗠𝗔𝗡𝗗𝗢𝗦 𝗦𝗫
 ⌠⅏⌡➟ ${PREFIX}tijera
 ⌠⅏⌡➟ ${PREFIX}beso
@@ -53,6 +53,23 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}tocar
 ⌠⅏⌡➟ ${PREFIX}haiti
 ⌠⅏⌡➟ ${PREFIX}saborear
+══════════.K.═
+
+*𝗗𝗲𝘀𝗰𝗮𝗿𝗴𝗮𝗿 𝗩𝗶𝗱𝗲𝗼𝘀*
+> ᐒtiktok
+⌠⅏⌡➟ ${PREFIX}tiktok + link
+> ᐒfacebook
+⌠⅏⌡➟ ${PREFIX}facebook + link
+> ᐒtwitter
+⌠⅏⌡➟ ${PREFIX}x + link
+
+═.K.═════════
+*MINIVIDEOS*
+(respondiendo a un usuario con foto de perfil)
+
+⌠⅏⌡➟ ${PREFIX}minivideo
+⌠⅏⌡➟ ${PREFIX}fea/feo
+
 »»————- - ————-««
 > Operacion Marshall
 »»————- - ————-««`;
