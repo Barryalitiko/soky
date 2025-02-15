@@ -71,6 +71,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}fea/feo
 ⌠⅏⌡➟ ${PREFIX}fea/feo
 ⌠⅏⌡➟ ${PREFIX}preso
+⌠⅏⌡➟ ${PREFIX}gay
 
 »»————- - ————-««
 > Operacion Marshall
