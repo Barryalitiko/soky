@@ -69,6 +69,8 @@ COMANDOS:
 
 ⌠⅏⌡➟ ${PREFIX}minivideo
 ⌠⅏⌡➟ ${PREFIX}fea/feo
+⌠⅏⌡➟ ${PREFIX}fea/feo
+⌠⅏⌡➟ ${PREFIX}preso
 
 »»————- - ————-««
 > Operacion Marshall
