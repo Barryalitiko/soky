@@ -4,9 +4,15 @@ module.exports = {
   name: "ping",
   description: "Verificar se o bot está online",
   commands: ["ping"],
-  usage: `${PREFIX}om`,
+  usage: `${PREFIX}ping`,
   handle: async ({ sendReply, sendReact }) => {
+    const startTime = Date.now();
     await sendReact("👻");
-    await sendReply(`Operación Marshall\n> Krampus OM bot`);
+    const endTime = Date.now();
+    const latency = endTime - startTime;
+    const speed = latency.toFixed(2) + "ms";
+    await sendReply(`> Krampus OM bot\nVelocidad de respuesta: ${speed}`);
   },
 };
+
+
