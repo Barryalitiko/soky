@@ -30,6 +30,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}todos
 ⌠⅏⌡➟ ${PREFIX}reglas
 ⌠⅏⌡➟ ${PREFIX}ban
+⌠⅏⌡➟ ${PREFIX}advertencia/adv
 ══════════.K.═
 𝗠𝗜𝗘𝗠𝗕𝗥𝗢𝗦
 ⌠⅏⌡➟ ${PREFIX}link
