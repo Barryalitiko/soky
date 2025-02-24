@@ -2,8 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const { PREFIX } = require("../../krampus");
 
-const marriageFilePath = path.resolve(process.cwd(), "assets/marriage.json");
-const userItemsFilePath = path.resolve(process.cwd(), "assets/userItems.json");
+const MARRIAGE_FILE_PATH = path.resolve(process.cwd(), "assets/marriage.json");
+const USER_ITEMS_FILE_PATH = path.resolve(process.cwd(), "assets/userItems.json");
+const PENDING_MARRIAGES_FILE = path.resolve(process.cwd(), "assets/pending_marriages.json");
 
 const readData = (filePath) => {
   try {
@@ -26,62 +27,91 @@ module.exports = {
   description: "Proponer matrimonio a alguien.",
   commands: ["boda"],
   usage: `${PREFIX}boda 💍 @usuario`,
-  handle: async ({ sendReply, userJid, mentionedJid }) => {
-    const userItems = readData(userItemsFilePath);
-    const userItem = userItems.find(entry => entry.userJid === userJid);
+  handle: async ({ socket, sendReply, userJid, args, isReply, replyJid, mentionedJid, remoteJid }) => {
+    
+    if (!args || args.length === 0) {
+      await sendReply("❌ Debes incluir el anillo 💍 y etiquetar a la persona con quien quieres casarte.\nKrampus OM bot");
+      return;
+    }
 
-    // Verificar si el usuario tiene un anillo
+    if (!args.includes("💍")) {
+      await sendReply("❌ Debes usar el anillo 💍 en tu propuesta de matrimonio.");
+      return;
+    }
+
+    let targetJid;
+    if (isReply) {
+      targetJid = replyJid;
+    } else if (mentionedJid && mentionedJid.length > 0) {
+      targetJid = mentionedJid[0];
+    } else if (args.length > 1) {
+      targetJid = args[1].replace("@", "") + "@s.whatsapp.net";
+    }
+
+    if (!targetJid) {
+      await sendReply("❌ Debes etiquetar o responder a un usuario para proponer matrimonio.");
+      return;
+    }
+
+    if (targetJid === userJid) {
+      await sendReply("💍 No puedes casarte contigo mismo, busca a alguien especial.\n> Krampus OM bot");
+      return;
+    }
+
+    const userItems = readData(USER_ITEMS_FILE_PATH);
+    const userItem = userItems.find((entry) => entry.userJid === userJid);
+
     if (!userItem || userItem.items.anillos <= 0) {
-      await sendReply("¿Y el anillo pa' cuando?");
+      await sendReply("💍 ¿Y el anillo pa' cuando?\nNo tienes anillos para proponer matrimonio.\n\n> Usa #tienda y compra uno");
       return;
     }
 
-    // Verificar si el usuario propuesto ya está casado
-    const marriageData = readData(marriageFilePath);
-    const existingMarriage = marriageData.find(entry => entry.userJid === mentionedJid || entry.partnerJid === mentionedJid);
-    
+    const marriageData = readData(MARRIAGE_FILE_PATH);
+    const existingMarriage = marriageData.find(
+      (entry) => entry.userJid === userJid || entry.partnerJid === userJid
+    );
+
     if (existingMarriage) {
-      await sendReply("Cuernero, ya estás casado.");
+      await sendReply("💔 Ya estás casado!!\nNo le pongas los cuernos a tu pareja 😞");
       return;
     }
 
-    // Propuesta de matrimonio
-    await sendReply(`@${mentionedJid} ¿Aceptas la propuesta de matrimonio? Responde con #si o #no. Tienes 3 minutos.`);
-    
-    // Crear un timeout de 3 minutos para la respuesta
-    const timeout = setTimeout(() => {
-      sendReply(`La propuesta de matrimonio a @${mentionedJid} ha sido rechazada por falta de respuesta.`);
-    }, 180000); // 3 minutos en milisegundos
+    const targetMarriage = marriageData.find(
+      (entry) => entry.userJid === targetJid || entry.partnerJid === targetJid
+    );
 
-    // Manejo de la respuesta con #si o #no
-    const onResponse = async (message) => {
-      if (message.includes("#si")) {
-        // Confirmación de matrimonio
-        const marriageEntry = {
-          userJid: userJid,
-          partnerJid: mentionedJid,
-          date: new Date().toISOString(),
-          groupId: "groupId12345", // Esto debería ser obtenido de algún lugar
-          dailyLove: 0
-        };
+    if (targetMarriage) {
+      await sendReply("💔 Esa persona ya está casada\n> Krampus OM bot");
+      return;
+    }
 
-        marriageData.push(marriageEntry);
-        writeData(marriageFilePath, marriageData);
+    let pendingMarriages = readData(PENDING_MARRIAGES_FILE);
+    pendingMarriages = pendingMarriages.filter(entry => Date.now() - entry.timestamp < 60000);
 
-        // Descontar el anillo del inventario del usuario
-        userItem.items.anillos -= 1;
-        writeData(userItemsFilePath, userItems);
+    const alreadyProposed = pendingMarriages.find(
+      (entry) => entry.proposer === userJid && entry.proposedTo === targetJid
+    );
 
-        await sendReply(`¡Felicidades! @${userJid} y @${mentionedJid} están ahora casados. 💍`);
-      } else if (message.includes("#no")) {
-        // Rechazo de la propuesta
-        await sendReply(`@${mentionedJid} ha rechazado la propuesta de matrimonio. ❌`);
-      }
+    if (alreadyProposed) {
+      await sendReply("> Cual es la prisa?\n⏳ Ya le has hecho la propuesta, espera a que responda...");
+      return;
+    }
 
-      clearTimeout(timeout);
-    };
+    pendingMarriages.push({
+      proposer: userJid,
+      proposedTo: targetJid,
+      timestamp: Date.now()
+    });
 
-    // Esperar la respuesta
-    setTimeout(onResponse, 3000); // Verificar la respuesta en 3 segundos (para pruebas)
-  }
+    writeData(PENDING_MARRIAGES_FILE, pendingMarriages);
+
+    await socket.sendMessage(remoteJid, {
+      text: `💍 *@${userJid.split("@")[0]}* te propuso matrimonio ❤️ *@${targetJid.split("@")[0]}*!  
+      
+Responde con *#r si* para aceptar o *#r no* para rechazar.  
+
+> ⏳ *Tienes 1 minuto para decidir.*`,
+      mentions: [userJid, targetJid]
+    });
+  },
 };
