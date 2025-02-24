@@ -2,9 +2,10 @@ const fs = require("fs");
 const path = require("path");
 const { PREFIX } = require("../../krampus");
 
-const marriageFilePath = path.resolve(process.cwd(), "assets/marriage.json");
-const krFilePath = path.resolve(process.cwd(), "assets/kr.json");
-const userItemsFilePath = path.resolve(process.cwd(), "assets/userItems.json");
+const MARRIAGE_FILE_PATH = path.resolve(process.cwd(), "assets/marriage.json");
+const KR_FILE_PATH = path.resolve(process.cwd(), "assets/kr.json");
+const USER_ITEMS_FILE_PATH = path.resolve(process.cwd(), "assets/userItems.json");
+const HEARTS_FILE_PATH = path.resolve(process.cwd(), "assets/hearts.json");
 
 const readData = (filePath) => {
   try {
@@ -23,10 +24,18 @@ const writeData = (filePath, data) => {
 };
 
 const assignInitialKr = (userJid) => {
-  const krData = readData(krFilePath);
+  const krData = readData(KR_FILE_PATH);
   if (!krData.find(entry => entry.userJid === userJid)) {
     krData.push({ userJid, kr: 50 });
-    writeData(krFilePath, krData);
+    writeData(KR_FILE_PATH, krData);
+  }
+};
+
+const assignInitialHearts = (userJid) => {
+  const heartsData = readData(HEARTS_FILE_PATH);
+  if (!heartsData.find(entry => entry.userJid === userJid)) {
+    heartsData.push({ userJid, hearts: 0, streak: 0, lastUsed: null });
+    writeData(HEARTS_FILE_PATH, heartsData);
   }
 };
 
@@ -37,43 +46,60 @@ module.exports = {
   usage: `${PREFIX}data`,
   handle: async ({ sendReply, userJid }) => {
     assignInitialKr(userJid);
-    const marriageData = readData(marriageFilePath);
-    const krData = readData(krFilePath);
-    const userItems = readData(userItemsFilePath);
+    assignInitialHearts(userJid);
+    const marriageData = readData(MARRIAGE_FILE_PATH);
+    const krData = readData(KR_FILE_PATH);
+    const userItems = readData(USER_ITEMS_FILE_PATH);
+    const heartsData = readData(HEARTS_FILE_PATH);
 
-    if (krData && krData.length > 0) {
-      const userKr = krData.find(entry => entry.userJid === userJid);
-      const userKrBalance = userKr ? userKr.kr : 0;
-      const marriage = marriageData.find(entry => entry.userJid === userJid || entry.partnerJid === userJid);
+    const userKr = krData.find(entry => entry.userJid === userJid);
+    const userKrBalance = userKr ? userKr.kr : 0;
 
-      if (!marriage) {
-        const noMarriageInfo = ` ❌ **No estás casado.** 💸 **Tus monedas 𝙺𝚛:** ${userKrBalance} `;
-        const userItem = userItems.find(entry => entry.userJid === userJid);
-        if (!userItem) {
-          await sendReply(`${noMarriageInfo} ❌ **No tienes objetos acumulados.**`);
-          return;
-        }
-        const anillos = userItem.items.anillos;
-        const papeles = userItem.items.papeles;
-        await sendReply(`${noMarriageInfo} 🎁 **Tienes acumulados:** ${anillos} 💍 y ${papeles} 📜`);
-        return;
-      }
+    const userHearts = heartsData.find(entry => entry.userJid === userJid);
+    const hearts = userHearts ? userHearts.hearts : 0;
+    const streak = userHearts ? userHearts.streak : 0;
 
-      const { partnerJid, date, groupId, dailyLove } = marriage;
-      const partnerName = partnerJid.split("@")[0];
+    const marriage = marriageData.find(entry => entry.userJid === userJid || entry.partnerJid === userJid);
+    const userItem = userItems.find(entry => entry.userJid === userJid) || { items: {} };
+
+    const anillos = userItem.items.anillos || 0;
+    const papeles = userItem.items.papeles || 0;
+
+    let message;
+    if (!marriage) {
+      message = 
+      `╭─── ❀ *📜 Datos* ❀ ───╮  
+┃ ❌ *Estado:* *Soltero(a)*  
+┃ 💰 *Kr:* *${userKrBalance}*  
+┃ 🎁 *Objetos:*  
+┃    💍 Anillos: *${anillos}*  
+┃    📜 Papeles: *${papeles}*  
+┃ ❤️ *Corazones:* *${hearts}*  
+┃ 💖 *Racha de Amor:* *${streak} días*  
+╰──────────────────╯`;
+    } else {
+      const { date, groupId, dailyLove } = marriage;
       const marriageDate = new Date(date);
       const currentDate = new Date();
       const daysMarried = Math.floor((currentDate - marriageDate) / (1000 * 60 * 60 * 24));
-      const marriageInfo = ` 💍 **Estado Matrimonial: Casado** 👰 **Pareja:** @${partnerName} 📅 **Fecha de Casamiento:** ${marriageDate.toLocaleDateString()} 🗓️ **Días Casados:** ${daysMarried} días 🏠 **Grupo:** ${groupId} 💖 **Amor Diario:** ${dailyLove} mensajes diarios 💸 **Tus monedas 𝙺𝚛:** ${userKrBalance} `;
 
-      const userItem = userItems.find(entry => entry.userJid === userJid);
-      if (!userItem) {
-        await sendReply(`${marriageInfo} ❌ **No tienes objetos acumulados.**`);
-        return;
-      }
-      const anillos = userItem.items.anillos;
-      const papeles = userItem.items.papeles;
-      await sendReply(`${marriageInfo} 🎁 **Tienes acumulados:** ${anillos} 💍 y ${papeles} 📜`);
+      message = 
+      `╭─── 💖 *📜 Datos* 💖 ───╮  
+┃ 💍 *Estado:* *Casado(a)*  
+┃ 📅 *Matrimonio:* *${marriageDate.toLocaleDateString()}*  
+┃ 🗓️ *Días:* *${daysMarried}*  
+┃ 🏠 *Grupo:* *${groupId || "N/A"}*  
+┃ 💖 *Amor:* *${dailyLove} msgs/día*  
+┃ 💰 *Kr:* *${userKrBalance}*  
+┃ 🎁 *Objetos:*  
+┃    💍 Anillos: *${anillos}*  
+┃    📜 Papeles: *${papeles}*  
+┃ ❤️ *Corazones:* *${hearts}*  
+┃ 💖 *Racha de Amor:* *${streak} días*  
+╰────────────────────╯`;
     }
+
+    // Ahora usamos sendReply para responder directamente al usuario
+    await sendReply(message);
   },
 };
