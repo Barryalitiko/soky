@@ -22,7 +22,7 @@ module.exports = {
     try {
       const currentStatus = readStatus();
       if (!currentStatus.enabled) {
-        await sendReply("❌ El sistema de comandos está apagado. Por favor, enciéndelo para usar este comando.");
+        await sendReply("❌ El sistema de gifs está apagado.\nPide a un admin que lo encienda");
         return;
       }
 
