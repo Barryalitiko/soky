@@ -7,6 +7,19 @@ const KR_FILE_PATH = path.resolve(process.cwd(), "assets/kr.json");
 const USER_ITEMS_FILE_PATH = path.resolve(process.cwd(), "assets/userItems.json");
 const HEARTS_FILE_PATH = path.resolve(process.cwd(), "assets/hearts.json");
 
+const surnames = [
+  "González", "Rodríguez", "Gómez", "Fernández", "López", 
+  "Martínez", "Pérez", "García", "Sánchez", "Ramírez", 
+  "Torres", "Flores", "Rivera", "Álvarez", "Castro", 
+  "Ortiz", "Vargas", "Reyes", "Morales", "Herrera", 
+  "Mendoza", "Jiménez", "Ramos", "Romero", "Chávez", 
+  "Guerrero", "Ibarra", "Salazar", "Vega", "Delgado"
+];
+
+const getRandomSurname = () => {
+  return surnames[Math.floor(Math.random() * surnames.length)];
+};
+
 const readData = (filePath) => {
   try {
     return JSON.parse(fs.readFileSync(filePath, "utf-8"));
@@ -78,10 +91,22 @@ module.exports = {
 ┃ 💖 *Racha de Amor:* *${streak} días*  
 ╰─────────────╯`;
     } else {
-      const { date, groupId, dailyLove } = marriage;
+      let { userJid: proposer, partnerJid, date, groupId, surname } = marriage;
+
+      // Si la relación no tiene apellido, asignar uno y guardarlo en marriage.json
+      if (!surname) {
+        surname = getRandomSurname();
+        marriage.surname = surname;
+        writeData(MARRIAGE_FILE_PATH, marriageData);
+      }
+
       const marriageDate = new Date(date);
       const currentDate = new Date();
       const daysMarried = Math.floor((currentDate - marriageDate) / (1000 * 60 * 60 * 24));
+
+      const proposerSuffix = proposer.split("@")[0].slice(-3);
+      const partnerSuffix = partnerJid.split("@")[0].slice(-3);
+      const relationshipCode = `${surname} ${proposerSuffix}${partnerSuffix}`;
 
       message = 
       `╭─── 💖 *📜 Datos* 💖 ───╮  
@@ -89,7 +114,7 @@ module.exports = {
 ┃ 📅 *Matrimonio:* *${marriageDate.toLocaleDateString()}*  
 ┃ 🗓️ *Días:* *${daysMarried}*  
 ┃ 🏠 *Grupo:* *${groupId || "N/A"}*  
-┃ 💖 *Amor:* *${dailyLove} msgs/día*  
+┃ 💖 *Amor:* *${relationshipCode}*  
 ┃ 💰 *Kr:* *${userKrBalance}*  
 ┃ 🎁 *Objetos:*  
 ┃    💍 Anillos: *${anillos}*  
@@ -99,7 +124,6 @@ module.exports = {
 ╰─────────────╯`;
     }
 
-    // Ahora usamos sendReply para responder directamente al usuario
     await sendReply(message);
   },
 };
