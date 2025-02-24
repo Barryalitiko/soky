@@ -113,7 +113,6 @@ module.exports = {
 ┃ 💍 *Estado:* *Casado(a)*  
 ┃ 📅 *Matrimonio:* *${marriageDate.toLocaleDateString()}*  
 ┃ 🗓️ *Días:* *${daysMarried}*  
-┃ 🏠 *Grupo:* *${groupId || "N/A"}*  
 ┃ 💖 *Amor:* *${relationshipCode}*  
 ┃ 💰 *Kr:* *${userKrBalance}*  
 ┃ 🎁 *Objetos:*  
