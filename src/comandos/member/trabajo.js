@@ -10,7 +10,7 @@ const readData = (filePath) => {
   try {
     return JSON.parse(fs.readFileSync(filePath, "utf-8"));
   } catch {
-    return [];
+    return {};
   }
 };
 
@@ -21,6 +21,8 @@ const writeData = (filePath, data) => {
     console.error(`Error al escribir en el archivo ${filePath}: ${error.message}`);
   }
 };
+
+const TIEMPO_TRABAJO_MS = 5 * 60 * 1000; // 5 minutos en milisegundos
 
 module.exports = {
   name: "trabajo",
@@ -35,15 +37,23 @@ module.exports = {
     }
 
     const trabajoStats = readData(usageStatsFilePath);
-    const userStats = trabajoStats.users?.[userJid] || { trabajo: null };
+    trabajoStats.users = trabajoStats.users || {};
+    const userStats = trabajoStats.users[userJid] || { trabajo: null, inicioTrabajo: null };
 
     if (userStats.trabajo) {
-      await sendReply("❌ Ya estás trabajando en una profesión, termina tu trabajo actual.");
-      return;
+      const tiempoPasado = Date.now() - userStats.inicioTrabajo;
+      if (tiempoPasado >= TIEMPO_TRABAJO_MS) {
+        // Si ya pasó el tiempo, procesar el pago inmediato
+        await pagarTrabajo(userJid, userStats.trabajo, sendReply);
+        return;
+      } else {
+        const tiempoRestante = Math.ceil((TIEMPO_TRABAJO_MS - tiempoPasado) / 1000);
+        await sendReply(`❌ Ya estás trabajando como *${userStats.trabajo}*. Te pagarán en ${Math.ceil(tiempoRestante / 60)} minutos.`);
+        return;
+      }
     }
 
     if (args.length === 0) {
-      // Si no se especifica profesión, enviar la lista de trabajos disponibles
       const trabajosDisponibles = [
         "Motoconcho",
         "Dembowsero",
@@ -56,7 +66,7 @@ module.exports = {
         "Cuero",
         "Bachatero"
       ];
-      
+
       const listaTrabajos = trabajosDisponibles.map((trabajo, index) => `${index + 1}. **${trabajo}**`).join("\n");
 
       await sendReply(`💼 *Profesiones disponibles:*\n\n${listaTrabajos}\n\nUsa el comando \`#trabajo <profesión>\` para elegir uno.`);
@@ -64,96 +74,16 @@ module.exports = {
     }
 
     const trabajos = [
-      {
-        nombre: "Motoconcho",
-        pago: [8, 10, 15],
-        mensajes: {
-          8: "Diache, te pasaste el día dando carrera y na’ más hiciste 8 pesos. Hoy no fue tu día, manito.",
-          10: "Bobo, te cogieron lucha con los tapones, pero hiciste 10 pesos. Sigue dándole pa’ lo tuyo.",
-          15: "Tú sí coronaste hoy, pa’! 15 pesos en el motoconcho, sigue así y te compras un motor nuevo."
-        }
-      },
-      {
-        nombre: "Dembowsero",
-        pago: [8, 10, 15],
-        mensajes: {
-          8: "Loco, nadie te quiere en el estudio, na’ más hiciste 8 pesos. Mejor ve a practicar más.",
-          10: "Sonaste en un party de barrio y te dieron 10 pesos. Algo es algo, mi loco.",
-          15: "Tamo' rompiendo! Pegaste un tema y te cayeron 15 pesos. El próximo Tokischa eres tú."
-        }
-      },
-      {
-        nombre: "Banquera",
-        pago: [8, 10, 15],
-        mensajes: {
-          8: "Ay mi madre, jugaste unos numeritos y lo que hiciste fueron 8 pesos. Mejor suerte pa' la próxima.",
-          10: "Te dejaron una buena propina y subiste a 10 pesos. Vas bien, sigue vendiendo sueños.",
-          15: "Oye, tú sí eres dura! Rompiste la banca con 15 pesos, sigue así y montas tu propio negocio."
-        }
-      },
-      {
-        nombre: "Delivery",
-        pago: [8, 10, 15],
-        mensajes: {
-          8: "Diablo, loco, la propina hoy estuvo floja. Solo hiciste 8 pesos, pero no te quilles.",
-          10: "Repartiste pila de órdenes y te quedaron 10 pesos. Al menos te dieron algo extra.",
-          15: "Prrrr, te dieron la gran propina y terminaste con 15 pesos. Sigue dándole duro!"
-        }
-      },
-      {
-        nombre: "Colmadero",
-        pago: [8, 10, 15],
-        mensajes: {
-          8: "Compai, hoy la venta estuvo floja, solo hiciste 8 pesos. Reza pa’ que mañana vengan más clientes.",
-          10: "Vendiste un par de frias y alcanzaste los 10 pesos. No está mal, pero falta pa’ la moña.",
-          15: "La gente hizo fila en el colmado y te dejaste caer con 15 pesos. Vas bien, patrón!"
-        }
-      },
-      {
-        nombre: "Atracador",
-        pago: [8, 10, 15],
-        mensajes: {
-          8: "Diablo, manito, te tumbaste solo y solo sacaste 8 pesos. ¿De verdad era worth?",
-          10: "Le quitaste la moña a un turista y saliste con 10 pesos. Medio arriesgado, pero coronaste.",
-          15: "Manín, hoy sí te pusiste pal’ problema, hiciste 15 pesos. Cuidado con la poli!"
-        }
-      },
-      {
-        nombre: "Pintor",
-        pago: [8, 10, 15],
-        mensajes: {
-          8: "Loco, la pintura se te regó y el jefe te pagó solo 8 pesos. Un día difícil en la obra.",
-          10: "Pintaste par de casas y te dieron 10 pesos. Poco a poco se va llenando el saquito.",
-          15: "¡Tu arte vale oro! Te dieron 15 pesos por tu trabajo, sigue así."
-        }
-      },
-      {
-        nombre: "Policia",
-        pago: [8, 10, 15],
-        mensajes: {
-          8: "Coño, na' más hiciste 8 pesos hoy. Parece que la gente se portó bien.",
-          10: "Multaste un par de gente y subiste a 10 pesos. Sigue con el ticket en mano!",
-          15: "Te llegó la grasa hoy, 15 pesos de 'coimas'. La patrulla te respeta!"
-        }
-      },
-      {
-        nombre: "Cuero",
-        pago: [8, 10, 15],
-        mensajes: {
-          8: "Te la pasaste rompiendo corazones, pero solo hiciste 8 pesos. ¿Será que no sabes seducir?",
-          10: "Te dieron 10 pesos por tus encantos. No te quejes, algo es algo.",
-          15: "Hoy la rompiste! Te ganaste 15 pesos por tu habilidad. ¡Así es que se hace!"
-        }
-      },
-      {
-        nombre: "Bachatero",
-        pago: [8, 10, 15],
-        mensajes: {
-          8: "Te tiraste un par de notas desafinadas y solo hiciste 8 pesos. Sigue practicando.",
-          10: "Lograste pegar un tema en el barrio y te dejaron 10 pesos. Vamos bien.",
-          15: "Te coronaste con 15 pesos. Eres el nuevo Romeo Santos, sigue así."
-        }
-      }
+      { nombre: "Motoconcho", pago: [8, 10, 15] },
+      { nombre: "Dembowsero", pago: [8, 10, 15] },
+      { nombre: "Banquera", pago: [8, 10, 15] },
+      { nombre: "Delivery", pago: [8, 10, 15] },
+      { nombre: "Colmadero", pago: [8, 10, 15] },
+      { nombre: "Atracador", pago: [8, 10, 15] },
+      { nombre: "Pintor", pago: [8, 10, 15] },
+      { nombre: "Policia", pago: [8, 10, 15] },
+      { nombre: "Cuero", pago: [8, 10, 15] },
+      { nombre: "Bachatero", pago: [8, 10, 15] }
     ];
 
     const trabajoElegido = trabajos.find(t => t.nombre.toLowerCase() === args.join(" ").toLowerCase());
@@ -163,32 +93,44 @@ module.exports = {
     }
 
     userStats.trabajo = trabajoElegido.nombre;
-    trabajoStats.users = trabajoStats.users || {};
+    userStats.inicioTrabajo = Date.now();
     trabajoStats.users[userJid] = userStats;
     writeData(usageStatsFilePath, trabajoStats);
 
-    await sendReply(`💼 Has comenzado tu trabajo como *${trabajoElegido.nombre}*.\n\n> El pago sera en 5 min`);
+    await sendReply(`💼 Has comenzado tu trabajo como *${trabajoElegido.nombre}*.\n\n⏳ El pago será en 5 minutos.`);
 
     setTimeout(async () => {
-      const pago = trabajoElegido.pago[Math.floor(Math.random() * trabajoElegido.pago.length)];
-
-      let krData = readData(krFilePath);
-      let userKr = krData.find(entry => entry.userJid === userJid);
-
-      if (!userKr) {
-        userKr = { userJid, kr: 0 };
-        krData.push(userKr);
-        writeData(krFilePath, krData);
-      }
-
-      userKr.kr += pago;
-      krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
-      writeData(krFilePath, krData);
-
-      await sendReply(`🛠️ Tu trabajo como *${trabajoElegido.nombre}* ha terminado.\n\n> ${trabajoElegido.mensajes[pago]}`);
-      await sendReply(`💰 Tu saldo actual es ${userKr.kr}kr.\n\n> Krampus OM bot`);
-      userStats.trabajo = null;
-      writeData(usageStatsFilePath, trabajoStats);
-    }, 300000); // 5 minutos
+      await pagarTrabajo(userJid, trabajoElegido.nombre, sendReply);
+    }, TIEMPO_TRABAJO_MS);
   }
 };
+
+async function pagarTrabajo(userJid, trabajo, sendReply) {
+  const trabajos = {
+    Motoconcho: { pago: [8, 10, 15], mensajes: { 8: "Diache, solo 8 pesos.", 10: "Buen día, hiciste 10 pesos.", 15: "Coronaste con 15 pesos!" } },
+    Dembowsero: { pago: [8, 10, 15], mensajes: { 8: "Solo 8 pesos por tu demo.", 10: "Un party te dejó 10 pesos.", 15: "Pegaste un tema, 15 pesos!" } },
+    Banquera: { pago: [8, 10, 15], mensajes: { 8: "8 pesos, floja la venta.", 10: "Te dejaron 10 de propina.", 15: "15 pesos, ¡rompiste la banca!" } },
+    Delivery: { pago: [8, 10, 15], mensajes: { 8: "Malas propinas, 8 pesos.", 10: "10 pesos, no está mal.", 15: "Buena propina, 15 pesos!" } },
+    Colmadero: { pago: [8, 10, 15], mensajes: { 8: "8 pesos, día flojo.", 10: "Vendiste bien, 10 pesos.", 15: "Colmado lleno, 15 pesos!" } },
+    Atracador: { pago: [8, 10, 15], mensajes: { 8: "Mal golpe, solo 8 pesos.", 10: "Coronaste con 10 pesos.", 15: "15 pesos, pero cuídate!" } },
+    Pintor: { pago: [8, 10, 15], mensajes: { 8: "8 pesos, desastre de pintura.", 10: "10 pesos por buen trabajo.", 15: "15 pesos, eres un artista!" } },
+    Policia: { pago: [8, 10, 15], mensajes: { 8: "8 pesos, día tranquilo.", 10: "10 pesos en multas.", 15: "15 pesos en 'coimas'!" } },
+    Cuero: { pago: [8, 10, 15], mensajes: { 8: "8 pesos, poca clientela.", 10: "10 pesos, buen día.", 15: "15 pesos, ¡tú sí sabes!" } },
+    Bachatero: { pago: [8, 10, 15], mensajes: { 8: "8 pesos, nadie te oyó.", 10: "10 pesos, algo pegaste.", 15: "15 pesos, ¡Romeo eres tú!" } }
+  };
+
+  const pago = trabajos[trabajo].pago[Math.floor(Math.random() * trabajos[trabajo].pago.length)];
+  const mensaje = trabajos[trabajo].mensajes[pago];
+
+  let krData = readData(krFilePath);
+  let userKr = krData.find(entry => entry.userJid === userJid) || { userJid, kr: 0 };
+  userKr.kr += pago;
+  krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
+  writeData(krFilePath, krData);
+
+  let trabajoStats = readData(usageStatsFilePath);
+  delete trabajoStats.users[userJid];
+  writeData(usageStatsFilePath, trabajoStats);
+
+  await sendReply(`🛠️ Tu trabajo como *${trabajo}* ha terminado.\n\n💰 ${mensaje}\n\n💵 Saldo: ${userKr.kr} kr.`);
+}
