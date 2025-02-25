@@ -28,6 +28,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}spam on-off
 ⌠⅏⌡➟ ${PREFIX}tag
 ⌠⅏⌡➟ ${PREFIX}todos
+⌠⅏⌡➟ ${PREFIX}toimage
 ⌠⅏⌡➟ ${PREFIX}reglas
 ⌠⅏⌡➟ ${PREFIX}ban
 ⌠⅏⌡➟ ${PREFIX}advertencia/adv
