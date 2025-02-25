@@ -5,13 +5,12 @@ const { PREFIX } = require("../../krampus");
 const commandStatusFilePath = path.resolve(process.cwd(), "assets/monedas.json");
 const usageStatsFilePath = path.resolve(process.cwd(), "assets/usageStats.json");
 const krFilePath = path.resolve(process.cwd(), "assets/kr.json");
-const ruletaPendienteFilePath = path.resolve(process.cwd(), "assets/ruletaPendiente.json");
 
 const readData = (filePath) => {
   try {
     return JSON.parse(fs.readFileSync(filePath, "utf-8"));
   } catch {
-    return {};
+    return [];
   }
 };
 
@@ -28,7 +27,7 @@ module.exports = {
   description: "Juega a la ruleta y gana o pierde monedas.",
   commands: ["ruleta"],
   usage: `${PREFIX}ruleta`,
-  handle: async ({ sendReply, SendReact, userJid }) => {
+  handle: async ({ sendReply, sendReact, userJid }) => {
     const commandStatus = readData(commandStatusFilePath);
     if (commandStatus.commandStatus !== "on") {
       await sendReply("❌ El sistema de ruleta está desactivado.");
@@ -36,8 +35,6 @@ module.exports = {
     }
 
     const usageStats = readData(usageStatsFilePath);
-    const ruletaPendiente = readData(ruletaPendienteFilePath);
-
     const userStats = usageStats.users?.[userJid] || { attempts: 0 };
 
     if (userStats.attempts >= 3) {
@@ -45,49 +42,35 @@ module.exports = {
       return;
     }
 
+    // Leer el saldo de monedas del usuario
     let krData = readData(krFilePath);
     let userKr = krData.find(entry => entry.userJid === userJid);
 
+    // Si el usuario no existe en kr.json, lo agregamos con 0 monedas
     if (!userKr) {
       userKr = { userJid, kr: 0 };
       krData.push(userKr);
       writeData(krFilePath, krData);
     }
 
+    // Verificar si el usuario tiene monedas para jugar
     if (userKr.kr <= 0) {
       await sendReply("❌ No tienes monedas suficientes para jugar. Gana monedas antes de intentarlo.");
       return;
     }
 
-    const ahora = Date.now();
-
-    if (ruletaPendiente[userJid] && ahora - ruletaPendiente[userJid].tiempoInicio >= 5000) {
-      // **Si el bot se reinició, y el usuario ya había jugado, se le da su recompensa**
-      const pagoPendiente = ruletaPendiente[userJid].recompensa;
-      userKr.kr += pagoPendiente;
-      krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
-      writeData(krFilePath, krData);
-
-      delete ruletaPendiente[userJid];
-      writeData(ruletaPendienteFilePath, ruletaPendiente);
-
-      await sendReply(`🎯 Tu ruleta anterior se completó tras el reinicio.\n\n> Has recibido ${pagoPendiente} monedas.`);
-      await sendReply(`💰 Tu saldo actual es ${userKr.kr} 𝙺𝚛.`);
-      return;
-    }
-
-    // **Restar intento**
+    // Restar un intento al usuario y guardar el nuevo estado
     userStats.attempts += 1;
     usageStats.users = usageStats.users || {};
     usageStats.users[userJid] = userStats;
     writeData(usageStatsFilePath, usageStats);
 
-    // **Enviar reacciones dinámicas en lugar de mensajes**
-    await SendReact("⚪");
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    await SendReact("🔄");
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    await SendReact("🎯");
+    await sendReply("🏹 Probando tu suerte...");
+    await sendReact("💨");
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Espera 2 segundos
+    await sendReact("🎯");
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Espera 2 segundos
+    await sendReact("💥");
 
     const result = Math.random();
     let amount = 0;
@@ -104,29 +87,16 @@ module.exports = {
       amount = -4;
     }
 
-    // **Guardar la jugada en caso de reinicio**
-    ruletaPendiente[userJid] = {
-      recompensa: amount,
-      tiempoInicio: ahora
-    };
-    writeData(ruletaPendienteFilePath, ruletaPendiente);
+    userKr.kr += amount;
+    krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
+    writeData(krFilePath, krData);
 
-    // **Dar la recompensa después de 5 segundos**
-    setTimeout(async () => {
-      userKr.kr += amount;
-      krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
-      writeData(krFilePath, krData);
+    if (amount > 0) {
+      await sendReply(`🎉 ¡Has ganado ${amount} monedas! 🎉`);
+    } else {
+      await sendReply(`😢 ¡Has perdido ${Math.abs(amount)} monedas! 😢`);
+    }
 
-      delete ruletaPendiente[userJid];
-      writeData(ruletaPendienteFilePath, ruletaPendiente);
-
-      if (amount > 0) {
-        await sendReply(`🎉 ¡Has ganado ${amount} monedas! 🎉`);
-      } else {
-        await sendReply(`😢 ¡Has perdido ${Math.abs(amount)} monedas! 😢`);
-      }
-
-      await sendReply(`💰 Tu saldo actual es ${userKr.kr} 𝙺𝚛.`);
-    }, 5000);
+    await sendReply(`💰 Tu saldo actual es ${userKr.kr} 𝙺𝚛`);
   },
 };
