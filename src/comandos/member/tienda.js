@@ -26,6 +26,7 @@ module.exports = {
     const precios = {
       "💍": 6,
       "✏️": 7,
+      "🏆": 10, // Añadimos el trofeo
     };
 
     const objeto = args[0]?.toLowerCase();
@@ -40,7 +41,7 @@ module.exports = {
     }
 
     if (!precios[objeto]) {
-      await sendReply("❌ Objeto inválido.\nUsa el comando sin emojis para ver la lista de objetos.");
+      await sendReply("❌ Objeto inválido.\nUsa el comando sin argumentos para ver la lista de objetos.");
       return;
     }
 
@@ -61,7 +62,7 @@ module.exports = {
     let userItemEntry = userItems.find(entry => entry.userJid === userJid);
 
     if (!userItemEntry) {
-      userItemEntry = { userJid, items: { anillos: 0, papeles: 0 } };
+      userItemEntry = { userJid, items: { anillos: 0, papeles: 0, trofeos: 0 } };
       userItems.push(userItemEntry);
     }
 
@@ -69,6 +70,8 @@ module.exports = {
       userItemEntry.items.anillos += 1;
     } else if (objeto === "✏️") {
       userItemEntry.items.papeles += 1;
+    } else if (objeto === "🏆") {
+      userItemEntry.items.trofeos += 1;
     }
 
     userKrEntry.kr -= precios[objeto];
@@ -76,6 +79,6 @@ module.exports = {
     writeData(userItemsFilePath, userItems);
     writeData(krFilePath, krData);
 
-    await sendReply(`✅ ¡Has comprado ${objeto}!\nAhora tienes ${userKrEntry.kr} monedas y:\n- 💍: ${userItemEntry.items.anillos}\n- 📜: ${userItemEntry.items.papeles}`);
+    await sendReply(`✅ ¡Has comprado ${objeto}!\nAhora tienes ${userKrEntry.kr} monedas y:\n- 💍: ${userItemEntry.items.anillos}\n- ✏️: ${userItemEntry.items.papeles}\n- 🏆: ${userItemEntry.items.trofeos}`);
   },
 };
