@@ -59,7 +59,7 @@ module.exports = {
       
       const listaTrabajos = trabajosDisponibles.map((trabajo, index) => `${index + 1}. **${trabajo}**`).join("\n");
 
-      await sendReply(`💼 **Profesiones disponibles:**\n\n${listaTrabajos}\n\nUsa el comando \`#trabajo <profesión>\` para elegir uno.`);
+      await sendReply(`💼 *Profesiones disponibles:*\n\n${listaTrabajos}\n\nUsa el comando \`#trabajo <profesión>\` para elegir uno.`);
       return;
     }
 
@@ -167,7 +167,7 @@ module.exports = {
     trabajoStats.users[userJid] = userStats;
     writeData(usageStatsFilePath, trabajoStats);
 
-    await sendReply(`💼 Has comenzado tu trabajo como **${trabajoElegido.nombre}**. ¡Te pagarán en breve!`);
+    await sendReply(`💼 Has comenzado tu trabajo como *${trabajoElegido.nombre}*.\n\n> El pago sera en 5 min`);
 
     setTimeout(async () => {
       const pago = trabajoElegido.pago[Math.floor(Math.random() * trabajoElegido.pago.length)];
@@ -185,8 +185,8 @@ module.exports = {
       krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
       writeData(krFilePath, krData);
 
-      await sendReply(`🛠️ Tu trabajo como **${trabajoElegido.nombre}** ha terminado. ${trabajoElegido.mensajes[pago]}`);
-      await sendReply(`💰 Tu saldo actual es: ${userKr.kr} monedas.`);
+      await sendReply(`🛠️ Tu trabajo como *${trabajoElegido.nombre}* ha terminado.\n\n> ${trabajoElegido.mensajes[pago]}`);
+      await sendReply(`💰 Tu saldo actual es ${userKr.kr}kr.\n\n> Krampus OM bot`);
       userStats.trabajo = null;
       writeData(usageStatsFilePath, trabajoStats);
     }, 300000); // 5 minutos
