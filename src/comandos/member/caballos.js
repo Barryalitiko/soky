@@ -25,9 +25,9 @@ const writeData = (filePath, data) => {
 module.exports = {
   name: "apuesta_caballos",
   description: "Apuesta en una carrera de caballos y gana monedas.",
-  commands: ["apuesta"],
-  usage: `${PREFIX}apuesta_caballos <caballo> <cantidad>`,
-  handle: async ({ sendReply, userJid, args }) => {
+  commands: ["caballo"],
+  usage: `${PREFIX}caballo a/b/c <cantidad>`,
+  handle: async ({ sendReply, sendReact, userJid, args }) => {
     const commandStatus = readData(commandStatusFilePath);
     if (commandStatus.commandStatus !== "on") {
       await sendReply("❌ El sistema de apuestas de caballos está desactivado.");
@@ -56,11 +56,11 @@ module.exports = {
       return;
     }
 
-    const selectedHorse = parseInt(args[0]);
+    const selectedHorse = args[0].toLowerCase();
     const betAmount = parseInt(args[1]);
 
-    if (![1, 2, 3].includes(selectedHorse)) {
-      await sendReply("❌ Opción inválida. Elige un caballo: 1️⃣, 2️⃣ o 3️⃣.");
+    if (!["a", "b", "c"].includes(selectedHorse)) {
+      await sendReply("❌ Opción inválida. Elige un caballo: a, b o c.");
       return;
     }
 
@@ -78,24 +78,25 @@ module.exports = {
     writeData(usageStatsFilePath, usageStats);
 
     await sendReply("🏇 ¡La carrera comienza! 🏇💨");
+    await sendReact("🏇");
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await sendReply("🏇💨 Los caballos están corriendo a toda velocidad... 🏁");
+    await sendReact("💨");
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await sendReply("🏁 ¡Ya casi llegan a la meta! 🏁");
+    await sendReact("🏁");
 
     const winner = Math.floor(Math.random() * 3) + 1;
     let resultMessage;
     let ganancia = 0;
 
-    if (selectedHorse === winner) {
+    if (selectedHorse === (winner === 1 ? 'a' : winner === 2 ? 'b' : 'c')) {
       ganancia = betAmount * 0.15;
       userKr.kr += betAmount + ganancia;
-      resultMessage = `🎉 ¡Tu caballo *${selectedHorse}* ganó!\n\n> Has ganado *${ganancia.toFixed(2)} monedas*.`;
-    } else if (Math.abs(selectedHorse - winner) === 1) {
-      resultMessage = `😐 Tu caballo *${selectedHorse}* quedó en segundo lugar.\n\n> No ganaste ni perdiste monedas.`;
+      resultMessage = `🎉 ¡Tu caballo *${selectedHorse.toUpperCase()}* ganó!\n\n> Has ganado *${ganancia.toFixed(2)} monedas*.`;
+    } else if (Math.abs(["a", "b", "c"].indexOf(selectedHorse) - winner + 1) === 1) {
+      resultMessage = `😐 Tu caballo *${selectedHorse.toUpperCase()}* quedó en segundo lugar.\n\n> No ganaste ni perdiste monedas.`;
       userKr.kr += betAmount;
     } else {
-      resultMessage = `❌ Tu caballo *${selectedHorse}* perdió la carrera.\n\n> Has perdido *${betAmount} monedas*.`;
+      resultMessage = `❌ Tu caballo *${selectedHorse.toUpperCase()}* perdió la carrera.\n\n> Has perdido *${betAmount} monedas*.`;
     }
 
     krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
