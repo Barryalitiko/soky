@@ -25,8 +25,8 @@ const writeData = (filePath, data) => {
 module.exports = {
   name: "apuesta_caballos",
   description: "Apuesta en una carrera de caballos y gana monedas.",
-  commands: ["caballo"],
-  usage: `${PREFIX}caballo a/b/c <cantidad>`,
+  commands: ["apuesta"],
+  usage: `${PREFIX}apuesta_caballos <caballo> <cantidad>`,
   handle: async ({ sendReply, sendReact, userJid, args }) => {
     const commandStatus = readData(commandStatusFilePath);
     if (commandStatus.commandStatus !== "on") {
@@ -56,11 +56,13 @@ module.exports = {
       return;
     }
 
-    const selectedHorse = args[0].toLowerCase();
+    // Verificar si los argumentos son válidos
+    const validHorses = ['a', 'b', 'c'];
+    const selectedHorse = args[0]?.toLowerCase(); // Asegurarse de que args[0] esté definido y sea una cadena
     const betAmount = parseInt(args[1]);
 
-    if (!["a", "b", "c"].includes(selectedHorse)) {
-      await sendReply("❌ Opción inválida. Elige un caballo: a, b o c.");
+    if (!validHorses.includes(selectedHorse)) {
+      await sendReply("❌ Opción inválida. Elige un caballo: a/b/c.");
       return;
     }
 
@@ -69,6 +71,7 @@ module.exports = {
       return;
     }
 
+    // Restar la apuesta
     userKr.kr -= betAmount;
     krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
     writeData(krFilePath, krData);
@@ -77,22 +80,21 @@ module.exports = {
     usageStats.users[userJid] = userStats;
     writeData(usageStatsFilePath, usageStats);
 
-    await sendReply("🏇 ¡La carrera comienza! 🏇💨");
-    await sendReact("🏇");
+    await sendReact("🏇"); // Empezamos con una reacción
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await sendReact("💨");
+    await sendReact("💨"); // Reacción de carrera
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await sendReact("🏁");
+    await sendReact("🏁"); // Reacción de meta
 
     const winner = Math.floor(Math.random() * 3) + 1;
     let resultMessage;
     let ganancia = 0;
 
-    if (selectedHorse === (winner === 1 ? 'a' : winner === 2 ? 'b' : 'c')) {
+    if (selectedHorse === validHorses[winner - 1]) {
       ganancia = betAmount * 0.15;
       userKr.kr += betAmount + ganancia;
       resultMessage = `🎉 ¡Tu caballo *${selectedHorse.toUpperCase()}* ganó!\n\n> Has ganado *${ganancia.toFixed(2)} monedas*.`;
-    } else if (Math.abs(["a", "b", "c"].indexOf(selectedHorse) - winner + 1) === 1) {
+    } else if (Math.abs(validHorses.indexOf(selectedHorse) - winner) === 1) {
       resultMessage = `😐 Tu caballo *${selectedHorse.toUpperCase()}* quedó en segundo lugar.\n\n> No ganaste ni perdiste monedas.`;
       userKr.kr += betAmount;
     } else {
