@@ -27,10 +27,10 @@ module.exports = {
   description: "Juega a las tragamonedas y gana o pierde monedas.",
   commands: ["tragamonedas"],
   usage: `${PREFIX}tragamonedas`,
-  handle: async ({ sendReact, userJid }) => {
+  handle: async ({ sendReply, sendReact, userJid }) => {
     const commandStatus = readData(commandStatusFilePath);
     if (commandStatus.commandStatus !== "on") {
-      await sendReact("❌");
+      await sendReply("❌ El sistema de tragamonedas está desactivado.");
       return;
     }
 
@@ -39,7 +39,7 @@ module.exports = {
 
     // Límite de intentos diarios
     if (userStats.attempts >= 4) {
-      await sendReact("❌");
+      await sendReply("❌ Has alcanzado el límite de intentos diarios en el tragamonedas.");
       return;
     }
 
@@ -56,7 +56,7 @@ module.exports = {
 
     // Verificar si el usuario tiene monedas para jugar
     if (userKr.kr < 5) {
-      await sendReact("❌");
+      await sendReply("❌ No tienes suficientes monedas para jugar. Necesitas 5 monedas para jugar.");
       return;
     }
 
@@ -85,7 +85,7 @@ module.exports = {
     const reel2 = getRandomItem();
     const reel3 = getRandomItem();
 
-    // Mostrar la combinación
+    // Mostrar la combinación con reacciones
     await sendReact(reel1);
     await new Promise(resolve => setTimeout(resolve, 2000));
     await sendReact(reel2);
@@ -95,18 +95,22 @@ module.exports = {
 
     // Verificar el resultado
     let amount = 0;
+    let resultMessage = "";
 
     if (reel1 === reel2 && reel2 === reel3) {
       // Tres iguales: ganar entre +2 y +8 monedas
       amount = Math.floor(Math.random() * 7) + 2; // Ganar entre 2 y 8 monedas
+      resultMessage = `🎉 ¡Has ganado ${amount} monedas! 🎉`;
       await sendReact("🎉");
     } else if (reel1 === reel2 || reel2 === reel3 || reel1 === reel3) {
       // Dos iguales: ganar entre +1 y +5 monedas
       amount = Math.floor(Math.random() * 5) + 1; // Ganar entre 1 y 5 monedas
+      resultMessage = `🎉 ¡Has ganado ${amount} monedas! 🎉`;
       await sendReact("🎉");
     } else {
       // Ningún igual: perder entre -1 y -8 monedas
       amount = -(Math.floor(Math.random() * 8) + 1); // Perder entre 1 y 8 monedas
+      resultMessage = `😢 ¡Has perdido ${Math.abs(amount)} monedas! 😢`;
       await sendReact("😢");
     }
 
@@ -116,6 +120,6 @@ module.exports = {
     writeData(krFilePath, krData);
 
     // Mostrar el saldo actualizado
-    await sendReact("💰");
+    await sendReply(`${resultMessage}\n💰 Tu saldo actual es: ${userKr.kr} 𝙺𝚛`);
   },
 };
