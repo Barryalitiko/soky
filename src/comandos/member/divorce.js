@@ -24,7 +24,7 @@ const writeData = (filePath, data) => {
 module.exports = {
   name: "divorce",
   description: "Divorciarte de tu pareja actual con un papel de divorcio.",
-  commands: ["divorce"],
+  commands: ["divorcio"],
   usage: `${PREFIX}divorce`,
   handle: async ({ sendReply, socket, userJid, remoteJid }) => {
     const marriageData = readData(MARRIAGE_FILE_PATH);
