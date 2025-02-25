@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const { PREFIX } = require("../../krampus");
 
-const commandStatusFilePath = path.resolve(process.cwd(), "assets/monedas.json");
 const krFilePath = path.resolve(process.cwd(), "assets/kr.json");
 const userItemsFilePath = path.resolve(process.cwd(), "assets/userItems.json");
 
@@ -10,7 +9,7 @@ const readData = (filePath) => {
   try {
     return JSON.parse(fs.readFileSync(filePath, "utf-8"));
   } catch {
-    return {};
+    return [];
   }
 };
 
@@ -24,12 +23,6 @@ module.exports = {
   commands: ["tienda"],
   usage: `${PREFIX}tienda <objeto>`,
   handle: async ({ sendReply, args, userJid }) => {
-    const commandStatus = readData(commandStatusFilePath);
-    if (commandStatus.commandStatus !== "on") {
-      await sendReply("❌ El sistema de tienda está desactivado.");
-      return;
-    }
-
     const precios = {
       "💍": 6,
       "✏️": 7,
@@ -41,49 +34,48 @@ module.exports = {
       for (const [item, precio] of Object.entries(precios)) {
         listaPrecios += `- ${item}: ${precio} monedas\n`;
       }
-      listaPrecios += `\nUsa *${PREFIX}tienda <emoji>* para comprar.\n> Por ejemplo #tienda 💍`;
+      listaPrecios += `\nUsa *${PREFIX}tienda <emoji>* para comprar.\n> Por ejemplo: *${PREFIX}tienda 💍*`;
       await sendReply(listaPrecios);
       return;
     }
 
     if (!precios[objeto]) {
-      await sendReply("❌ Objeto inválido.\nUsa el comando sin emojis para ver la lista de objetos");
+      await sendReply("❌ Objeto inválido.\nUsa el comando sin emojis para ver la lista de objetos.");
       return;
     }
 
     let krData = readData(krFilePath);
-    if (!krData.find(entry => entry.userJid === userJid)) {
-      krData.push({ userJid, kr: 0 });
-    }
-    const userKr = krData.find(entry => entry.userJid === userJid).kr;
+    let userKrEntry = krData.find(entry => entry.userJid === userJid);
 
-    if (userKr < precios[objeto]) {
-      await sendReply(`❌ No tienes suficientes monedas\nNecesitas ${precios[objeto]} monedas para comprar ${objeto}.`);
+    if (!userKrEntry) {
+      userKrEntry = { userJid, kr: 0 };
+      krData.push(userKrEntry);
+    }
+
+    if (userKrEntry.kr < precios[objeto]) {
+      await sendReply(`❌ No tienes suficientes monedas.\nNecesitas ${precios[objeto]} monedas para comprar ${objeto}.`);
       return;
     }
 
     let userItems = readData(userItemsFilePath);
-    if (typeof userItems !== 'object' || !Array.isArray(userItems)) {
-      userItems = [];
+    let userItemEntry = userItems.find(entry => entry.userJid === userJid);
+
+    if (!userItemEntry) {
+      userItemEntry = { userJid, items: { anillos: 0, papeles: 0 } };
+      userItems.push(userItemEntry);
     }
-    if (!userItems.find(entry => entry.userJid === userJid)) {
-      userItems.push({ userJid, items: { anillos: 0, papeles: 0 } });
-    }
-    const userItem = userItems.find(entry => entry.userJid === userJid);
 
     if (objeto === "💍") {
-      userItem.items.anillos += 1;
+      userItemEntry.items.anillos += 1;
     } else if (objeto === "✏️") {
-      userItem.items.papeles += 1;
+      userItemEntry.items.papeles += 1;
     }
 
-    const userKrBalance = userKr - precios[objeto];
-    krData = krData.map(entry => entry.userJid === userJid ? { userJid, kr: userKrBalance } : entry);
-    userItems = userItems.map(entry => entry.userJid === userJid ? userItem : entry);
+    userKrEntry.kr -= precios[objeto];
 
     writeData(userItemsFilePath, userItems);
     writeData(krFilePath, krData);
 
-    await sendReply(`✅ ¡Has comprado ${objeto}!\nAhora tienes ${userKrBalance} monedas y:\n- 💍: ${userItem.items.anillos}\n- 📜: ${userItem.items.papeles}`);
+    await sendReply(`✅ ¡Has comprado ${objeto}!\nAhora tienes ${userKrEntry.kr} monedas y:\n- 💍: ${userItemEntry.items.anillos}\n- 📜: ${userItemEntry.items.papeles}`);
   },
 };
