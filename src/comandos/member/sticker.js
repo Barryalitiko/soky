@@ -30,7 +30,7 @@ const outputPath = path.resolve(TEMP_DIR, "output.webp");
 if (isImage) {
   const inputPath = await downloadImage(webMessage, "input");
   exec(
-    `ffmpeg -i "${inputPath}" -vf scale=512:-1 "${outputPath}"`,
+    `ffmpeg -i "${inputPath}" -vf scale='min(512,iw)':-1:force_original_aspect_ratio=decrease "${outputPath}"`,
     async (error) => {
       if (error) {
         console.log(error);
@@ -51,7 +51,6 @@ if (isImage) {
     webMessage.message?.extendedTextMessage?.contextInfo?.quotedMessage
       ?.videoMessage?.seconds;
   const haveSecondsRule = seconds <= sizeInSeconds;
-
   if (!haveSecondsRule) {
     fs.unlinkSync(inputPath);
     await sendErrorReply(
@@ -59,9 +58,8 @@ if (isImage) {
     );
     return;
   }
-
   exec(
-    `ffmpeg -i "${inputPath}" -y -vcodec libwebp -fs 0.99M -filter_complex "[0:v] scale=512:-1,fps=12,pad=512:512:-1:-1:color=white@0.0,split[a][b];[a]palettegen=reserve_transparent=on:transparency_color=ffffff[p];[b][p]paletteuse" -f webp "${outputPath}"`,
+    `ffmpeg -i "${inputPath}" -y -vcodec libwebp -fs 0.99M -filter_complex "[0:v] scale='min(512,iw)':-1:force_original_aspect_ratio=decrease,fps=12,pad=512:512:-1:-1:color=white@0.0,split[a][b];[a]palettegen=reserve_transparent=on:transparency_color=ffffff[p];[b][p]paletteuse" -f webp "${outputPath}"`,
     async (error) => {
       if (error) {
         console.log(error);
