@@ -1,5 +1,3 @@
-Aquí está el script completo con las modificaciones que te mencioné anteriormente:
-
 const { PREFIX, TEMP_DIR } = require("../../krampus");
 const { InvalidParameterError } = require("../../errors/InvalidParameterError");
 const path = require("path");
