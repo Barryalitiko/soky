@@ -21,7 +21,7 @@ sendStickerFromFile,
 }) => {
 if (!isImage && !isVideo) {
 throw new InvalidParameterError(
-"Indicame que quieres convertir a sticker\n> Krampus OM bot"
+"Indicame lo que quieres que convierta en sticker\n> Krampus OM bot"
 );
 }
 
@@ -55,7 +55,7 @@ if (isImage) {
   if (!haveSecondsRule) {
     fs.unlinkSync(inputPath);
     await sendErrorReply(
-      `Este video tiene más de ${sizeInSeconds} segundos! Envia un video más corto!`
+      `👻 Krampus 👻Este video tiene más de ${sizeInSeconds} segundos! Envia un video más corto!`
     );
     return;
   }
