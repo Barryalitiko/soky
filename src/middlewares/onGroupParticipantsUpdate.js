@@ -1,4 +1,3 @@
-Necesito que le añadas unos 30 tipos diferentes de mensajes de despedida 
 const { getProfileImageData } = require("../services/baileys");
 const fs = require("fs");
 const { onlyNumbers } = require("../utils");
