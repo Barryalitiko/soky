@@ -74,7 +74,7 @@ module.exports = {
               video: {
                 url: videoFilePath,
               },
-              caption: `Aquí está tu mini video, @${userJid.split("@")[0]}`,
+              caption: `No sabia eso de ti\n@${userJid.split("@")[0]}`,
               mentions: [userJid],
             });
 
