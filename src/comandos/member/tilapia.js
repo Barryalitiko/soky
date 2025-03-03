@@ -10,7 +10,7 @@ const COOLDOWN_TIME = 25 * 1000; // 25 segundos en milisegundos
 module.exports = {
   name: "miniVideo",
   description: "Genera un mini video con la foto de perfil de un usuario y un audio.",
-  commands: ["minivideo", "videoPerfil"],
+  commands: ["tilapia"],
   usage: `${PREFIX}minivideo @usuario`,
   handle: async ({ args, socket, remoteJid, sendReply, sendReact, isReply, replyJid, senderJid }) => {
     let userJid;
@@ -18,7 +18,7 @@ module.exports = {
     if (isReply) {
       userJid = replyJid;
     } else if (args.length < 1) {
-      await sendReply("Uso incorrecto. Usa el comando así:\n" + `${PREFIX}minivideo @usuario`);
+      await sendReply("Uso incorrecto. Usa el comando así:\n" + `${PREFIX}tilapia @usuario`);
       return;
     } else {
       userJid = args[0].replace("@", "") + "@s.whatsapp.net";
