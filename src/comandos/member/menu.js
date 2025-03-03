@@ -66,6 +66,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}boda
 ⌠⅏⌡➟ ${PREFIX}divorcio
 ⌠⅏⌡➟ ${PREFIX}tienda
+⌠⅏⌡➟ ${PREFIX}apuesta
 
 ══════════.K.═
 
