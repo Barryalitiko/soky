@@ -3,7 +3,6 @@ const path = require("path");
 const { PREFIX } = require("../../krampus");
 
 const commandStatusFilePath = path.resolve(process.cwd(), "assets/monedas.json");
-const usageStatsFilePath = path.resolve(process.cwd(), "assets/usageStats.json");
 const krFilePath = path.resolve(process.cwd(), "assets/kr.json");
 
 const readData = (filePath) => {
@@ -16,7 +15,7 @@ const readData = (filePath) => {
 
 const writeData = (filePath, data) => {
   try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8"));
   } catch (error) {
     console.error(`Error al escribir en el archivo ${filePath}: ${error.message}`);
   }
@@ -26,7 +25,7 @@ module.exports = {
   name: "apuesta_caballos",
   description: "Apuesta en una carrera de caballos y gana monedas.",
   commands: ["apuesta"],
-  usage: `${PREFIX}apuesta <caballo>`,
+  usage: `${PREFIX}apuesta <a|b|c>`,
   handle: async ({ sendReply, sendReact, userJid, args }) => {
     const commandStatus = readData(commandStatusFilePath);
     if (commandStatus.commandStatus !== "on") {
@@ -34,23 +33,8 @@ module.exports = {
       return;
     }
 
-    const validHorses = ["a", "b", "c"];
-    const selectedHorse = args[0]?.toLowerCase(); // Convertimos el argumento a minúsculas
-
-    // Si el usuario no elige un caballo
-    if (!selectedHorse) {
-      await sendReply(
-        "🏇 Elige un caballo para apostar:\n\n" +
-          `➡️ *${PREFIX}apuesta a*\n` +
-          `➡️ *${PREFIX}apuesta b*\n` +
-          `➡️ *${PREFIX}apuesta c*\n\n` +
-          "💰 La apuesta cuesta *10 monedas*."
-      );
-      return;
-    }
-
-    if (!validHorses.includes(selectedHorse)) {
-      await sendReply("❌ Opción inválida. Debes elegir entre: *a, b o c*.");
+    if (!args[0]) {
+      await sendReply("🏇 Elige tu caballo para apostar:\n\n#apuesta a\n#apuesta b\n#apuesta c\n\n💰 La apuesta cuesta 10 monedas.");
       return;
     }
 
@@ -68,32 +52,46 @@ module.exports = {
       return;
     }
 
-    // Restar la apuesta de 10 monedas
+    // Nombres de los caballos
+    const horses = {
+      "a": "Gavilán",
+      "b": "Relámpago",
+      "c": "Tormenta"
+    };
+
+    const selectedHorse = args[0]?.toLowerCase();
+    if (!horses[selectedHorse]) {
+      await sendReply("❌ Opción inválida. Elige un caballo:\n\n#apuesta a\n#apuesta b\n#apuesta c");
+      return;
+    }
+
+    // Restar la apuesta
     userKr.kr -= 10;
     krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
     writeData(krFilePath, krData);
 
-    await sendReact("🏇"); // Empezamos con una reacción
+    // Iniciar la carrera
+    await sendReact("🏇");
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await sendReact("💨"); // Reacción de carrera
+    await sendReact("💨");
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await sendReact("🏁"); // Reacción de meta
+    await sendReact("🏁");
 
-    const winner = Math.floor(Math.random() * 3) + 1;
+    const horseList = Object.keys(horses);
+    const winnerIndex = Math.floor(Math.random() * horseList.length);
+    const winner = horseList[winnerIndex];
+
     let resultMessage;
     let ganancia = 0;
 
-    if (selectedHorse === validHorses[winner - 1]) {
+    if (selectedHorse === winner) {
       ganancia = 15;
-      userKr.kr += 10 + ganancia;
-      resultMessage = `🎉 ¡Tu caballo *${selectedHorse.toUpperCase()}* ganó!\n\n> Has ganado *${ganancia} monedas*.`;
-    } else if (Math.abs(validHorses.indexOf(selectedHorse) - winner) === 1) {
-      resultMessage = `😐 Tu caballo *${selectedHorse.toUpperCase()}* quedó en segundo lugar.\n\n> No ganaste ni perdiste monedas.`;
-      userKr.kr += 10; // Se le devuelve la apuesta
+      resultMessage = `🎉 ¡Tu caballo *${horses[selectedHorse]}* ganó! Has ganado 15 monedas.`;
     } else {
-      resultMessage = `❌ Tu caballo *${selectedHorse.toUpperCase()}* perdió la carrera.\n\n> Has perdido *10 monedas*.`;
+      resultMessage = `❌ Apostaste por *${horses[selectedHorse]}*, pero perdió la carrera. Has perdido 10 monedas.`;
     }
 
+    userKr.kr += ganancia;
     krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
     writeData(krFilePath, krData);
 
