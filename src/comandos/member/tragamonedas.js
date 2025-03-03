@@ -3,7 +3,6 @@ const path = require("path");
 const { PREFIX } = require("../../krampus");
 
 const commandStatusFilePath = path.resolve(process.cwd(), "assets/monedas.json");
-const usageStatsFilePath = path.resolve(process.cwd(), "assets/usageStats.json");
 const krFilePath = path.resolve(process.cwd(), "assets/kr.json");
 
 const readData = (filePath) => {
@@ -34,15 +33,6 @@ module.exports = {
       return;
     }
 
-    const usageStats = readData(usageStatsFilePath);
-    const userStats = usageStats.users?.[userJid] || { attempts: 0 };
-
-    // Límite de intentos diarios
-    if (userStats.attempts >= 4) {
-      await sendReply("❌ Has alcanzado el límite de intentos diarios en el tragamonedas.");
-      return;
-    }
-
     // Leer el saldo de monedas del usuario
     let krData = readData(krFilePath);
     let userKr = krData.find(entry => entry.userJid === userJid);
@@ -64,11 +54,6 @@ module.exports = {
     userKr.kr -= 5;
     krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
     writeData(krFilePath, krData);
-
-    // Aumentar los intentos
-    userStats.attempts += 1;
-    usageStats.users[userJid] = userStats;
-    writeData(usageStatsFilePath, usageStats);
 
     // Reacción inicial
     await sendReact("🎰");
