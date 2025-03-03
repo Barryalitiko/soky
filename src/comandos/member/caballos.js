@@ -26,7 +26,7 @@ module.exports = {
   name: "apuesta_caballos",
   description: "Apuesta en una carrera de caballos y gana monedas.",
   commands: ["apuesta"],
-  usage: `${PREFIX}apuesta_caballos <caballo> <cantidad>`,
+  usage: `${PREFIX}apuesta <caballo>`,
   handle: async ({ sendReply, sendReact, userJid, args }) => {
     const commandStatus = readData(commandStatusFilePath);
     if (commandStatus.commandStatus !== "on") {
@@ -34,11 +34,23 @@ module.exports = {
       return;
     }
 
-    const usageStats = readData(usageStatsFilePath);
-    const userStats = usageStats.users?.[userJid] || { attempts: 0 };
+    const validHorses = ["a", "b", "c"];
+    const selectedHorse = args[0]?.toLowerCase(); // Convertimos el argumento a minúsculas
 
-    if (userStats.attempts >= 3) {
-      await sendReply("❌ Ya has alcanzado el límite de intentos diarios en las apuestas de caballos.");
+    // Si el usuario no elige un caballo
+    if (!selectedHorse) {
+      await sendReply(
+        "🏇 Elige un caballo para apostar:\n\n" +
+          `➡️ *${PREFIX}apuesta a*\n` +
+          `➡️ *${PREFIX}apuesta b*\n` +
+          `➡️ *${PREFIX}apuesta c*\n\n` +
+          "💰 La apuesta cuesta *10 monedas*."
+      );
+      return;
+    }
+
+    if (!validHorses.includes(selectedHorse)) {
+      await sendReply("❌ Opción inválida. Debes elegir entre: *a, b o c*.");
       return;
     }
 
@@ -56,29 +68,10 @@ module.exports = {
       return;
     }
 
-    // Verificar si los argumentos son válidos
-    const validHorses = ['a', 'b', 'c'];
-    const selectedHorse = args[0]?.toLowerCase(); // Asegurarse de que args[0] esté definido y sea una cadena
-    const betAmount = parseInt(args[1]);
-
-    if (!validHorses.includes(selectedHorse)) {
-      await sendReply("❌ Opción inválida. Elige un caballo: a/b/c.");
-      return;
-    }
-
-    if (isNaN(betAmount) || betAmount < 10 || betAmount > userKr.kr) {
-      await sendReply("❌ Apuesta inválida. Asegúrate de apostar al menos 10 monedas y no más de tu saldo.");
-      return;
-    }
-
-    // Restar la apuesta
-    userKr.kr -= betAmount;
+    // Restar la apuesta de 10 monedas
+    userKr.kr -= 10;
     krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
     writeData(krFilePath, krData);
-
-    userStats.attempts += 1;
-    usageStats.users[userJid] = userStats;
-    writeData(usageStatsFilePath, usageStats);
 
     await sendReact("🏇"); // Empezamos con una reacción
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -91,14 +84,14 @@ module.exports = {
     let ganancia = 0;
 
     if (selectedHorse === validHorses[winner - 1]) {
-      ganancia = betAmount * 0.15;
-      userKr.kr += betAmount + ganancia;
-      resultMessage = `🎉 ¡Tu caballo *${selectedHorse.toUpperCase()}* ganó!\n\n> Has ganado *${ganancia.toFixed(2)} monedas*.`;
+      ganancia = 15;
+      userKr.kr += 10 + ganancia;
+      resultMessage = `🎉 ¡Tu caballo *${selectedHorse.toUpperCase()}* ganó!\n\n> Has ganado *${ganancia} monedas*.`;
     } else if (Math.abs(validHorses.indexOf(selectedHorse) - winner) === 1) {
       resultMessage = `😐 Tu caballo *${selectedHorse.toUpperCase()}* quedó en segundo lugar.\n\n> No ganaste ni perdiste monedas.`;
-      userKr.kr += betAmount;
+      userKr.kr += 10; // Se le devuelve la apuesta
     } else {
-      resultMessage = `❌ Tu caballo *${selectedHorse.toUpperCase()}* perdió la carrera.\n\n> Has perdido *${betAmount} monedas*.`;
+      resultMessage = `❌ Tu caballo *${selectedHorse.toUpperCase()}* perdió la carrera.\n\n> Has perdido *10 monedas*.`;
     }
 
     krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
