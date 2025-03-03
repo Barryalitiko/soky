@@ -55,6 +55,18 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}tocar
 ⌠⅏⌡➟ ${PREFIX}haiti
 ⌠⅏⌡➟ ${PREFIX}saborear
+
+══════════.K.═
+
+*JUEGOS*
+⌠⅏⌡➟ ${PREFIX}data
+⌠⅏⌡➟ ${PREFIX}trabajo
+⌠⅏⌡➟ ${PREFIX}ruleta
+⌠⅏⌡➟ ${PREFIX}tragamonedas
+⌠⅏⌡➟ ${PREFIX}boda
+⌠⅏⌡➟ ${PREFIX}divorcio
+⌠⅏⌡➟ ${PREFIX}tienda
+
 ══════════.K.═
 
 *𝗗𝗲𝘀𝗰𝗮𝗿𝗴𝗮𝗿 𝗩𝗶𝗱𝗲𝗼𝘀*
