@@ -31,7 +31,7 @@ module.exports = {
     let userMarriage = marriageData.find(entry => entry.userJid === userJid || entry.partnerJid === userJid);
 
     if (!userMarriage) {
-      await sendReply("❌ No tienes pareja. Encuentra el amor antes de usar este comando.");
+      await sendReply("❌ No tienes pareja.\n\nEncuentra el amor antes de usar este comando.");
       return;
     }
 
@@ -42,7 +42,7 @@ module.exports = {
 
     // Si ya se usó el comando hoy, muestra un mensaje
     if (lastUsed === today) {
-      await sendReply("💖 Ya expresaste tu amor hoy. Vuelve mañana para mantener la racha.");
+      await sendReply("💖 Ya expresaste tu amor hoy.\nVuelve mañana para mantener la racha.");
       return;
     }
 
@@ -67,7 +67,7 @@ module.exports = {
     writeData(MARRIAGE_FILE_PATH, marriageData);
 
     // Enviar mensaje al usuario y a la pareja
-    let message = `❤️ @${partnerJid.split("@")[0]}, tu pareja @${userJid.split("@")[0]} te ha dicho #tequiero.\n`;
+    let message = `❤️ @${partnerJid.split("@")[0]}, tu pareja @${userJid.split("@")[0]} anda pensando en ti ❤️.\n`;
     message += `🔥 Racha de amor: ${loveStreak} días\n💖 Corazones acumulados: ${hearts}\n`;
     message += `No olviden mantener la llama viva cada día.`;
 
