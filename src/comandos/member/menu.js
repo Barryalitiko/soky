@@ -88,7 +88,6 @@ COMANDOS:
 
 ⌠⅏⌡➟ ${PREFIX}minivideo
 ⌠⅏⌡➟ ${PREFIX}fea/feo
-⌠⅏⌡➟ ${PREFIX}fea/feo
 ⌠⅏⌡➟ ${PREFIX}preso
 ⌠⅏⌡➟ ${PREFIX}gay
 ⌠⅏⌡➟ ${PREFIX}tilapia
