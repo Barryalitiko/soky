@@ -91,6 +91,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}preso
 ⌠⅏⌡➟ ${PREFIX}gay
 ⌠⅏⌡➟ ${PREFIX}tilapia
+⌠⅏⌡➟ ${PREFIX}tokischa
 
 »»————- - ————-««
 > Operacion Marshall
