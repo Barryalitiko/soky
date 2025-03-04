@@ -68,6 +68,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}tienda
 ⌠⅏⌡➟ ${PREFIX}apuesta
 ⌠⅏⌡➟ ${PREFIX}tequiero
+⌠⅏⌡➟ ${PREFIX}carrera
 
 ══════════.K.═
 
