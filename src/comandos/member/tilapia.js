@@ -3,7 +3,6 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
-
 const cooldowns = {}; // Almacena los tiempos de cooldown de los usuarios
 const COOLDOWN_TIME = 25 * 1000; // 25 segundos en milisegundos
 
@@ -12,9 +11,17 @@ module.exports = {
   description: "Genera un mini video con la foto de perfil de un usuario y un audio.",
   commands: ["tilapia"],
   usage: `${PREFIX}minivideo @usuario`,
-  handle: async ({ args, socket, remoteJid, sendReply, sendReact, isReply, replyJid, senderJid }) => {
+  handle: async ({
+    args,
+    socket,
+    remoteJid,
+    sendReply,
+    sendReact,
+    isReply,
+    replyJid,
+    senderJid,
+  }) => {
     let userJid;
-
     if (isReply) {
       userJid = replyJid;
     } else if (args.length < 1) {
@@ -58,35 +65,48 @@ module.exports = {
       fs.writeFileSync(imageFilePath, response.data);
 
       const audioFilePath = path.resolve(__dirname, "../../../assets/audio/tilapia.mp3");
-      const videoFilePath = path.resolve(tempFolder, `${userJid}_video.mp4`);
+      const videoFilePath = path.resolve(__dirname, "../../../assets/images/baile.mp4");
+      const tempVideoFilePath = path.resolve(tempFolder, `${userJid}_temp.mp4`);
+      const finalVideoFilePath = path.resolve(tempFolder, `${userJid}_final.mp4`);
 
       ffmpeg()
         .input(imageFilePath)
-        .loop(10)
+        .loop(13)
         .input(audioFilePath)
         .audioCodec("aac")
         .videoCodec("libx264")
-        .outputOptions(["-t 20", "-vf fade=t=in:st=0:d=4", "-preset fast"])
-        .output(videoFilePath)
+        .outputOptions(["-t 13", "-vf fade=t=in:st=0:d=4", "-preset fast"])
+        .output(tempVideoFilePath)
         .on("end", async () => {
-          try {
-            await socket.sendMessage(remoteJid, {
-              video: {
-                url: videoFilePath,
-              },
-              caption: `No sabia eso de ti\n@${userJid.split("@")[0]}`,
-              mentions: [userJid],
-            });
+          // Concatenar el vídeo sin filtro
+          ffmpeg()
+            .input(tempVideoFilePath)
+            .input(videoFilePath)
+            .outputOptions(["-concat", "-f", "mp4", "-t", "20"])
+            .output(finalVideoFilePath)
+            .on("end", async () => {
+              // Enviar el vídeo final
+              await socket.sendMessage(remoteJid, {
+                video: {
+                  url: finalVideoFilePath,
+                },
+                caption: `No sabia eso de ti\n@${userJid.split("@")[0]}`,
+                mentions: [userJid],
+              });
 
-            fs.unlinkSync(imageFilePath);
-            fs.unlinkSync(videoFilePath);
+              // Eliminar archivos temporales
+              fs.unlinkSync(imageFilePath);
+              fs.unlinkSync(tempVideoFilePath);
+              fs.unlinkSync(finalVideoFilePath);
 
-            // Registrar el tiempo de uso para aplicar el cooldown
-            cooldowns[senderJid] = Date.now();
-          } catch (error) {
-            console.error(error);
-            await sendReply("Hubo un problema al generar el video.");
-          }
+              // Registrar el tiempo de uso para aplicar el cooldown
+              cooldowns[senderJid] = Date.now();
+            })
+            .on("error", (err) => {
+              console.error(err);
+              sendReply("Hubo un problema al crear el video.");
+            })
+            .run();
         })
         .on("error", (err) => {
           console.error(err);
