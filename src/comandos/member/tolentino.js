@@ -58,9 +58,9 @@ module.exports = {
       { message: "Tolentino te dejó entrar a la fuente, ganaste 5 monedas.", effect: 5 },
       { message: "Tolentino te subió a la ola y perdiste 10 monedas.", effect: -10 },
       { message: "Tolentino te invitó al junte y ganaste 8 monedas.", effect: 8 },
-      { message: "Tolentino te tumbó por meterte en cosas raras, perdiste 7 monedas.", effect: -7 },
+      { message: "Tolentino te tumbó por no entender el chisme, perdiste 7 monedas.", effect: -7 },
       { message: "Tolentino te dio una primicia, ganaste 18 monedas.", effect: 18 },
-      { message: "Tolentino te tumbó por no entender el chisme, perdiste 6 monedas.", effect: -6 },
+      { message: "Tolentino te tumbó por no prestar atención al chisme, perdiste 6 monedas.", effect: -6 },
       { message: "Tolentino te dio el scoop, ganaste 10 monedas.", effect: 10 },
       { message: "Tolentino te dijo que no ibas a entender, perdiste 3 monedas.", effect: -3 },
       { message: "Tolentino te mandó a callar y te quitó 5 monedas.", effect: -5 },
@@ -104,15 +104,19 @@ module.exports = {
     krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
     writeData(krFilePath, krData);
 
-    // Enviar el mensaje de la acción
-    await sendReply(randomAction.message);
-    await sendReply(`upss\n> 💰 Tu saldo actual es: ${userKr.kr} 𝙺𝚛`);
+    // Reacción inicial con ⏳
+    await sendReact("⏳");
 
-    // Reacción según el efecto de la acción
-    if (randomAction.effect > 0) {
-      await sendReact("🤗");
-    } else {
-      await sendReact("⏰");
-    }
+    // Esperar 3 segundos antes de cambiar la reacción
+    setTimeout(async () => {
+      if (randomAction.effect > 0) {
+        await sendReact("🤗");
+      } else {
+        await sendReact("⏰");
+      }
+
+      // Enviar un mensaje único con la acción y el saldo actualizado
+      await sendReply(`${randomAction.message}\n\n> 💰 Tu saldo actual es: ${userKr.kr} 𝙺𝚛`);
+    }, 3000);
   }
 };
