@@ -46,7 +46,7 @@ module.exports = {
     writeData(krFilePath, krData);
 
     // Animación de la carrera con reacciones
-    await sendReact("🏎️");
+    await sendReact("🛵");
     await new Promise(resolve => setTimeout(resolve, 2000));
     await sendReact("💨");
     await new Promise(resolve => setTimeout(resolve, 2000));
