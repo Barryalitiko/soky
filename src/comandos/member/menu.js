@@ -69,6 +69,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}apuesta
 ⌠⅏⌡➟ ${PREFIX}tequiero
 ⌠⅏⌡➟ ${PREFIX}carrera
+⌠⅏⌡➟ ${PREFIX}vuelta
 
 ══════════.K.═
 
