@@ -35,7 +35,7 @@ module.exports = {
     }
 
     if (!args.includes("💍")) {
-      await sendReply("❌ Debes usar el anillo 💍 en tu propuesta de matrimonio.");
+      await sendReply("❌ Debes usar el anillo 💍 en tu propuesta de matrimonio.\n\n> Usa #tienda para comprar uno");
       return;
     }
 
