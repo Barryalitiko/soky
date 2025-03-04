@@ -60,17 +60,21 @@ module.exports = {
       const videoFilePath = path.resolve(tempFolder, `${userJid}_video.mp4`);
       const baileVideoPath = path.resolve(__dirname, "../../../assets/images/baile.mp4");
 
-      // Archivo de concatenación
-      const concatFilePath = path.resolve(tempFolder, `${userJid}_concat.txt`);
-      fs.writeFileSync(concatFilePath, `file '${imageFilePath}'\nduration 13\nfile '${baileVideoPath}'`);
-
       ffmpeg()
-        .input(concatFilePath)
-        .inputFormat("concat")
+        .input(imageFilePath)
+        .loop(13) // La imagen dura 13 segundos
+        .input(baileVideoPath)
         .input(audioFilePath)
         .audioCodec("aac")
         .videoCodec("libx264")
         .outputOptions(["-preset fast"])
+        .complexFilter([
+          "[0:v]scale=720:720:force_original_aspect_ratio=decrease,pad=720:720:(ow-iw)/2:(oh-ih)/2,setsar=1[img];",
+          "[1:v]scale=720:720,setsar=1[vid];",
+          "[img][vid]concat=n=2:v=1:a=0[outv]",
+        ])
+        .map("[outv]")
+        .map("2:a") // Mantiene el audio tilapia.mp3
         .output(videoFilePath)
         .on("end", async () => {
           try {
