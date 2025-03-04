@@ -61,7 +61,7 @@ module.exports = {
       const baileVideoPath = path.resolve(__dirname, "../../../assets/images/baile.mp4");
       const finalVideoPath = path.resolve(tempFolder, `${userJid}_final.mp4`);
 
-      // **1. Generar el video con la imagen de perfil**
+      // **1. Generar el video con la imagen de perfil (13 segundos)**
       await new Promise((resolve, reject) => {
         ffmpeg()
           .input(imageFilePath)
@@ -76,14 +76,13 @@ module.exports = {
           .run();
       });
 
-      // **2. Unir el video de la imagen con el video del baile**
+      // **2. Unir el video de la imagen con el video del baile (añadir video de 7 segundos a partir del segundo 13)**
       await new Promise((resolve, reject) => {
         ffmpeg()
-          .input(profileVideoPath)
-          .input(baileVideoPath)
-          .videoCodec("libx264")
-          .audioCodec("aac")
-          .outputOptions(["-preset fast"])
+          .input(profileVideoPath)  // El video de 13 segundos
+          .input(baileVideoPath)  // El video de 7 segundos
+          .filterComplex("[0][1]concat=n=2:v=1:a=0[v]")  // Unir ambos videos
+          .map("[v]")  // Mapear el video resultante
           .output(finalVideoPath)
           .on("end", resolve)
           .on("error", reject)
