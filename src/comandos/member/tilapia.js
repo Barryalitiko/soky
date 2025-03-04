@@ -3,8 +3,8 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
-const cooldowns = {}; // Almacena los tiempos de cooldown de los usuarios
-const COOLDOWN_TIME = 25 * 1000; // 25 segundos en milisegundos
+const cooldowns = {};
+const COOLDOWN_TIME = 25 * 1000;
 
 module.exports = {
   name: "miniVideo",
@@ -25,13 +25,12 @@ module.exports = {
     if (isReply) {
       userJid = replyJid;
     } else if (args.length < 1) {
-      await sendReply("Uso incorrecto. Usa el comando así:\n" + `${PREFIX}tilapia @usuario`);
+      await sendReply(`Uso incorrecto. Usa el comando así:\n${PREFIX}tilapia @usuario`);
       return;
     } else {
       userJid = args[0].replace("@", "") + "@s.whatsapp.net";
     }
 
-    // Verificar cooldown
     const lastUsed = cooldowns[senderJid] || 0;
     const now = Date.now();
     if (now - lastUsed < COOLDOWN_TIME) {
@@ -78,14 +77,14 @@ module.exports = {
         .outputOptions(["-t 13", "-vf fade=t=in:st=0:d=4", "-preset fast"])
         .output(tempVideoFilePath)
         .on("end", async () => {
-          // Concatenar el vídeo sin filtro
+          const concatFile = path.resolve(tempFolder, "concat.txt");
+          fs.writeFileSync(concatFile, `file '${tempVideoFilePath}'\nfile '${videoFilePath}'`);
+
           ffmpeg()
-            .input(tempVideoFilePath)
-            .input(videoFilePath)
-            .outputOptions(["-concat", "-f", "mp4", "-t", "20"])
+            .inputOptions(["-f", "concat", "-safe", "0", "-i", concatFile])
+            .outputOptions(["-c", "copy", "-t", "20"])
             .output(finalVideoFilePath)
             .on("end", async () => {
-              // Enviar el vídeo final
               await socket.sendMessage(remoteJid, {
                 video: {
                   url: finalVideoFilePath,
@@ -94,12 +93,11 @@ module.exports = {
                 mentions: [userJid],
               });
 
-              // Eliminar archivos temporales
               fs.unlinkSync(imageFilePath);
               fs.unlinkSync(tempVideoFilePath);
               fs.unlinkSync(finalVideoFilePath);
+              fs.unlinkSync(concatFile);
 
-              // Registrar el tiempo de uso para aplicar el cooldown
               cooldowns[senderJid] = Date.now();
             })
             .on("error", (err) => {
