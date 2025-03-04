@@ -57,7 +57,7 @@ module.exports = {
       writeData(MARRIAGE_FILE_PATH, marriages);
 
       await socket.sendMessage(remoteJid, {
-        text: `🎉 ¡Felicidades!\n\n*@${proposal.proposer.split("@")[0]}* y *@${userJid.split("@")[0]}* ahora están casados. 💍\n\n> Krampus OM bot`,
+        text: `🎉 ¡Felicidades!\n\n*@${proposal.proposer.split("@")[0]}* y *@${userJid.split("@")[0]}* ahora están casados.\n\nUsa el comando #tequiero diariamante para mantener la racha💍\n\n> Krampus OM bot`,
         mentions: [proposal.proposer, userJid]
       });
     } else {
