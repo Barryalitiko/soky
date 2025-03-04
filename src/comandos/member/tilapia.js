@@ -12,7 +12,7 @@ module.exports = {
   description: "Genera un mini video con la foto de perfil de un usuario y un audio.",
   commands: ["tilapia"],
   usage: `${PREFIX}tilapia @usuario`,
-  handle: async ({ args, socket, remoteJid, sendReply, sendReact, isReply, replyJid, senderJid }) => {
+  handle: async ({ args, socket, remoteJid, sendReply, isReply, replyJid, senderJid }) => {
     let userJid;
 
     if (isReply) {
@@ -57,47 +57,52 @@ module.exports = {
       fs.writeFileSync(imageFilePath, response.data);
 
       const audioFilePath = path.resolve(__dirname, "../../../assets/audio/tilapia.mp3");
-      const videoFilePath = path.resolve(tempFolder, `${userJid}_video.mp4`);
+      const profileVideoPath = path.resolve(tempFolder, `${userJid}_profile_video.mp4`);
       const baileVideoPath = path.resolve(__dirname, "../../../assets/images/baile.mp4");
+      const finalVideoPath = path.resolve(tempFolder, `${userJid}_final.mp4`);
 
-      ffmpeg()
-        .input(imageFilePath)
-        .loop(13) // La imagen dura 13 segundos
-        .input(baileVideoPath)
-        .input(audioFilePath)
-        .audioCodec("aac")
-        .videoCodec("libx264")
-        .outputOptions(["-preset fast"])
-        .complexFilter([
-          "[0:v]scale=720:720:force_original_aspect_ratio=decrease,pad=720:720:(ow-iw)/2:(oh-ih)/2,setsar=1[img];",
-          "[1:v]scale=720:720,setsar=1[vid];",
-          "[img][vid]concat=n=2:v=1:a=0[outv]",
-        ])
-        .map("[outv]")
-        .map("2:a") // Mantiene el audio tilapia.mp3
-        .output(videoFilePath)
-        .on("end", async () => {
-          try {
-            await socket.sendMessage(remoteJid, {
-              video: { url: videoFilePath },
-              caption: `No sabía eso de ti\n@${userJid.split("@")[0]}`,
-              mentions: [userJid],
-            });
+      // **1. Generar el video con la imagen de perfil**
+      await new Promise((resolve, reject) => {
+        ffmpeg()
+          .input(imageFilePath)
+          .loop(13) // La imagen dura 13 segundos
+          .input(audioFilePath)
+          .audioCodec("aac")
+          .videoCodec("libx264")
+          .outputOptions(["-preset fast"])
+          .output(profileVideoPath)
+          .on("end", resolve)
+          .on("error", reject)
+          .run();
+      });
 
-            fs.unlinkSync(imageFilePath);
-            fs.unlinkSync(videoFilePath);
+      // **2. Unir el video de la imagen con el video del baile**
+      await new Promise((resolve, reject) => {
+        ffmpeg()
+          .input(profileVideoPath)
+          .input(baileVideoPath)
+          .videoCodec("libx264")
+          .audioCodec("aac")
+          .outputOptions(["-preset fast"])
+          .output(finalVideoPath)
+          .on("end", resolve)
+          .on("error", reject)
+          .run();
+      });
 
-            cooldowns[senderJid] = Date.now();
-          } catch (error) {
-            console.error(error);
-            await sendReply("Hubo un problema al generar el video.");
-          }
-        })
-        .on("error", (err) => {
-          console.error(err);
-          sendReply("Hubo un problema al crear el video.");
-        })
-        .run();
+      // **3. Enviar el video final**
+      await socket.sendMessage(remoteJid, {
+        video: { url: finalVideoPath },
+        caption: `No sabía eso de ti\n@${userJid.split("@")[0]}`,
+        mentions: [userJid],
+      });
+
+      // **4. Borrar archivos temporales**
+      fs.unlinkSync(imageFilePath);
+      fs.unlinkSync(profileVideoPath);
+      fs.unlinkSync(finalVideoPath);
+
+      cooldowns[senderJid] = Date.now();
     } catch (error) {
       console.error(error);
       await sendReply("Hubo un error al procesar el comando.");
