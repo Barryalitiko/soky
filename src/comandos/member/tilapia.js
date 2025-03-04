@@ -4,14 +4,14 @@ const fs = require("fs");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
 
-const cooldowns = {}; // Almacena los tiempos de cooldown de los usuarios
-const COOLDOWN_TIME = 25 * 1000; // 25 segundos en milisegundos
+const cooldowns = {};
+const COOLDOWN_TIME = 25 * 1000;
 
 module.exports = {
   name: "miniVideo",
   description: "Genera un mini video con la foto de perfil de un usuario y un audio.",
   commands: ["tilapia"],
-  usage: `${PREFIX}minivideo @usuario`,
+  usage: `${PREFIX}tilapia @usuario`,
   handle: async ({ args, socket, remoteJid, sendReply, sendReact, isReply, replyJid, senderJid }) => {
     let userJid;
 
@@ -24,7 +24,6 @@ module.exports = {
       userJid = args[0].replace("@", "") + "@s.whatsapp.net";
     }
 
-    // Verificar cooldown
     const lastUsed = cooldowns[senderJid] || 0;
     const now = Date.now();
     if (now - lastUsed < COOLDOWN_TIME) {
@@ -59,29 +58,38 @@ module.exports = {
 
       const audioFilePath = path.resolve(__dirname, "../../../assets/audio/tilapia.mp3");
       const videoFilePath = path.resolve(tempFolder, `${userJid}_video.mp4`);
+      const baileVideoPath = path.resolve(__dirname, "../../../assets/images/baile.mp4");
+
+      const finalTxt = path.resolve(tempFolder, `${userJid}_concat.txt`);
+      fs.writeFileSync(finalTxt, `file '${imageFilePath}'\nduration 13\nfile '${baileVideoPath}'\nduration 7`);
 
       ffmpeg()
         .input(imageFilePath)
-        .loop(10)
+        .loop(13)
+        .input(baileVideoPath)
         .input(audioFilePath)
         .audioCodec("aac")
         .videoCodec("libx264")
-        .outputOptions(["-t 20", "-vf fade=t=in:st=0:d=4", "-preset fast"])
+        .outputOptions(["-preset fast", "-t 20", "-vf fade=t=in:st=0:d=4"])
+        .complexFilter([
+          "[0:v]scale=720:720[img];",
+          "[1:v]scale=720:720[vid];",
+          "[img][vid]concat=n=2:v=1:a=0[outv]",
+        ])
+        .map("[outv]")
+        .map("2:a")
         .output(videoFilePath)
         .on("end", async () => {
           try {
             await socket.sendMessage(remoteJid, {
-              video: {
-                url: videoFilePath,
-              },
-              caption: `No sabia eso de ti\n@${userJid.split("@")[0]}`,
+              video: { url: videoFilePath },
+              caption: `No sabía eso de ti\n@${userJid.split("@")[0]}`,
               mentions: [userJid],
             });
 
             fs.unlinkSync(imageFilePath);
             fs.unlinkSync(videoFilePath);
 
-            // Registrar el tiempo de uso para aplicar el cooldown
             cooldowns[senderJid] = Date.now();
           } catch (error) {
             console.error(error);
