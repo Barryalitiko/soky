@@ -24,6 +24,9 @@ module.exports = {
       userJid = args[0].replace("@", "") + "@s.whatsapp.net";
     }
 
+    // Reacción al recibir el comando
+    await sendReact("⏳");
+
     // Verificar cooldown
     const lastUsed = cooldowns[senderJid] || 0;
     const now = Date.now();
@@ -77,6 +80,9 @@ module.exports = {
               caption: `No sabia eso de ti\n@${userJid.split("@")[0]}`,
               mentions: [userJid],
             });
+
+            // Reacción al enviar el video
+            await sendReact("🐟");
 
             fs.unlinkSync(imageFilePath);
             fs.unlinkSync(videoFilePath);
