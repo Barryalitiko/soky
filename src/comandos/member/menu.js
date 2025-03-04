@@ -70,6 +70,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}tequiero
 ⌠⅏⌡➟ ${PREFIX}carrera
 ⌠⅏⌡➟ ${PREFIX}vuelta
+⌠⅏⌡➟ ${PREFIX}tolentino
 
 ══════════.K.═
 
