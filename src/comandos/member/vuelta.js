@@ -31,7 +31,7 @@ module.exports = {
     let lastUsage = cooldowns[userJid] || 0;
     let now = Date.now();
 
-    if (now - lastUsage < 2 * 60 * 1000) {
+    if (now - lastUsage < 1 * 60 * 1000) {
       await sendReply("❌ Ya estás en una vuelta, espera.");
       return;
     }
