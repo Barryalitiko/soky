@@ -60,24 +60,17 @@ module.exports = {
       const videoFilePath = path.resolve(tempFolder, `${userJid}_video.mp4`);
       const baileVideoPath = path.resolve(__dirname, "../../../assets/images/baile.mp4");
 
-      const finalTxt = path.resolve(tempFolder, `${userJid}_concat.txt`);
-      fs.writeFileSync(finalTxt, `file '${imageFilePath}'\nduration 13\nfile '${baileVideoPath}'\nduration 7`);
+      // Archivo de concatenación
+      const concatFilePath = path.resolve(tempFolder, `${userJid}_concat.txt`);
+      fs.writeFileSync(concatFilePath, `file '${imageFilePath}'\nduration 13\nfile '${baileVideoPath}'`);
 
       ffmpeg()
-        .input(imageFilePath)
-        .loop(13)
-        .input(baileVideoPath)
+        .input(concatFilePath)
+        .inputFormat("concat")
         .input(audioFilePath)
         .audioCodec("aac")
         .videoCodec("libx264")
-        .outputOptions(["-preset fast", "-t 20", "-vf fade=t=in:st=0:d=4"])
-        .complexFilter([
-          "[0:v]scale=720:720[img];",
-          "[1:v]scale=720:720[vid];",
-          "[img][vid]concat=n=2:v=1:a=0[outv]",
-        ])
-        .map("[outv]")
-        .map("2:a")
+        .outputOptions(["-preset fast"])
         .output(videoFilePath)
         .on("end", async () => {
           try {
