@@ -54,7 +54,7 @@ try {
   const imageFilePath = path.join(tempFolder, `${sanitizedJid}_profile.jpg`);
   const outputVideoPath = path.join(tempFolder, `${sanitizedJid}_fade.mp4`);
   const pngImagePath = path.resolve(__dirname, "../../../assets/images/xnxx.png");
-  const audioFilePath = path.resolve(__dirname, "../../../assets/audio/preso30.mp3");
+  const audioFilePath = path.resolve(__dirname, "../../../assets/audio/toki.mp3");
 
   const response = await axios({ url: profilePicUrl, responseType: "arraybuffer" });
   fs.writeFileSync(imageFilePath, response.data);
@@ -71,7 +71,7 @@ try {
       ])
       .map("[final]")
       .output(outputVideoPath)
-      .duration(10)
+      .duration(13)
       .on("end", async () => {
         const videoWithAudioPath = path.join(tempFolder, `${sanitizedJid}_video.mp4`);
         ffmpeg()
@@ -84,7 +84,7 @@ try {
             await sendReact("😎");
             await socket.sendMessage(remoteJid, {
               video: { url: videoWithAudioPath },
-              caption: `El *DICRIM* te ha capturado @${userJid.split("@")[0]}\nTe espera un largo tiempo en la carcel. . .\n> Krampus OM bot`,
+              caption: `Miren que me encontre🤔\n\n> Krampus OM bot`,
             });
             resolve();
           })
