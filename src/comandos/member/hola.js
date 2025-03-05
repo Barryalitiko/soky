@@ -11,7 +11,12 @@ module.exports = {
 
     await socket.sendMessage(remoteJid, {
       text: mensaje,
-      url: link,
+      buttons: [
+        {
+          url: link,
+          text: "Únete",
+        },
+      ],
     });
   },
 };
