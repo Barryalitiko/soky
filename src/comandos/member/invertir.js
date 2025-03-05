@@ -78,7 +78,8 @@ module.exports = {
 
     writeData(investmentFilePath, investmentStatus);
 
-    await sendReply(`💼 ¡Acabas de invertir en *${empresaElegida.nombre}*!\n> Ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
+    // Ahora incluimos la cantidad de dinero invertido en el mensaje
+    await sendReply(`💼 ¡Acabas de invertir *${saldoInvertido} monedas* en *${empresaElegida.nombre}*!\n> Ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
 
     const intervalo = setInterval(async () => {
       const tiempoTranscurrido = Math.floor((Date.now() - investmentStatus[userJid].tiempoInicio) / 60000);
