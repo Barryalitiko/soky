@@ -1,8 +1,9 @@
+const { PREFIX } = require("../../krampus");
 const fs = require("fs");
 const path = require("path");
-const { PREFIX } = require("../../krampus");
 
 const MARRIAGE_FILE_PATH = path.resolve(process.cwd(), "assets/marriage.json");
+const USER_ITEMS_FILE_PATH = path.resolve(process.cwd(), "assets/userItems.json");
 
 const readData = (filePath) => {
   try {
@@ -22,11 +23,12 @@ const writeData = (filePath, data) => {
 
 module.exports = {
   name: "divorce",
-  description: "Divorciarte de tu pareja actual.",
+  description: "Divorciarte de tu pareja actual con un papel de divorcio.",
   commands: ["divorcio"],
   usage: `${PREFIX}divorce`,
   handle: async ({ sendReply, socket, userJid, remoteJid }) => {
     const marriageData = readData(MARRIAGE_FILE_PATH);
+    const userItems = readData(USER_ITEMS_FILE_PATH);
 
     // Verificar si el usuario está casado
     const marriageIndex = marriageData.findIndex(
@@ -38,6 +40,17 @@ module.exports = {
       return;
     }
 
+    // Verificar si el usuario tiene un papel de divorcio
+    const userItem = userItems.find((entry) => entry.userJid === userJid);
+    if (!userItem || userItem.items.divorcePapers < 1) {
+      await sendReply("❌ No tienes un papel de divorcio para firmar 🫣\nCompra uno para poder divorciarte.\n> Usa #tienda para comprarlo");
+      return;
+    }
+
+    // Reducir el número de papeles de divorcio en el inventario
+    userItem.items.divorcePapers -= 1;
+    writeData(USER_ITEMS_FILE_PATH, userItems);
+
     // Procesar divorcio
     const { userJid: partner1, partnerJid: partner2 } = marriageData[marriageIndex];
     marriageData.splice(marriageIndex, 1); // Eliminar matrimonio
@@ -47,6 +60,14 @@ module.exports = {
     await socket.sendMessage(remoteJid, {
       text: `📄 *¡Divorcio confirmado!*  
 @${partner1.split("@")[0]} y @${partner2.split("@")[0]} ahora están oficialmente divorciados. 💔`,
+      mentions: [partner1, partner2]
+    });
+
+    // Enviar el GIF de divorcio con el mensaje
+    await socket.sendMessage(remoteJid, {
+      video: fs.readFileSync("assets/sx/divorcio.mp4"),
+      caption: `💔 *El divorcio ha sido procesado* 💔\n@${partner1.split("@")[0]} y @${partner2.split("@")[0]} ahora están separados. ¡Que siga la vida!`,
+      gifPlayback: true,
       mentions: [partner1, partner2]
     });
   },
