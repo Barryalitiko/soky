@@ -80,11 +80,13 @@ module.exports = {
       if (tiempoTranscurrido >= 5) {
         clearInterval(intervalo);
         await socket.sendMessage(remoteJid, {
-          text: `⏳ @${userJid} Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${saldoFinal} monedas.`
+          text: `⏳ @${userJid.split("@")[0]} Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${saldoFinal} monedas.`,
+          mentions: [userJid],
         });
       } else {
         await socket.sendMessage(remoteJid, {
-          text: `⏳ @${userJid} Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`
+          text: `⏳ @${userJid.split("@")[0]} Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`,
+          mentions: [userJid],
         });
       }
     }, 60000);
