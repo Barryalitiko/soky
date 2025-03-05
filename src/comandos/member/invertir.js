@@ -34,15 +34,15 @@ module.exports = {
   description: "Invierte en una empresa aleatoria.",
   commands: ["invertir"],
   usage: `${PREFIX}invertir`,
-  handle: async ({ sendReply, userJid }) => {
+  handle: async ({ sendReply, socket, userJid, remoteJid }) => {
     const investmentStatus = readData(investmentFilePath);
     const userInvestment = investmentStatus[userJid] || null;
 
     if (userInvestment) {
-      return sendReply(" No puedes invertir porque ya estás invertido. Si quieres retirarte, usa `#retirar`.");
+      return sendReply(" No puedes invertir de nuevo. Si deseas retirarte, usa el comando `#retirar`.");
     }
 
-    let krData = readData(krFilePath);
+    const krData = readData(krFilePath);
     let userKr = krData.find(entry => entry.userJid === userJid);
 
     if (!userKr) {
@@ -75,25 +75,32 @@ module.exports = {
 
     writeData(investmentFilePath, investmentStatus);
 
-    await sendReply(` Invertiste en *${empresaElegida.nombre}*! \n> Ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
+    await sendReply(` Acabas de invertir en *${empresaElegida.nombre}*!\n> Ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
 
     const intervalo = setInterval(async () => {
       const tiempoTranscurrido = Math.floor((Date.now() - investmentStatus[userJid].tiempoInicio) / 60000);
       const gananciaOpcion = (investmentStatus[userJid].saldoInvertido * investmentStatus[userJid].porcentaje) / 100;
       const saldoFinal = investmentStatus[userJid].saldoInvertido + gananciaOpcion;
-      const estadoInversion = gananciaOpcion >= 0 ? `Ganaste ${gananciaOpcion} monedas!` : `Perdiste ${Math.abs(gananciaOpcion)} monedas!`;
+const estadoInversion = gananciaOpcion >= 0 ? `¡Has ganado ${gananciaOpcion} monedas!` : `¡Has perdido ${Math.abs(gananciaOpcion)} monedas!`;
 
-      if (tiempoTranscurrido >= 5) {
-        clearInterval(intervalo);
-        krData = readData(krFilePath);
-        userKr = krData.find(entry => entry.userJid === userJid);
-        userKr.kr += saldoInvertido + gananciaOpcion;
-        krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
-        writeData(krFilePath, krData);
-        await sendReply(`Tu inversión en *${empresaElegida.nombre}* terminó.\n\n${estadoInversion}\n\nTu saldo final es de ${userKr.kr} monedas.`);
-      } else {
-        await sendReply(`Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando #retirar.`);
-      }
-    }, 60000);
-  },
+if (tiempoTranscurrido >= 5) {
+  clearInterval(intervalo);
+  krData = readData(krFilePath);
+  userKr = krData.find(entry => entry.userJid === userJid);
+  userKr.kr += saldoInvertido + gananciaOpcion;
+  krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
+  writeData(krFilePath, krData);
+  await socket.sendMessage(remoteJid, {
+    text: `⏳ @${userJid.split("@")[0]} Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${userKr.kr} monedas.`,
+    mentions: [userJid],
+  });
+} else {
+  await socket.sendMessage(remoteJid, {
+    text: `⏳ @${userJid.split("@")[0]} Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`,
+    mentions: [userJid],
+  });
+}
+}, 60000);
+}
+},
 };
