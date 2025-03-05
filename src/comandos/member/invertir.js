@@ -103,4 +103,4 @@ if (tiempoTranscurrido >= 5) {
 }, 60000);
 }
 },
-};
+
