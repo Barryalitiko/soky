@@ -6,16 +6,10 @@ module.exports = {
   commands: ["invitar"],
   usage: `${PREFIX}invitar`,
   handle: async ({ sendReply, socket, userJid, remoteJid }) => {
-    const mensaje = "Hola";
-    const grupo = "https://chat.whatsapp.com/..."; // enlace de invitación al grupo
+    const mensaje = `Hola, únete a nuestro grupo: ${"https://chat.whatsapp.com/..."}`;
 
     await socket.sendMessage(remoteJid, {
       text: mensaje,
-      groupInviteMessage: {
-        groupJid: grupo,
-        inviteCode: grupo.split("/").pop(),
-        inviteExpiration: Date.now() + 86400000, // 1 día
-      },
     });
   },
 };
