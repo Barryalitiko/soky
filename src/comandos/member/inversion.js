@@ -29,6 +29,6 @@ module.exports = {
     const saldoFinal = userInvestment.saldoInvertido + gananciaOpcion;
     const estadoInversion = gananciaOpcion >= 0 ? `¡Has ganado ${gananciaOpcion} monedas!` : `¡Has perdido ${Math.abs(gananciaOpcion)} monedas!`;
 
-    await sendReply(`💼 @${userJid} tu inversión en *${userInvestment.empresa}* sigue en pie.\n\n${estadoInversion}\n\nSaldo invertido: ${userInvestment.saldoInvertido} monedas.\nSaldo final: ${saldoFinal} monedas.\nSi quieres retirarte, usa \`#retirar\`.`);
-  }
+    await sendReply(`💼 Tu inversión en *${userInvestment.empresa}* sigue en pie.\n\n${estadoInversion}\n\nSaldo invertido: ${userInvestment.saldoInvertido} monedas.\nSaldo final: ${saldoFinal} monedas.\nSi quieres retirarte, usa \`#retirar\`.`);
+  },
 };
