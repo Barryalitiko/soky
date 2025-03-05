@@ -3,7 +3,6 @@ const fs = require("fs");
 const path = require("path");
 
 const MARRIAGE_FILE_PATH = path.resolve(process.cwd(), "assets/marriage.json");
-const USER_ITEMS_FILE_PATH = path.resolve(process.cwd(), "assets/userItems.json");
 
 const readData = (filePath) => {
   try {
@@ -23,12 +22,11 @@ const writeData = (filePath, data) => {
 
 module.exports = {
   name: "divorce",
-  description: "Divorciarte de tu pareja actual con un papel de divorcio.",
+  description: "Divorciarte de tu pareja actual.",
   commands: ["divorcio"],
   usage: `${PREFIX}divorce`,
   handle: async ({ sendReply, socket, userJid, remoteJid }) => {
     const marriageData = readData(MARRIAGE_FILE_PATH);
-    const userItems = readData(USER_ITEMS_FILE_PATH);
 
     // Verificar si el usuario está casado
     const marriageIndex = marriageData.findIndex(
@@ -39,17 +37,6 @@ module.exports = {
       await sendReply("❌ No estás casado actualmente.\n> Krampus OM bot");
       return;
     }
-
-    // Verificar si el usuario tiene un papel de divorcio
-    const userItem = userItems.find((entry) => entry.userJid === userJid);
-    if (!userItem || userItem.items.divorcePapers < 1) {
-      await sendReply("❌ No tienes un papel de divorcio para firmar 🫣\nCompra uno para poder divorciarte.\n> Usa #tienda para comprarlo");
-      return;
-    }
-
-    // Reducir el número de papeles de divorcio en el inventario
-    userItem.items.divorcePapers -= 1;
-    writeData(USER_ITEMS_FILE_PATH, userItems);
 
     // Procesar divorcio
     const { userJid: partner1, partnerJid: partner2 } = marriageData[marriageIndex];
