@@ -1,32 +1,21 @@
 const { PREFIX } = require("../../krampus");
 
 module.exports = {
-  name: "hola",
-  description: "Prueba de botones interactivos.",
-  commands: ["hola", "hello"],
-  usage: `${PREFIX}hola`,
-  handle: async ({ socket, remoteJid, sendReply }) => {
-    try {
-      await socket.sendMessage(remoteJid, {
-        text: "👋 ¡Hola! Este es un mensaje interactivo de prueba. ¿Qué te gustaría hacer?",
-        templateMessage: {
-          buttons: [
-            {
-              buttonId: "info",
-              buttonText: { displayText: "🔗 Ver información" },
-              type: 1
-            },
-            {
-              buttonId: "contact",
-              buttonText: { displayText: "📞 Contactar soporte" },
-              type: 1
-            }
-          ]
-        }
-      });
-    } catch (error) {
-      console.error("Error al enviar el mensaje interactivo:", error);
-      await sendReply("❌ Hubo un error al enviar el mensaje interactivo.");
-    }
-  }
+  name: "invitar",
+  description: "Invita a un usuario a un grupo de WhatsApp.",
+  commands: ["invitar"],
+  usage: `${PREFIX}invitar`,
+  handle: async ({ sendReply, socket, userJid, remoteJid }) => {
+    const mensaje = "Hola";
+    const grupo = "https://chat.whatsapp.com/..."; // enlace de invitación al grupo
+
+    await socket.sendMessage(remoteJid, {
+      text: mensaje,
+      groupInviteMessage: {
+        groupJid: grupo,
+        inviteCode: grupo.split("/").pop(),
+        inviteExpiration: Date.now() + 86400000, // 1 día
+      },
+    });
+  },
 };
