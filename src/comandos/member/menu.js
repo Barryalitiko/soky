@@ -71,6 +71,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}carrera
 ⌠⅏⌡➟ ${PREFIX}vuelta
 ⌠⅏⌡➟ ${PREFIX}tolentino
+⌠⅏⌡➟ ${PREFIX}negocio
 
 ══════════.K.═
 
