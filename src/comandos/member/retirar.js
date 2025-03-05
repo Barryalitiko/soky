@@ -36,12 +36,11 @@ module.exports = {
     const gananciaOpcion = (userInvestment.saldoInvertido * userInvestment.porcentaje) / 100;
     const saldoFinal = userInvestment.saldoInvertido + gananciaOpcion;
 
-    // Retirar la inversión y limpiar datos
     delete investmentStatus[userJid];
     writeData(investmentFilePath, investmentStatus);
 
     const estadoInversion = gananciaOpcion >= 0 ? `¡Has ganado ${gananciaOpcion} monedas!` : `¡Has perdido ${Math.abs(gananciaOpcion)} monedas!`;
 
-    await sendReply(`💼 @${userJid} ¡Has retirado tu inversión de *${userInvestment.empresa}*!\n\n${estadoInversion}\nSaldo final: ${saldoFinal} monedas.\n\n¡Buena suerte con el siguiente negocio!`);
-  }
+    await sendReply(`💼 ¡Has retirado tu inversión de *${userInvestment.empresa}*!\n\n${estadoInversion}\nSaldo final: ${saldoFinal} monedas.\n\n¡Buena suerte con el siguiente negocio!`);
+  },
 };
