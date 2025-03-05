@@ -6,24 +6,24 @@ const investmentFilePath = path.resolve(process.cwd(), "assets/investment.json")
 
 const empresas = [
   {
-    nombre: "Peluquería La Mejor",
-    frase: ["¡Te cortamos el cabello y te dejamos con la pela!", "¡Cuidado con el look que esta inversión es peligrosa!"]
+    nombre: "Colmado Lewito 🍺",
+    frase: ["*No ai seivicio a dosmicilio er delivery anda endrogao*"]
   },
   {
-    nombre: "Muebles Los Reyes",
-    frase: ["¡Venta de muebles que te hacen rey, pero ojo, no todo brilla!", "Si te caen las ganancias, no digas que no te avisé."]
+    nombre: "Alofoke Media Group 🔴",
+    frase: ["*Viene nuevo contenido para el canal"]
   },
   {
-    nombre: "Supermercado El Chevere",
-    frase: ["¡Compra tu inversión aquí, las frutas te salen caras pero ricas!", "¿Te vas a arriesgar con las gallinas o buscas algo más sólido?"]
+    nombre: "Show de Carlos Durant 🗣️",
+    frase: ["*Por cada inversionista un suscriptor le sobará la 12 a la Piry*"]
   },
   {
-    nombre: "Electrodomésticos SuperFast",
-    frase: ["Tu inversión puede explotar como una olla de presión, o puede salir bien. ¡Eso solo lo sabremos con el tiempo!", "¿Qué vas a comprar? ¿Lavadora o un electrodoméstico de lujo?"]
+    nombre: "PRM 🇩🇴",
+    frase: ["*Necesitamos la inversion para ~robar~ mejorar el pais*"]
   },
   {
-    nombre: "Tienda La Bonita",
-    frase: ["Te venden de todo, pero la ganancia es incierta, el mercado está impredecible.", "¿Vas a comprar un celular o un televisor? Cualquier cosa puede salir mal."]
+    nombre: "Mr Black la Fama 💔",
+    frase: ["*Necesito el dinero para mi carrera*"]
   },
 ];
 
@@ -57,7 +57,7 @@ module.exports = {
     }
 
     const empresaElegida = empresas[Math.floor(Math.random() * empresas.length)];
-    const porcentaje = Math.floor(Math.random() * 2) === 0 ? 8 : -8;
+    const porcentaje = Math.floor(Math.random() * 2) === 0 ? 20 : -20;
 
     investmentStatus[userJid] = {
       empresa: empresaElegida.nombre,
@@ -69,7 +69,7 @@ module.exports = {
 
     writeData(investmentFilePath, investmentStatus);
 
-    await sendReply(`💼 ¡Te has invertido con *${empresaElegida.nombre}*! Aquí vamos con una ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
+    await sendReply(`💼 ¡Acabas de invertir en *${empresaElegida.nombre}*!\n> ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
 
     const intervalo = setInterval(async () => {
       const tiempoTranscurrido = Math.floor((Date.now() - investmentStatus[userJid].tiempoInicio) / 60000);
