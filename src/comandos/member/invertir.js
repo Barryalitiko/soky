@@ -22,11 +22,11 @@ const writeData = (filePath, data) => {
 };
 
 const empresas = [
-  { nombre: "Colmado Lewito 🍺", frase: ["*No ai seivicio a dosmicilio er delivery anda endrogao*"] },
-  { nombre: "Alofoke Media Group 🔴", frase: ["*Viene nuevo contenido para el canal"] },
-  { nombre: "Show de Carlos Durant 🗣️", frase: ["*Por cada inversionista un suscriptor le sobará la 12 a la Piry*"] },
-  { nombre: "PRM 🇩🇴", frase: ["*Necesitamos la inversion para ~robar~ mejorar el pais*"] },
-  { nombre: "Mr Black la Fama 💔", frase: ["*Necesito el dinero para mi carrera*"] },
+  { nombre: "Colmado Lewito ", frase: ["*No ai seivicio a dosmicilio er delivery anda endrogao*"] },
+  { nombre: "Alofoke Media Group ", frase: ["*Viene nuevo contenido para el canal"] },
+  { nombre: "Show de Carlos Durant ", frase: ["*Por cada inversionista un suscriptor le sobará la 12 a la Piry*"] },
+  { nombre: "PRM ", frase: ["*Necesitamos la inversion para ~robar~ mejorar el pais*"] },
+  { nombre: "Mr Black la Fama ", frase: ["*Necesito el dinero para mi carrera*"] },
 ];
 
 module.exports = {
@@ -39,11 +39,11 @@ module.exports = {
     const userInvestment = investmentStatus[userJid] || null;
 
     if (userInvestment) {
-      return sendReply("❌ ¡Parece que ya estás invertido, hermano! Si quieres retirarte, usa el comando `#retirar`.");
+      return sendReply(" No puedes invertir porque ya estás invertido. Si quieres retirarte, usa `#retirar`.");
     }
 
-    const krData = readData(krFilePath);
-    const userKr = krData.find(entry => entry.userJid === userJid);
+    let krData = readData(krFilePath);
+    let userKr = krData.find(entry => entry.userJid === userJid);
 
     if (!userKr) {
       userKr = { userJid, kr: 0 };
@@ -54,7 +54,7 @@ module.exports = {
     const saldoInvertido = Math.floor(userKr.kr * 0.25);
 
     if (userKr.kr < saldoInvertido) {
-      await sendReply("❌ No tienes suficientes monedas para invertir.");
+      await sendReply(" No tienes suficientes monedas para invertir.");
       return;
     }
 
@@ -75,13 +75,13 @@ module.exports = {
 
     writeData(investmentFilePath, investmentStatus);
 
-    await sendReply(`💼 ¡Acabas de invertir en *${empresaElegida.nombre}*!\n> Ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
+    await sendReply(` Invertiste en *${empresaElegida.nombre}*! \n> Ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
 
     const intervalo = setInterval(async () => {
       const tiempoTranscurrido = Math.floor((Date.now() - investmentStatus[userJid].tiempoInicio) / 60000);
       const gananciaOpcion = (investmentStatus[userJid].saldoInvertido * investmentStatus[userJid].porcentaje) / 100;
       const saldoFinal = investmentStatus[userJid].saldoInvertido + gananciaOpcion;
-      const estadoInversion = gananciaOpcion >= 0 ? `¡Has ganado ${gananciaOpcion} monedas!` : `¡Has perdido ${Math.abs(gananciaOpcion)} monedas!`;
+      const estadoInversion = gananciaOpcion >= 0 ? `Ganaste ${gananciaOpcion} monedas!` : `Perdiste ${Math.abs(gananciaOpcion)} monedas!`;
 
       if (tiempoTranscurrido >= 5) {
         clearInterval(intervalo);
@@ -90,9 +90,9 @@ module.exports = {
         userKr.kr += saldoInvertido + gananciaOpcion;
         krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
         writeData(krFilePath, krData);
-        await sendReply(`⏳ Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${userKr.kr} monedas.`);
+        await sendReply(`Tu inversión en *${empresaElegida.nombre}* terminó.\n\n${estadoInversion}\n\nTu saldo final es de ${userKr.kr} monedas.`);
       } else {
-        await sendReply(`⏳ Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`);
+        await sendReply(`Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando #retirar.`);
       }
     }, 60000);
   },
