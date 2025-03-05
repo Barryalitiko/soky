@@ -3,29 +3,7 @@ const path = require("path");
 const { PREFIX } = require("../../krampus");
 
 const investmentFilePath = path.resolve(process.cwd(), "assets/investment.json");
-
-const empresas = [
-  {
-    nombre: "Colmado Lewito 🍺",
-    frase: ["*No ai seivicio a dosmicilio er delivery anda endrogao*"]
-  },
-  {
-    nombre: "Alofoke Media Group 🔴",
-    frase: ["*Viene nuevo contenido para el canal"]
-  },
-  {
-    nombre: "Show de Carlos Durant 🗣️",
-    frase: ["*Por cada inversionista un suscriptor le sobará la 12 a la Piry*"]
-  },
-  {
-    nombre: "PRM 🇩🇴",
-    frase: ["*Necesitamos la inversion para ~robar~ mejorar el pais*"]
-  },
-  {
-    nombre: "Mr Black la Fama 💔",
-    frase: ["*Necesito el dinero para mi carrera*"]
-  },
-];
+const krFilePath = path.resolve(process.cwd(), "assets/kr.json");
 
 const readData = (filePath) => {
   try {
@@ -43,18 +21,47 @@ const writeData = (filePath, data) => {
   }
 };
 
+const empresas = [
+  { nombre: "Colmado Lewito 🍺", frase: ["*No ai seivicio a dosmicilio er delivery anda endrogao*"] },
+  { nombre: "Alofoke Media Group 🔴", frase: ["*Viene nuevo contenido para el canal"] },
+  { nombre: "Show de Carlos Durant 🗣️", frase: ["*Por cada inversionista un suscriptor le sobará la 12 a la Piry*"] },
+  { nombre: "PRM 🇩🇴", frase: ["*Necesitamos la inversion para ~robar~ mejorar el pais*"] },
+  { nombre: "Mr Black la Fama 💔", frase: ["*Necesito el dinero para mi carrera*"] },
+];
+
 module.exports = {
   name: "invertir",
   description: "Invierte en una empresa aleatoria.",
   commands: ["invertir"],
   usage: `${PREFIX}invertir`,
-  handle: async ({ socket, userJid, remoteJid, sendReply }) => {
+  handle: async ({ sendReply, userJid }) => {
     const investmentStatus = readData(investmentFilePath);
     const userInvestment = investmentStatus[userJid] || null;
 
     if (userInvestment) {
       return sendReply("❌ ¡Parece que ya estás invertido, hermano! Si quieres retirarte, usa el comando `#retirar`.");
     }
+
+    const krData = readData(krFilePath);
+    const userKr = krData.find(entry => entry.userJid === userJid);
+
+    if (!userKr) {
+      userKr = { userJid, kr: 0 };
+      krData.push(userKr);
+      writeData(krFilePath, krData);
+    }
+
+    const saldoInvertido = Math.floor(userKr.kr * 0.25);
+
+    if (userKr.kr < saldoInvertido) {
+      await sendReply("❌ No tienes suficientes monedas para invertir.");
+      return;
+    }
+
+    // Restar el saldo invertido
+    userKr.kr -= saldoInvertido;
+    krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
+    writeData(krFilePath, krData);
 
     const empresaElegida = empresas[Math.floor(Math.random() * empresas.length)];
     const porcentaje = Math.floor(Math.random() * 2) === 0 ? 20 : -20;
@@ -63,13 +70,13 @@ module.exports = {
       empresa: empresaElegida.nombre,
       frase: empresaElegida.frase,
       porcentaje: porcentaje,
-      saldoInvertido: 25,
+      saldoInvertido: saldoInvertido,
       tiempoInicio: Date.now(),
     };
 
     writeData(investmentFilePath, investmentStatus);
 
-    await sendReply(`💼 ¡Acabas de invertir en *${empresaElegida.nombre}*!\n> ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
+    await sendReply(`💼 ¡Acabas de invertir en *${empresaElegida.nombre}*!\n> Ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
 
     const intervalo = setInterval(async () => {
       const tiempoTranscurrido = Math.floor((Date.now() - investmentStatus[userJid].tiempoInicio) / 60000);
@@ -79,15 +86,9 @@ module.exports = {
 
       if (tiempoTranscurrido >= 5) {
         clearInterval(intervalo);
-        await socket.sendMessage(remoteJid, {
-          text: `⏳ @${userJid.split("@")[0]} Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${saldoFinal} monedas.`,
-          mentions: [userJid],
-        });
+        await sendReply(`⏳ Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${saldoFinal} monedas.`);
       } else {
-        await socket.sendMessage(remoteJid, {
-          text: `⏳ @${userJid.split("@")[0]} Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`,
-          mentions: [userJid],
-        });
+        await sendReply(`⏳ Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`);
       }
     }, 60000);
   },
