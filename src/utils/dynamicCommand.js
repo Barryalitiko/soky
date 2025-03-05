@@ -40,7 +40,7 @@ antiLinkMode === "2" ||
 if (!(await isAdmin({ remoteJid, userJid, socket }))) {
 await socket.groupParticipantsUpdate(remoteJid, [userJid], "remove");
 await sendReply(
-"> Krampus OM bot \nBaneado por enviar `link`"
+"Baneado por enviar `link`\n\n> Krampus OM bot"
 );
 await socket.sendMessage(remoteJid, {
 delete: {
@@ -67,7 +67,7 @@ return;
 
 if (!(await checkPermission({ type, ...paramsHandler }))) {
 await sendErrorReply(
-"> Krampus OM bot\nNo tienes permitido usar el comando"
+"No tienes permitido usar el comando\n\n> Krampus OM bot"
 );
 return;
 }
