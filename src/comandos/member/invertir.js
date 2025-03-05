@@ -60,8 +60,10 @@ module.exports = {
 
     // Restar el saldo invertido
     userKr.kr -= saldoInvertido;
-    krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
-    writeData(krFilePath, krData);
+
+    // Aquí no reasignamos krData, solo modificamos el objeto de la lista
+    const updatedKrData = krData.map(entry => entry.userJid === userJid ? userKr : entry);
+    writeData(krFilePath, updatedKrData);
 
     const empresaElegida = empresas[Math.floor(Math.random() * empresas.length)];
     const porcentaje = Math.floor(Math.random() * 2) === 0 ? 20 : -20;
