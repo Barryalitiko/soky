@@ -60,16 +60,17 @@ module.exports = {
     const result = Math.random();
     let amount = 0;
 
-    if (result < 0.25) {
-      amount = 1;
-    } else if (result < 0.5) {
-      amount = 2;
-    } else if (result < 0.75) {
-      amount = 3;
-    } else if (result < 0.875) {
-      amount = -2;
+    // Aseguramos que las ganancias y pérdidas sean balanceadas
+    if (result < 0.2) {
+      amount = 30; // Ganancia mayor
+    } else if (result < 0.4) {
+      amount = 20; // Ganancia media
+    } else if (result < 0.6) {
+      amount = 10; // Ganancia pequeña
+    } else if (result < 0.8) {
+      amount = -10; // Pérdida pequeña
     } else {
-      amount = -4;
+      amount = -20; // Pérdida media
     }
 
     userKr.kr += amount;
@@ -77,11 +78,9 @@ module.exports = {
     writeData(krFilePath, krData);
 
     if (amount > 0) {
-      await sendReply(`🎉 ¡Has ganado ${amount} monedas! 🎉`);
+      await sendReply(`🎉 ¡Has ganado ${amount} monedas! 🎉\n💰 Tu saldo actual es ${userKr.kr} 𝙺𝚛`);
     } else {
-      await sendReply(`😢 ¡Has perdido ${Math.abs(amount)} monedas! 😢`);
+      await sendReply(`😢 ¡Has perdido ${Math.abs(amount)} monedas! 😢\n💰 Tu saldo actual es ${userKr.kr} 𝙺𝚛`);
     }
-
-    await sendReply(`💰 Tu saldo actual es ${userKr.kr} 𝙺𝚛`);
   },
 };
