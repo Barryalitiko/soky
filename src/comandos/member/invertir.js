@@ -5,11 +5,26 @@ const { PREFIX } = require("../../krampus");
 const investmentFilePath = path.resolve(process.cwd(), "assets/investment.json");
 
 const empresas = [
-  { nombre: "Peluquería La Mejor", frase: ["¡Te cortamos el cabello y te dejamos con la pela!", "¡Cuidado con el look que esta inversión es peligrosa!"] },
-  { nombre: "Muebles Los Reyes", frase: ["¡Venta de muebles que te hacen rey, pero ojo, no todo brilla!", "Si te caen las ganancias, no digas que no te avisé."] },
-  { nombre: "Supermercado El Chevere", frase: ["¡Compra tu inversión aquí, las frutas te salen caras pero ricas!", "¿Te vas a arriesgar con las gallinas o buscas algo más sólido?"] },
-  { nombre: "Electrodomésticos SuperFast", frase: ["Tu inversión puede explotar como una olla de presión, o puede salir bien. ¡Eso solo lo sabremos con el tiempo!", "¿Qué vas a comprar? ¿Lavadora o un electrodoméstico de lujo?"] },
-  { nombre: "Tienda La Bonita", frase: ["Te venden de todo, pero la ganancia es incierta, el mercado está impredecible.", "¿Vas a comprar un celular o un televisor? Cualquier cosa puede salir mal."] },
+  {
+    nombre: "Peluquería La Mejor",
+    frase: ["¡Te cortamos el cabello y te dejamos con la pela!", "¡Cuidado con el look que esta inversión es peligrosa!"]
+  },
+  {
+    nombre: "Muebles Los Reyes",
+    frase: ["¡Venta de muebles que te hacen rey, pero ojo, no todo brilla!", "Si te caen las ganancias, no digas que no te avisé."]
+  },
+  {
+    nombre: "Supermercado El Chevere",
+    frase: ["¡Compra tu inversión aquí, las frutas te salen caras pero ricas!", "¿Te vas a arriesgar con las gallinas o buscas algo más sólido?"]
+  },
+  {
+    nombre: "Electrodomésticos SuperFast",
+    frase: ["Tu inversión puede explotar como una olla de presión, o puede salir bien. ¡Eso solo lo sabremos con el tiempo!", "¿Qué vas a comprar? ¿Lavadora o un electrodoméstico de lujo?"]
+  },
+  {
+    nombre: "Tienda La Bonita",
+    frase: ["Te venden de todo, pero la ganancia es incierta, el mercado está impredecible.", "¿Vas a comprar un celular o un televisor? Cualquier cosa puede salir mal."]
+  },
 ];
 
 const readData = (filePath) => {
@@ -33,12 +48,12 @@ module.exports = {
   description: "Invierte en una empresa aleatoria.",
   commands: ["invertir"],
   usage: `${PREFIX}invertir`,
-  handle: async ({ socket, userJid }) => {
+  handle: async ({ socket, userJid, sendReply }) => {
     const investmentStatus = readData(investmentFilePath);
     const userInvestment = investmentStatus[userJid] || null;
 
     if (userInvestment) {
-      return socket.sendMessage(userJid, "❌ ¡Parece que ya estás invertido, hermano! Si quieres retirarte, usa el comando `#retirar`.");
+      return sendReply("❌ ¡Parece que ya estás invertido, hermano! Si quieres retirarte, usa el comando `#retirar`.");
     }
 
     const empresaElegida = empresas[Math.floor(Math.random() * empresas.length)];
@@ -48,28 +63,26 @@ module.exports = {
       empresa: empresaElegida.nombre,
       frase: empresaElegida.frase,
       porcentaje: porcentaje,
-      saldoInvertido: 25, // Suponiendo que la inversión será del 25% del saldo del usuario.
+      saldoInvertido: 25,
       tiempoInicio: Date.now(),
     };
 
     writeData(investmentFilePath, investmentStatus);
 
-    await socket.sendMessage(userJid, `💼 ¡Te has invertido con *${empresaElegida.nombre}*! Aquí vamos con una ganancia/pérdida de ${porcentaje}%.\n\n*${empresaElegida.frase[0]}*\n\n¡Que comience la aventura!`);
+    await sendReply(`💼 ¡Te has invertido con *${empresaElegida.nombre}*! Aquí vamos con una ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
 
     const intervalo = setInterval(async () => {
       const tiempoTranscurrido = Math.floor((Date.now() - investmentStatus[userJid].tiempoInicio) / 60000);
       const gananciaOpcion = (investmentStatus[userJid].saldoInvertido * investmentStatus[userJid].porcentaje) / 100;
       const saldoFinal = investmentStatus[userJid].saldoInvertido + gananciaOpcion;
-
       const estadoInversion = gananciaOpcion >= 0 ? `¡Has ganado ${gananciaOpcion} monedas!` : `¡Has perdido ${Math.abs(gananciaOpcion)} monedas!`;
 
       if (tiempoTranscurrido >= 5) {
         clearInterval(intervalo);
         await socket.sendMessage(userJid, `⏳ @${userJid} Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${saldoFinal} monedas.`);
-        // Aquí puedes agregar la lógica para actualizar el saldo final del usuario y eliminar la inversión
       } else {
         await socket.sendMessage(userJid, `⏳ @${userJid} Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`);
       }
-    }, 60000);  // Cada minuto se envía una actualización
-  }
+    }, 60000);
+  },
 };
