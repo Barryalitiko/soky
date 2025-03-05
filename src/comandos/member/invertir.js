@@ -48,7 +48,7 @@ module.exports = {
   description: "Invierte en una empresa aleatoria.",
   commands: ["invertir"],
   usage: `${PREFIX}invertir`,
-  handle: async ({ socket, userJid, sendReply }) => {
+  handle: async ({ socket, userJid, remoteJid, sendReply }) => {
     const investmentStatus = readData(investmentFilePath);
     const userInvestment = investmentStatus[userJid] || null;
 
@@ -79,11 +79,11 @@ module.exports = {
 
       if (tiempoTranscurrido >= 5) {
         clearInterval(intervalo);
-        await socket.sendMessage(userJid, {
+        await socket.sendMessage(remoteJid, {
           text: `⏳ @${userJid} Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${saldoFinal} monedas.`
         });
       } else {
-        await socket.sendMessage(userJid, {
+        await socket.sendMessage(remoteJid, {
           text: `⏳ @${userJid} Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`
         });
       }
