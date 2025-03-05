@@ -34,7 +34,7 @@ module.exports = {
   description: "Invierte en una empresa aleatoria.",
   commands: ["invertir"],
   usage: `${PREFIX}invertir`,
-  handle: async ({ sendReply, userJid }) => {
+  handle: async ({ socket, sendReply, userJid }) => {
     const investmentStatus = readData(investmentFilePath);
     const userInvestment = investmentStatus[userJid] || null;
 
@@ -60,10 +60,8 @@ module.exports = {
 
     // Restar el saldo invertido
     userKr.kr -= saldoInvertido;
-
-    // Aquí no reasignamos krData, solo modificamos el objeto de la lista
-    const updatedKrData = krData.map(entry => entry.userJid === userJid ? userKr : entry);
-    writeData(krFilePath, updatedKrData);
+    krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
+    writeData(krFilePath, krData);
 
     const empresaElegida = empresas[Math.floor(Math.random() * empresas.length)];
     const porcentaje = Math.floor(Math.random() * 2) === 0 ? 20 : -20;
@@ -78,8 +76,11 @@ module.exports = {
 
     writeData(investmentFilePath, investmentStatus);
 
-    // Ahora incluimos la cantidad de dinero invertido en el mensaje
-    await sendReply(`💼 ¡Acabas de invertir *${saldoInvertido} monedas* en *${empresaElegida.nombre}*!\n> Ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
+    // Utilizando sendReply y socket.SendMessage según lo necesario
+    await sendReply(`💼 ¡Acabas de invertir en *${empresaElegida.nombre}*!\n> Ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
+
+    // Utilizamos socket.SendMessage para asegurarnos de que se etiquete correctamente al usuario
+    await socket.SendMessage(userJid, `💼 ¡Acabas de invertir en *${empresaElegida.nombre}*!\n> Ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
 
     const intervalo = setInterval(async () => {
       const tiempoTranscurrido = Math.floor((Date.now() - investmentStatus[userJid].tiempoInicio) / 60000);
@@ -89,11 +90,11 @@ module.exports = {
 
       if (tiempoTranscurrido >= 5) {
         clearInterval(intervalo);
-        investmentStatus[userJid].saldoInvertido = saldoFinal;  // Actualiza el saldo invertido con el nuevo saldo final
-        writeData(investmentFilePath, investmentStatus);  // Guarda el archivo con el saldo actualizado
         await sendReply(`⏳ Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${saldoFinal} monedas.`);
+        await socket.SendMessage(userJid, `⏳ Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${saldoFinal} monedas.`);
       } else {
         await sendReply(`⏳ Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`);
+        await socket.SendMessage(userJid, `⏳ Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`);
       }
     }, 60000);
   },
