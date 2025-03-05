@@ -5,11 +5,11 @@ const { PREFIX } = require("../../krampus");
 const investmentFilePath = path.resolve(process.cwd(), "assets/investment.json");
 
 const empresas = [
-  { nombre: "Peluquería La Mejor", frase: ["¡Te cortamos el cabello y te dejamos con la pela!" , "¡Cuidado con el look que esta inversión es peligrosa!"] },
-  { nombre: "Muebles Los Reyes", frase: ["¡Venta de muebles que te hacen rey, pero ojo, no todo brilla!" , "Si te caen las ganancias, no digas que no te avisé."] },
-  { nombre: "Supermercado El Chevere", frase: ["¡Compra tu inversión aquí, las frutas te salen caras pero ricas!" , "¿Te vas a arriesgar con las gallinas o buscas algo más sólido?"] },
-  { nombre: "Electrodomésticos SuperFast", frase: ["Tu inversión puede explotar como una olla de presión, o puede salir bien. ¡Eso solo lo sabremos con el tiempo!" , "¿Qué vas a comprar? ¿Lavadora o un electrodoméstico de lujo?"] },
-  { nombre: "Tienda La Bonita", frase: ["Te venden de todo, pero la ganancia es incierta, el mercado está impredecible." , "¿Vas a comprar un celular o un televisor? Cualquier cosa puede salir mal."] },
+  { nombre: "Peluquería La Mejor", frase: ["¡Te cortamos el cabello y te dejamos con la pela!", "¡Cuidado con el look que esta inversión es peligrosa!"] },
+  { nombre: "Muebles Los Reyes", frase: ["¡Venta de muebles que te hacen rey, pero ojo, no todo brilla!", "Si te caen las ganancias, no digas que no te avisé."] },
+  { nombre: "Supermercado El Chevere", frase: ["¡Compra tu inversión aquí, las frutas te salen caras pero ricas!", "¿Te vas a arriesgar con las gallinas o buscas algo más sólido?"] },
+  { nombre: "Electrodomésticos SuperFast", frase: ["Tu inversión puede explotar como una olla de presión, o puede salir bien. ¡Eso solo lo sabremos con el tiempo!", "¿Qué vas a comprar? ¿Lavadora o un electrodoméstico de lujo?"] },
+  { nombre: "Tienda La Bonita", frase: ["Te venden de todo, pero la ganancia es incierta, el mercado está impredecible.", "¿Vas a comprar un celular o un televisor? Cualquier cosa puede salir mal."] },
 ];
 
 const readData = (filePath) => {
@@ -54,7 +54,7 @@ module.exports = {
 
     writeData(investmentFilePath, investmentStatus);
 
-    await socket.sendMessage(userJid, `💼 ¡Te has invertido con *${empresaElegida.nombre}*! Aquí vamos con una ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
+    await socket.sendMessage(userJid, `💼 ¡Te has invertido con *${empresaElegida.nombre}*! Aquí vamos con una ganancia/pérdida de ${porcentaje}%.\n\n*${empresaElegida.frase[0]}*\n\n¡Que comience la aventura!`);
 
     const intervalo = setInterval(async () => {
       const tiempoTranscurrido = Math.floor((Date.now() - investmentStatus[userJid].tiempoInicio) / 60000);
