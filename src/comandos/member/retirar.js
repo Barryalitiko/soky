@@ -41,6 +41,6 @@ module.exports = {
 
     const estadoInversion = gananciaOpcion >= 0 ? `¡Has ganado ${gananciaOpcion} monedas!` : `¡Has perdido ${Math.abs(gananciaOpcion)} monedas!`;
 
-    await sendReply(`💼 ¡Has retirado tu inversión de *${userInvestment.empresa}*!\n\n${estadoInversion}\nSaldo final: ${saldoFinal} monedas.\n\n¡Buena suerte con el siguiente negocio!`);
+    await sendReply(`💼 ¡Has retirado tu inversión de *${userInvestment.empresa}*!\n\n${estadoInversion}\n> Lo generado es: ${saldoFinal} monedas.\n\n¡Buena suerte con el siguiente negocio!\n> Krampus OM bot`);
   },
 };
