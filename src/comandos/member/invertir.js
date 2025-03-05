@@ -33,12 +33,12 @@ module.exports = {
   description: "Invierte en una empresa aleatoria.",
   commands: ["invertir"],
   usage: `${PREFIX}invertir`,
-  handle: async ({ sendReply, userJid }) => {
+  handle: async ({ socket, userJid }) => {
     const investmentStatus = readData(investmentFilePath);
     const userInvestment = investmentStatus[userJid] || null;
 
     if (userInvestment) {
-      return sendReply("❌ ¡Parece que ya estás invertido, hermano! Si quieres retirarte, usa el comando `#retirar`.");
+      return socket.sendMessage(userJid, "❌ ¡Parece que ya estás invertido, hermano! Si quieres retirarte, usa el comando `#retirar`.");
     }
 
     const empresaElegida = empresas[Math.floor(Math.random() * empresas.length)];
@@ -54,7 +54,7 @@ module.exports = {
 
     writeData(investmentFilePath, investmentStatus);
 
-    await sendReply(`💼 ¡Te has invertido con *${empresaElegida.nombre}*! Aquí vamos con una ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
+    await socket.sendMessage(userJid, `💼 ¡Te has invertido con *${empresaElegida.nombre}*! Aquí vamos con una ganancia/pérdida de ${porcentaje}%.\n\n${empresaElegida.frase[0]}\n\n¡Que comience la aventura!`);
 
     const intervalo = setInterval(async () => {
       const tiempoTranscurrido = Math.floor((Date.now() - investmentStatus[userJid].tiempoInicio) / 60000);
@@ -65,10 +65,10 @@ module.exports = {
 
       if (tiempoTranscurrido >= 5) {
         clearInterval(intervalo);
-        await sendReply(`⏳ @${userJid} Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${saldoFinal} monedas.`);
+        await socket.sendMessage(userJid, `⏳ @${userJid} Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${saldoFinal} monedas.`);
         // Aquí puedes agregar la lógica para actualizar el saldo final del usuario y eliminar la inversión
       } else {
-        await sendReply(`⏳ @${userJid} Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`);
+        await socket.sendMessage(userJid, `⏳ @${userJid} Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`);
       }
     }, 60000);  // Cada minuto se envía una actualización
   }
