@@ -3,7 +3,6 @@ const path = require("path");
 const { PREFIX } = require("../../krampus");
 
 const krFilePath = path.resolve(process.cwd(), "assets/kr.json");
-const cooldownFilePath = path.resolve(process.cwd(), "assets/cooldown.json");
 
 const readData = (filePath) => {
   try {
@@ -27,15 +26,6 @@ module.exports = {
   commands: ["vuelta"],
   usage: `${PREFIX}vuelta`,
   handle: async ({ sendReply, userJid }) => {
-    let cooldowns = readData(cooldownFilePath);
-    let lastUsage = cooldowns[userJid] || 0;
-    let now = Date.now();
-
-    if (now - lastUsage < 1 * 60 * 1000) {
-      await sendReply("❌ Ya estás en una vuelta, espera.");
-      return;
-    }
-
     let krData = readData(krFilePath);
     let userKr = krData.find(entry => entry.userJid === userJid);
 
@@ -92,9 +82,6 @@ module.exports = {
 
     krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
     writeData(krFilePath, krData);
-
-    cooldowns[userJid] = now;
-    writeData(cooldownFilePath, cooldowns);
 
     await sendReply(`🔄 ${vuelta.msg}\n\n> 💰 Tu saldo actual es: ${userKr.kr} 𝙺𝚛`);
   },
