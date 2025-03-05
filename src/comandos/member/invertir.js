@@ -23,7 +23,7 @@ const writeData = (filePath, data) => {
 
 const empresas = [
   { nombre: "Colmado Lewito 🍺", frase: ["*No ai seivicio a dosmicilio er delivery anda endrogao*"] },
-  { nombre: "Alofoke Media Group 🔴", frase: ["*Viene nuevo contenido para el canal"] },
+  { nombre: "Alofoke Media Group 🔴", frase: ["*Viene nuevo contenido para el canal*"] },
   { nombre: "Show de Carlos Durant 🗣️", frase: ["*Por cada inversionista un suscriptor le sobará la 12 a la Piry*"] },
   { nombre: "PRM 🇩🇴", frase: ["*Necesitamos la inversion para ~robar~ mejorar el pais*"] },
   { nombre: "Mr Black la Fama 💔", frase: ["*Necesito el dinero para mi carrera*"] },
@@ -43,7 +43,7 @@ module.exports = {
     }
 
     const krData = readData(krFilePath);
-    const userKr = krData.find(entry => entry.userJid === userJid);
+    let userKr = krData.find(entry => entry.userJid === userJid);
 
     if (!userKr) {
       userKr = { userJid, kr: 0 };
@@ -86,6 +86,8 @@ module.exports = {
 
       if (tiempoTranscurrido >= 5) {
         clearInterval(intervalo);
+        investmentStatus[userJid].saldoInvertido = saldoFinal;  // Actualiza el saldo invertido con el nuevo saldo final
+        writeData(investmentFilePath, investmentStatus);  // Guarda el archivo con el saldo actualizado
         await sendReply(`⏳ Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${saldoFinal} monedas.`);
       } else {
         await sendReply(`⏳ Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`);
