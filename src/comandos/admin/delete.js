@@ -4,32 +4,36 @@ module.exports = {
   name: "eliminar",
   description: "Elimina un mensaje para todos en el grupo.",
   commands: ["eliminar"],
-  usage: `${PREFIX}eliminar @usuario o responde a un mensaje`,
-  handle: async ({ socket, remoteJid, sendReply, isReply, replyJid, userJid, args }) => {
+  usage: `${PREFIX}eliminar [ID del mensaje]`,
+  handle: async ({ socket, remoteJid, sendReply, args }) => {
     try {
-      // Verificar si el comando es una respuesta a un mensaje
-      if (isReply) {
-        // Si es una respuesta, obtenemos el mensaje a eliminar
-        const messageToDelete = replyJid;
-
-        // Eliminar el mensaje para todos
-        await socket.sendMessage(remoteJid, {
-          delete: messageToDelete
-        });
-
-        await sendReply("✅ El mensaje ha sido eliminado para todos.");
-      } else if (args && args.length > 0) {
-        // Si el comando incluye una etiqueta, buscamos el mensaje del usuario
-        const targetJid = args[0].replace("@", "") + "@s.whatsapp.net";
-        
-        // Aquí podrías agregar lógica para buscar el mensaje del usuario específico si lo deseas.
-        await sendReply("❌ El comando de eliminación por usuario no está implementado.");
-      } else {
-        await sendReply("❌ Debes responder a un mensaje para eliminarlo.");
+      if (!args[0]) {
+        await sendReply("❌ Debes proporcionar el ID del mensaje que deseas eliminar.");
+        return;
       }
+
+      const messageId = args[0]; // El ID del mensaje que deseas eliminar
+
+      // Verificar si el mensaje existe
+      const message = await socket.loadMessage(remoteJid, messageId);
+      if (!message) {
+        await sendReply("❌ No se encontró el mensaje con ese ID.");
+        return;
+      }
+
+      // Eliminar el mensaje para todos
+      await socket.sendMessage(remoteJid, {
+        delete: {
+          remoteJid: remoteJid, // JID del grupo
+          id: messageId, // ID del mensaje
+          participant: message.key.participant // JID del participante (opcional, en caso de ser un grupo)
+        }
+      });
+
+      await sendReply("✅ El mensaje ha sido eliminado para todos.");
     } catch (error) {
       console.error("Error al intentar eliminar el mensaje:", error);
-      await sendReply("❌ No se pudo eliminar el mensaje.");
+      await sendReply("❌ Ocurrió un error al intentar eliminar el mensaje.");
     }
   }
 };
