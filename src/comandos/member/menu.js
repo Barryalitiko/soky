@@ -73,7 +73,6 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}tolentino
 ⌠⅏⌡➟ ${PREFIX}negocio
 ⌠⅏⌡➟ ${PREFIX}invertir
-⌠⅏⌡➟ ${PREFIX}inversion
 ⌠⅏⌡➟ ${PREFIX}retirar
 
 ══════════.K.═
