@@ -94,14 +94,37 @@ module.exports = {
         krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
         writeData(krFilePath, krData);
 
+        // Enviar el mensaje de inversión con el estilo reenviado
         await socket.sendMessage(remoteJid, {
           text: `⏳ @${userJid.split("@")[0]} Tu inversión ha terminado en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTu saldo final es de ${userKr.kr} monedas.`,
           mentions: [userJid],
+          contextInfo: {
+            isForwarded: true, // Marca como mensaje reenviado
+            forwardingScore: 2, // Hace que parezca más reenviado
+            participant: "1203630250000000@c.us", // Reemplaza con el JID del canal o grupo
+            externalAdReply: {
+              title: "Krampus OM bot",
+              body: "Operación Marshall",
+              thumbnailUrl: `file://${path.resolve(__dirname, "../../../assets/images/celda2.png")}`, // Cambia la ruta de la imagen si es necesario
+              sourceUrl: "https://www.instagram.com/KrampusOM/", // URL de origen
+            },
+          },
         });
       } else {
         await socket.sendMessage(remoteJid, {
           text: `⏳ @${userJid.split("@")[0]} Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\n\n${estadoInversion}\n\nTe quedan ${5 - tiempoTranscurrido} minutos. Si deseas retirarte antes, usa el comando \`#retirar\`.`,
           mentions: [userJid],
+          contextInfo: {
+            isForwarded: true, // Marca como mensaje reenviado
+            forwardingScore: 2, // Hace que parezca más reenviado
+            participant: "1203630250000000@c.us", // Reemplaza con el JID del canal o grupo
+            externalAdReply: {
+              title: "Krampus OM bot",
+              body: "Operación Marshall",
+              thumbnailUrl: `file://${path.resolve(__dirname, "../../../assets/images/celda2.png")}`, // Cambia la ruta de la imagen si es necesario
+              sourceUrl: "https://www.instagram.com/KrampusOM/", // URL de origen
+            },
+          },
         });
       }
     }, 60000);
