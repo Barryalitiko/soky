@@ -1,32 +1,34 @@
-const { PREFIX } = require("../../krampus");
+const { PREFIX } = require("../../krampus"); // Asegúrate de tener la constante PREFIX
+const fs = require("fs");
+const path = require("path");
 
 module.exports = {
   name: "eliminar",
-  description: "Elimina un mensaje para todos en el grupo.",
+  description: "Elimina un mensaje para todos en un grupo.",
   commands: ["eliminar"],
-  usage: `${PREFIX}eliminar [ID del mensaje]`,
-  handle: async ({ socket, remoteJid, sendReply, args }) => {
+  usage: `${PREFIX}eliminar [ID del mensaje] o responde a un mensaje`,
+  handle: async ({ socket, remoteJid, sendReply, isReply, message, replyJid }) => {
     try {
-      if (!args[0]) {
-        await sendReply("❌ Debes proporcionar el ID del mensaje que deseas eliminar.");
-        return;
+      let messageIdToDelete;
+
+      // Si es una respuesta a un mensaje, obtener el ID del mensaje respondido
+      if (isReply) {
+        messageIdToDelete = message.message.extendedTextMessage.contextInfo.stanzaId;
+      } else {
+        // Si no se proporciona un ID, enviar un mensaje de error
+        return sendReply("❌ Debes proporcionar el ID del mensaje que deseas eliminar o responder a un mensaje.");
       }
 
-      const messageId = args[0]; // El ID del mensaje que deseas eliminar
-
-      // Verificar si el mensaje existe
-      const message = await socket.loadMessage(remoteJid, messageId);
-      if (!message) {
-        await sendReply("❌ No se encontró el mensaje con ese ID.");
-        return;
+      if (!messageIdToDelete) {
+        return sendReply("❌ No se pudo obtener el ID del mensaje para eliminar.");
       }
 
       // Eliminar el mensaje para todos
       await socket.sendMessage(remoteJid, {
-        delete: {
-          remoteJid: remoteJid, // JID del grupo
-          id: messageId, // ID del mensaje
-          participant: message.key.participant // JID del participante (opcional, en caso de ser un grupo)
+        delete: { 
+          remoteJid, 
+          id: messageIdToDelete, 
+          participant: replyJid
         }
       });
 
@@ -35,5 +37,5 @@ module.exports = {
       console.error("Error al intentar eliminar el mensaje:", error);
       await sendReply("❌ Ocurrió un error al intentar eliminar el mensaje.");
     }
-  }
+  },
 };
