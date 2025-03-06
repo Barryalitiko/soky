@@ -23,7 +23,7 @@ module.exports = {
         participant: "1203630250000000@c.us", // Reemplaza con el JID del canal
         externalAdReply: {
           title: "Krampus OM bot",
-          body: "Mensaje reenviado desde el canal oficial",
+          body: "Operacion Marshall",
           thumbnailUrl: "https://example.com/imagen.jpg", // Imagen opcional
           sourceUrl: link, // Puedes enlazarlo a la invitación o a otro sitio
         },
