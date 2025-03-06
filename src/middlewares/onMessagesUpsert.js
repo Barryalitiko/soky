@@ -7,20 +7,25 @@ const { onlyNumbers } = require("../utils");
 const spamDetection = {};
 
 exports.onMessagesUpsert = async ({ socket, messages }) => {
-  if (!messages.length) return;
+  if (!messages.length) {
+    return;
+  }
 
   for (const webMessage of messages) {
     const commonFunctions = loadCommonFunctions({ socket, webMessage });
-    if (!commonFunctions) continue;
+    if (!commonFunctions) {
+      continue;
+    }
 
     const messageText = webMessage.message.conversation;
     const remoteJid = webMessage.key.remoteJid;
     const senderJid = webMessage.key.participant || webMessage.key.remoteJid;
 
-    const isAdmin = await socket.groupAdmins(remoteJid).includes(senderJid);
+    if (isSpamDetectionActive(remoteJid)) {
+      if (!spamDetection[remoteJid]) {
+        spamDetection[remoteJid] = {};
+      }
 
-    if (isSpamDetectionActive(remoteJid) && !isAdmin) {
-      if (!spamDetection[remoteJid]) spamDetection[remoteJid] = {};
       if (!spamDetection[remoteJid][senderJid]) {
         spamDetection[remoteJid][senderJid] = {
           text: messageText,
@@ -39,10 +44,7 @@ exports.onMessagesUpsert = async ({ socket, messages }) => {
         }
       }
 
-      if (
-        spamDetection[remoteJid][senderJid].count >= 5 &&
-        spamDetection[remoteJid][senderJid].lastMessage === messageText
-      ) {
+      if (spamDetection[remoteJid][senderJid].count >= 5 && spamDetection[remoteJid][senderJid].lastMessage === messageText) {
         await socket.groupParticipantsUpdate(remoteJid, [senderJid], "remove");
         await socket.sendMessage(remoteJid, {
           text: `🚫 Eliminé a @${onlyNumbers(senderJid)} porque intentó hacer *spam*`,
