@@ -17,15 +17,23 @@ module.exports = {
     await sendWaitReact();
 
     try {
-      // Buscar imágenes en Pinterest usando la API de DuckDuckGo
-      const response = await axios.get(`https://duckduckgo.com/i.js?q=${encodeURIComponent(fullArgs)}`);
-      
-      if (!response.data || !response.data.results || response.data.results.length === 0) {
+      // Usamos una API pública de imágenes de Pinterest
+      const response = await axios.get(`https://scraping.pics/api/v1/pinterest`, {
+        params: {
+          query: fullArgs,
+          limit: 10, // Número de imágenes a obtener
+        },
+        headers: {
+          "User-Agent": "Mozilla/5.0", // Evita bloqueos
+        },
+      });
+
+      if (!response.data || response.data.length === 0) {
         throw new WarningError("No encontré imágenes en Pinterest con esa descripción.");
       }
 
       // Seleccionar una imagen al azar de los resultados
-      const images = response.data.results.map(img => img.image);
+      const images = response.data.map(img => img.image);
       const imageUrl = images[Math.floor(Math.random() * images.length)];
 
       await sendSuccessReact();
