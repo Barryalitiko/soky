@@ -18,7 +18,7 @@ module.exports = {
       await socket.groupSettingUpdate(remoteJid, "not_announcement");
 
       const mensaje = "Grupo abierto, todos los miembros pueden enviar mensajes.";
-      const link = "https://www.instagram.com/krampusom?igsh=aXJ5OWViMzYweHAw&utm_source=qr";
+      const link = "https://www.instagram.com/KrampusOM/";
 
       await socket.sendMessage(remoteJid, {
         text: mensaje,
