@@ -51,7 +51,7 @@ module.exports = {
       writeData(krFilePath, krData);
     }
 
-    const saldoInvertido = Math.floor(userKr.kr * 0.25);
+    const saldoInvertido = Math.floor(userKr.kr * 0.25);  // Redondeamos el saldo invertido
 
     if (userKr.kr < saldoInvertido) {
       await sendReply(" No tienes suficientes monedas para invertir.");
@@ -80,15 +80,15 @@ module.exports = {
 
     const intervalo = setInterval(async () => {
       const tiempoTranscurrido = Math.floor((Date.now() - investmentStatus[userJid].tiempoInicio) / 60000);
-      const gananciaOpcion = (investmentStatus[userJid].saldoInvertido * investmentStatus[userJid].porcentaje) / 100;
-      const saldoFinal = investmentStatus[userJid].saldoInvertido + gananciaOpcion;
+      const gananciaOpcion = Math.floor((investmentStatus[userJid].saldoInvertido * investmentStatus[userJid].porcentaje) / 100);  // Redondeamos la ganancia
+      const saldoFinal = Math.floor(investmentStatus[userJid].saldoInvertido + gananciaOpcion);  // Redondeamos el saldo final
       const estadoInversion = gananciaOpcion >= 0 ? `¡Has ganado ${gananciaOpcion} monedas!` : `¡Has perdido ${Math.abs(gananciaOpcion)} monedas!`;
 
       if (tiempoTranscurrido >= 5) {
         clearInterval(intervalo);
         krData = readData(krFilePath);
         userKr = krData.find(entry => entry.userJid === userJid);
-        userKr.kr += saldoInvertido + gananciaOpcion; // Actualizamos el saldo final
+        userKr.kr += saldoFinal;  // Actualizamos el saldo final con el valor redondeado
 
         // Reasignando el objeto modificado
         krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
