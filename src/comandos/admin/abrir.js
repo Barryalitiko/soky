@@ -20,7 +20,8 @@ module.exports = {
       const mensaje = "Grupo abierto, todos los miembros pueden enviar mensajes.";
       const link = "https://www.instagram.com/krampusom?igsh=aXJ5OWViMzYweHAw&utm_source=qr";
 
-      await socket.sendMessage(remoteJid, {
+      // Enviar el mensaje con los botones y el formato de contexto utilizando sendReply
+      await sendReply({
         text: mensaje,
         buttons: [
           {
