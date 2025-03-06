@@ -7,7 +7,7 @@ module.exports = {
   usage: `${PREFIX}invitar`,
   handle: async ({ socket, remoteJid }) => {
     const mensaje = "Hola, únete a nuestro grupo de WhatsApp.";
-    const link = "https://chat.whatsapp.com/...";
+    const link = "https://www.instagram.com/krampusom?igsh=aXJ5OWViMzYweHAw&utm_source=qr";
 
     await socket.sendMessage(remoteJid, {
       text: mensaje,
