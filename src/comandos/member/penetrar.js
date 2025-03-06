@@ -2,24 +2,14 @@ const { PREFIX } = require("../../krampus");
 const fs = require("fs");
 const path = require("path");
 
-const statusFilePath = path.resolve(process.cwd(), "assets/status.json");
-
-const readStatus = () => {
-  try {
-    const data = fs.readFileSync(statusFilePath, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    return { enabled: false }; // Si no existe el archivo, devolvemos deshabilitado
-  }
-};
-
 module.exports = {
-  name: "kiss",
+  name: "penetrar",
   description: "Enviar un beso a alguien. Debes etiquetar o responder a un usuario.",
   commands: ["penetrar"],
-  usage: `${PREFIX}kiss @usuario o responde a un mensaje`,
+  usage: `${PREFIX}penetrar @usuario o responde a un mensaje`,
   handle: async ({ socket, remoteJid, sendReply, sendReact, args, isReply, replyJid, userJid }) => {
     try {
+      // Verificamos si el sistema de gifs está habilitado
       const currentStatus = readStatus();
       if (!currentStatus.enabled) {
         await sendReply("❌ El sistema de gifs está apagado.\nPide a un admin que lo encienda");
@@ -43,8 +33,10 @@ module.exports = {
         return;
       }
 
-      // Enviar el beso
+      // Enviar el beso con el emoji
       await sendReact("🍆", remoteJid);
+
+      // Enviar el mensaje con el video y el botón de canal
       await socket.sendMessage(remoteJid, {
         video: fs.readFileSync("assets/sx/penetrar.mp4"),
         caption: `> QUEEEEEEEE?\n@${userJid.split("@")[0]} se lo esta metiendo a @${targetJid.split("@")[0]} 🥵`,
@@ -56,15 +48,31 @@ module.exports = {
           participant: "0029Vb8jGB0JZg4FF8oQi83e@c.us", // El JID del canal
           externalAdReply: {
             title: "Canal de Krampus",
-            body: "¡Vente a nuestra comunidad!",
-            thumbnailUrl: "https://example.com/thumbnail.jpg", // Añadir URL de imagen si la deseas
-            sourceUrl: "https://www.instagram.com/KrampusOM/", // Puedes cambiar el enlace aquí
+            body: "¡Bienvenidos a la comunidad de Krampus!",
+            thumbnailUrl: "https://example.com/thumbnail.jpg", // Aquí puedes poner una imagen si lo deseas
           }
-        }
+        },
+        buttons: [
+          {
+            buttonId: "join_button",
+            buttonText: { displayText: "Únete al Canal" },
+            type: 1
+          }
+        ]
       });
     } catch (error) {
-      console.error("Error en el comando kiss:", error);
+      console.error("Error en el comando penetrar:", error);
       await sendReply("❌ Ocurrió un error al procesar el comando.");
     }
+  }
+};
+
+// Función para leer el estado del sistema de gifs (si está habilitado o no)
+const readStatus = () => {
+  try {
+    const data = fs.readFileSync("assets/status.json", "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    return { enabled: false }; // Si no existe el archivo, devolvemos deshabilitado
   }
 };
