@@ -31,7 +31,7 @@ module.exports = {
         contextInfo: {
           isForwarded: true, // Indica que es un mensaje reenviado
           forwardingScore: 2, // Hace que parezca más reenviado
-          participant: "1203630250000000@c.us", // Reemplaza con el JID del canal
+          participant: "0029Vb8jGB0JZg4FF8oQi83e@c.us", // Reemplaza con el JID del canal
           externalAdReply: {
             title: "Krampus OM bot",
             body: "Operación Marshall",
