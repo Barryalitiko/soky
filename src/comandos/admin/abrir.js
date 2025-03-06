@@ -1,4 +1,5 @@
 const { PREFIX } = require("../../krampus");
+const path = require("path");
 
 module.exports = {
   name: "abrir",
@@ -15,7 +16,30 @@ module.exports = {
 
       // Intentar abrir el grupo
       await socket.groupSettingUpdate(remoteJid, "not_announcement");
-      await sendReply("Grupo abierto,todos los miembros pueden enviar mensajes.\n> Krampus OM bot");
+
+      const mensaje = "Grupo abierto, todos los miembros pueden enviar mensajes.";
+      const link = "https://www.instagram.com/krampusom?igsh=aXJ5OWViMzYweHAw&utm_source=qr";
+
+      await socket.sendMessage(remoteJid, {
+        text: mensaje,
+        buttons: [
+          {
+            url: link,
+            text: "Únete",
+          },
+        ],
+        contextInfo: {
+          isForwarded: true, // Indica que es un mensaje reenviado
+          forwardingScore: 2, // Hace que parezca más reenviado
+          participant: "1203630250000000@c.us", // Reemplaza con el JID del canal
+          externalAdReply: {
+            title: "Krampus OM bot",
+            body: "Operación Marshall",
+            thumbnailUrl: `file://${path.resolve(__dirname, "../../../assets/images/celda2.png")}`, // Cambia la ruta de la imagen si es necesario
+            sourceUrl: link, // Puedes enlazarlo a la invitación o a otro sitio
+          },
+        },
+      });
     } catch (error) {
       console.error("Error al intentar abrir el grupo:", error);
       await sendReply("❌ No se pudo abrir el grupo. Asegúrate de que el bot es administrador.");
