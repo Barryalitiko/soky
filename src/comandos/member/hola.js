@@ -1,4 +1,5 @@
 const { PREFIX } = require("../../krampus");
+const path = require("path");
 
 module.exports = {
   name: "invitar",
@@ -18,14 +19,14 @@ module.exports = {
         },
       ],
       contextInfo: {
-        isForwarded: true, // Indica que es un mensaje reenviado
-        forwardingScore: 2, // Hace que parezca más reenviado
-        participant: "1203630250000000@c.us", // Reemplaza con el JID del canal
+        isForwarded: true,
+        forwardingScore: 2,
+        participant: "1203630250000000@c.us",
         externalAdReply: {
           title: "Krampus OM bot",
           body: "Operacion Marshall",
-          thumbnailUrl: "https://example.com/imagen.jpg", // Imagen opcional
-          sourceUrl: link, // Puedes enlazarlo a la invitación o a otro sitio
+          thumbnailUrl: `file://${path.resolve(__dirname, "../../../assets/images/celda2.png")}`,
+          sourceUrl: link,
         },
       },
     });
