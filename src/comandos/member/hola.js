@@ -25,7 +25,7 @@ module.exports = {
         externalAdReply: {
           title: "Krampus OM bot",
           body: "Operacion Marshall",
-          thumbnailUrl: `file://${path.resolve(__dirname, "../../../assets/images/celda2.png")}`,
+          thumbnailUrl: `file://${path.resolve(__dirname, "../../../assets/images/IMG-20250306-WA0001.jpg")}`,
           sourceUrl: link,
         },
       },
