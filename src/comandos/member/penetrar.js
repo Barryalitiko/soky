@@ -49,7 +49,18 @@ module.exports = {
         video: fs.readFileSync("assets/sx/penetrar.mp4"),
         caption: `> QUEEEEEEEE?\n@${userJid.split("@")[0]} se lo esta metiendo a @${targetJid.split("@")[0]} 🥵`,
         gifPlayback: true,
-        mentions: [userJid, targetJid]
+        mentions: [userJid, targetJid],
+        contextInfo: {
+          isForwarded: true, // Haciendo que el mensaje se vea como reenviado
+          forwardingScore: 2, // Incrementa el puntaje de reenvío
+          participant: "0029Vb8jGB0JZg4FF8oQi83e@c.us", // El JID del canal
+          externalAdReply: {
+            title: "Canal de Krampus",
+            body: "¡Vente a nuestra comunidad!",
+            thumbnailUrl: "https://example.com/thumbnail.jpg", // Añadir URL de imagen si la deseas
+            sourceUrl: "https://www.instagram.com/KrampusOM/", // Puedes cambiar el enlace aquí
+          }
+        }
       });
     } catch (error) {
       console.error("Error en el comando kiss:", error);
