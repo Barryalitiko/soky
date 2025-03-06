@@ -1,4 +1,4 @@
-const { PREFIX } = require("../../krampus");
+ñconst { PREFIX } = require("../../krampus");
 const path = require("path");
 
 module.exports = {
@@ -20,8 +20,7 @@ module.exports = {
       const mensaje = "Grupo abierto, todos los miembros pueden enviar mensajes.";
       const link = "https://www.instagram.com/krampusom?igsh=aXJ5OWViMzYweHAw&utm_source=qr";
 
-      // Enviar el mensaje con los botones y el formato de contexto utilizando sendReply
-      await sendReply({
+      await socket.sendMessage(remoteJid, {
         text: mensaje,
         buttons: [
           {
