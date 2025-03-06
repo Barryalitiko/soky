@@ -17,7 +17,7 @@ module.exports = {
       // Intentar cerrar el grupo
       await socket.groupSettingUpdate(remoteJid, "announcement");
 
-      const mensaje = "🔒 El grupo ha sido cerrado. Solo los administradores pueden enviar mensajes.";
+      const mensaje = "Grupo cerrado.\n> Solo los administradores pueden enviar mensajes.";
       const link = "https://www.instagram.com/KrampusOM/";
 
       await socket.sendMessage(remoteJid, {
