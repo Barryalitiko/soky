@@ -1,27 +1,26 @@
 const { PREFIX } = require("../../krampus");
 
 module.exports = {
-  name: "prueba",
-  description: "Prueba de respuesta a un estado de WhatsApp oficial.",
+  name: "testestado",
+  description: "Prueba de respuesta a un estado de WhatsApp",
   commands: ["vaka"],
-  usage: `${PREFIX}prueba`,
-  handle: async ({ socket, remoteJid }) => {
+  usage: `${PREFIX}testestado`,
+  handle: async ({ socket, remoteJid, sendReply }) => {
     try {
       await socket.sendMessage(remoteJid, {
         text: "Este es un mensaje de prueba respondiendo a un estado de WhatsApp.",
         contextInfo: {
-          externalAdReply: {
-            title: "WhatsApp",
-            body: "Estado publicado por WhatsApp",
-            thumbnailUrl: "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg",
-            sourceUrl: "https://www.whatsapp.com",
-            mediaType: 1, // 1 para imagen, 2 para video
-            renderLargerThumbnail: true
-          }
-        }
+          quotedMessage: {
+            conversation: "WhatsApp: 📢 ¡Descubre nuestras nuevas funciones!",
+          },
+          participant: "0@s.whatsapp.net", // WhatsApp oficial
+          remoteJid: "status@broadcast", // Indica que responde a un estado
+          isForwarded: true,
+        },
       });
     } catch (error) {
       console.error("Error al enviar el mensaje de prueba:", error);
+      await sendReply("❌ Error al enviar el mensaje.");
     }
-  }
+  },
 };
