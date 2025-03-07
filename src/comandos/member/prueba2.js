@@ -8,16 +8,15 @@ module.exports = {
   handle: async ({ socket, remoteJid, sendReply }) => {
     try {
       const buttons = [
-        { buttonId: "opcion_1", buttonText: { displayText: "Opción 1" }, type: 1 },
-        { buttonId: "opcion_2", buttonText: { displayText: "Opción 2" }, type: 1 },
-        { buttonId: "opcion_3", buttonText: { displayText: "Opción 3" }, type: 1 },
+        { index: 1, quickReplyButton: { displayText: "Opción 1", id: "opcion_1" } },
+        { index: 2, quickReplyButton: { displayText: "Opción 2", id: "opcion_2" } },
+        { index: 3, quickReplyButton: { displayText: "Opción 3", id: "opcion_3" } },
       ];
 
       const buttonMessage = {
         text: "Elige una opción:",
         footer: "Mensaje de prueba",
-        buttons: buttons,
-        headerType: 1,
+        templateButtons: buttons,
       };
 
       await socket.sendMessage(remoteJid, buttonMessage);
