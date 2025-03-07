@@ -1,8 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 const { PREFIX } = require("../../krampus");
+const { investmentIntervals } = require("./invertir");
 
 const investmentFilePath = path.resolve(process.cwd(), "assets/investment.json");
+const krFilePath = path.resolve(process.cwd(), "assets/kr.json");
 
 const readData = (filePath) => {
   try {
@@ -26,20 +28,35 @@ module.exports = {
   commands: ["retirar"],
   usage: `${PREFIX}retirar`,
   handle: async ({ sendReply, userJid }) => {
-    const investmentStatus = readData(investmentFilePath);
-    const userInvestment = investmentStatus[userJid] || null;
-
-    if (!userInvestment) {
+    let investmentStatus = readData(investmentFilePath);
+    if (!investmentStatus[userJid]) {
       return sendReply("❌ No tienes ninguna inversión activa para retirar.");
     }
 
-    const gananciaOpcion = (userInvestment.saldoInvertido * userInvestment.porcentaje) / 100;
+    if (investmentIntervals[userJid]) {
+      clearInterval(investmentIntervals[userJid]);
+      delete investmentIntervals[userJid];
+    }
+
+    const userInvestment = investmentStatus[userJid];
+    const gananciaOpcion = Math.floor((userInvestment.saldoInvertido * userInvestment.porcentaje) / 100);
     const saldoFinal = userInvestment.saldoInvertido + gananciaOpcion;
 
     delete investmentStatus[userJid];
     writeData(investmentFilePath, investmentStatus);
 
-    const estadoInversion = gananciaOpcion >= 0 ? `¡Has ganado ${gananciaOpcion} monedas!` : `¡Has perdido ${Math.abs(gananciaOpcion)} monedas!`;
+    let krData = readData(krFilePath);
+    let userKr = krData.find(entry => entry.userJid === userJid);
+
+    if (userKr) {
+      userKr.kr += saldoFinal;
+      krData = krData.map(entry => (entry.userJid === userJid ? userKr : entry));
+      writeData(krFilePath, krData);
+    }
+
+    const estadoInversion = gananciaOpcion >= 0
+      ? `¡Has ganado ${gananciaOpcion} monedas!`
+      : `¡Has perdido ${Math.abs(gananciaOpcion)} monedas!`;
 
     await sendReply(`💼 ¡Has retirado tu inversión de *${userInvestment.empresa}*!\n\n${estadoInversion}\n> Lo generado es: ${saldoFinal} monedas.\n\n¡Buena suerte con el siguiente negocio!\n> Krampus OM bot`);
   },
