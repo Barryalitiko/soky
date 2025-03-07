@@ -3,7 +3,7 @@ const { PREFIX } = require("../../krampus");
 module.exports = {
   name: "menu",
   description: "Muestra un menú interactivo",
-  commands: ["menu"],
+  commands: ["vaka"],
   usage: `${PREFIX}menu`,
   handle: async ({ socket, remoteJid }) => {
     try {
