@@ -4,6 +4,16 @@ const path = require("path");
 const fs = require("fs");
 const { exec } = require("child_process");
 
+// Función para ejecutar comandos de forma eficiente
+const execPromise = (command) => {
+  return new Promise((resolve, reject) => {
+    exec(command, (error) => {
+      if (error) return reject(error);
+      resolve();
+    });
+  });
+};
+
 module.exports = {
   name: "sticker",
   description: "Faço figurinhas de imagem/gif/vídeo",
@@ -27,61 +37,51 @@ module.exports = {
 
     const outputPath = path.resolve(TEMP_DIR, "output.webp");
 
-    if (isImage) {
-      const inputPath = await downloadImage(webMessage, "input");
+    try {
+      if (isImage) {
+        const inputPath = await downloadImage(webMessage, "input");
 
-      exec(
-        `ffmpeg -i ${inputPath} -vf "scale=512:512:force_original_aspect_ratio=decrease" ${outputPath}`,
-        async (error) => {
-          if (error) {
-            console.log(error);
-            fs.unlinkSync(inputPath);
-            throw new Error(error);
-          }
+        // Comando optimizado para imágenes
+        const command = `ffmpeg -i ${inputPath} -vf "scale=512:512:force_original_aspect_ratio=decrease" -qscale 100 ${outputPath}`;
+        await execPromise(command);
 
-          await sendSuccessReact();
-          await sendStickerFromFile(outputPath);
+        await sendSuccessReact();
+        await sendStickerFromFile(outputPath);
 
-          fs.unlinkSync(inputPath);
-          fs.unlinkSync(outputPath);
+        // Eliminar archivos después del uso
+        fs.unlink(inputPath, () => {});
+        fs.unlink(outputPath, () => {});
+      } else {
+        const inputPath = await downloadVideo(webMessage, "input");
+
+        const maxDuration = 10; // Tiempo máximo en segundos
+        const videoSeconds =
+          webMessage.message?.videoMessage?.seconds ||
+          webMessage.message?.extendedTextMessage?.contextInfo?.quotedMessage
+            ?.videoMessage?.seconds;
+
+        if (videoSeconds > maxDuration) {
+          fs.unlink(inputPath, () => {});
+          await sendErrorReply(
+            `👻 Krampus 👻 Este video tiene más de ${maxDuration} segundos! Envia un video más corto!`
+          );
+          return;
         }
-      );
-    } else {
-      const inputPath = await downloadVideo(webMessage, "input");
 
-      const sizeInSeconds = 10;
+        // Comando optimizado para videos
+        const command = `ffmpeg -i ${inputPath} -y -vcodec libwebp -preset fast -loop 0 -fs 0.99M -filter_complex "[0:v] scale=512:512:force_original_aspect_ratio=decrease,fps=10,pad=512:512:-1:-1:color=white@0.0,split[a][b];[a]palettegen=reserve_transparent=on:transparency_color=ffffff[p];[b][p]paletteuse" -f webp ${outputPath}`;
+        await execPromise(command);
 
-      const seconds =
-        webMessage.message?.videoMessage?.seconds ||
-        webMessage.message?.extendedTextMessage?.contextInfo?.quotedMessage
-          ?.videoMessage?.seconds;
+        await sendSuccessReact();
+        await sendStickerFromFile(outputPath);
 
-      const haveSecondsRule = seconds <= sizeInSeconds;
-
-      if (!haveSecondsRule) {
-        fs.unlinkSync(inputPath);
-
-        await sendErrorReply(`👻 Krampus 👻Este video tiene más de ${sizeInSeconds} segundos! Envia un video más corto!`);
-
-        return;
+        // Eliminar archivos después del uso
+        fs.unlink(inputPath, () => {});
+        fs.unlink(outputPath, () => {});
       }
-
-      exec(
-        `ffmpeg -i ${inputPath} -y -vcodec libwebp -fs 0.99M -filter_complex "[0:v] scale=512:512:force_original_aspect_ratio=decrease,fps=12,pad=512:512:-1:-1:color=white@0.0,split[a][b];[a]palettegen=reserve_transparent=on:transparency_color=ffffff[p];[b][p]paletteuse" -f webp ${outputPath}`,
-        async (error) => {
-          if (error) {
-            console.log(error);
-            fs.unlinkSync(inputPath);
-            throw new Error(error);
-          }
-
-          await sendSuccessReact();
-          await sendStickerFromFile(outputPath);
-
-          fs.unlinkSync(inputPath);
-          fs.unlinkSync(outputPath);
-        }
-      );
+    } catch (error) {
+      console.error("Error al crear sticker:", error);
+      await sendErrorReply("👻 Krampus 👻 Hubo un error al procesar el sticker.");
     }
   },
 };
