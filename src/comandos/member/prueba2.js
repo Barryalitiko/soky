@@ -1,30 +1,23 @@
 const { PREFIX } = require("../../krampus");
 
 module.exports = {
-  name: "elige",
-  description: "Muestra botones interactivos",
-  commands: ["elige"],
-  usage: `${PREFIX}elige`,
+  name: "link",
+  description: "Envía un botón con un enlace",
+  commands: ["link"],
+  usage: `${PREFIX}link`,
   handle: async ({ socket, remoteJid }) => {
     try {
-      const interactiveMessage = {
-        interactive: {
-          type: "button",
-          body: { text: "Elige una opción:" },
-          footer: { text: "Prueba de botones" },
-          action: {
-            buttons: [
-              { reply: { id: "btn1", title: "Opción 1" } },
-              { reply: { id: "btn2", title: "Opción 2" } },
-              { reply: { id: "btn3", title: "Opción 3" } },
-            ],
-          },
-        },
+      const message = {
+        text: "Haz clic en el botón para visitar nuestra página:",
+        footer: "Botón de enlace",
+        templateButtons: [
+          { index: 1, urlButton: { displayText: "Ir a la página", url: "https://example.com" } },
+        ],
       };
 
-      await socket.sendMessage(remoteJid, interactiveMessage);
+      await socket.sendMessage(remoteJid, message);
     } catch (error) {
-      console.error("Error al enviar el mensaje con botones:", error);
+      console.error("Error al enviar el botón con enlace:", error);
     }
   },
 };
