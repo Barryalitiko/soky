@@ -39,7 +39,13 @@ module.exports = {
     }
 
     const userInvestment = investmentStatus[userJid];
-    const gananciaOpcion = Math.floor((userInvestment.saldoInvertido * userInvestment.porcentaje) / 100);
+    const tiempoTranscurrido = Math.floor((Date.now() - userInvestment.tiempoInicio) / 60000);
+
+    let gananciaOpcion = 0;
+    if (tiempoTranscurrido > 0) {
+      gananciaOpcion = Math.floor((userInvestment.saldoInvertido * userInvestment.porcentaje) / 100);
+    }
+
     const saldoFinal = userInvestment.saldoInvertido + gananciaOpcion;
 
     delete investmentStatus[userJid];
@@ -54,9 +60,11 @@ module.exports = {
       writeData(krFilePath, krData);
     }
 
-    const estadoInversion = gananciaOpcion >= 0
+    const estadoInversion = gananciaOpcion > 0
       ? `¡Has ganado ${gananciaOpcion} monedas!`
-      : `¡Has perdido ${Math.abs(gananciaOpcion)} monedas!`;
+      : gananciaOpcion < 0
+      ? `¡Has perdido ${Math.abs(gananciaOpcion)} monedas!`
+      : `No ha pasado suficiente tiempo, por lo que no has generado ni perdido nada.`;
 
     await sendReply(`💼 ¡Has retirado tu inversión de *${userInvestment.empresa}*!\n\n${estadoInversion}\n> Lo generado es: ${saldoFinal} monedas.\n\n¡Buena suerte con el siguiente negocio!\n> Krampus OM bot`);
   },
