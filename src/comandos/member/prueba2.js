@@ -1,28 +1,34 @@
 const { PREFIX } = require("../../krampus");
 
 module.exports = {
-  name: "botonprueba",
-  description: "Prueba de botones en WhatsApp",
-  commands: ["botonprueba"],
-  usage: `${PREFIX}botonprueba`,
-  handle: async ({ socket, remoteJid, sendReply }) => {
+  name: "menu",
+  description: "Muestra un menú interactivo",
+  commands: ["menu"],
+  usage: `${PREFIX}menu`,
+  handle: async ({ socket, remoteJid }) => {
     try {
-      const buttons = [
-        { index: 1, quickReplyButton: { displayText: "Opción 1", id: "opcion_1" } },
-        { index: 2, quickReplyButton: { displayText: "Opción 2", id: "opcion_2" } },
-        { index: 3, quickReplyButton: { displayText: "Opción 3", id: "opcion_3" } },
+      const sections = [
+        {
+          title: "Opciones disponibles",
+          rows: [
+            { title: "Información", description: "Ver detalles sobre el bot", rowId: "info" },
+            { title: "Comandos", description: "Ver la lista de comandos", rowId: "commands" },
+            { title: "Contacto", description: "Hablar con el soporte", rowId: "contact" },
+          ],
+        },
       ];
 
-      const buttonMessage = {
-        text: "Elige una opción:",
-        footer: "Mensaje de prueba",
-        templateButtons: buttons,
+      const listMessage = {
+        text: "📋 *Menú interactivo*",
+        footer: "Selecciona una opción",
+        title: "Bienvenido al menú",
+        buttonText: "Ver opciones",
+        sections,
       };
 
-      await socket.sendMessage(remoteJid, buttonMessage);
+      await socket.sendMessage(remoteJid, listMessage);
     } catch (error) {
-      console.error("Error al enviar el mensaje con botones:", error);
-      await sendReply("❌ Error al enviar el mensaje con botones.");
+      console.error("Error al enviar el menú interactivo:", error);
     }
   },
 };
