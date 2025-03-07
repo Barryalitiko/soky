@@ -1,29 +1,34 @@
 const { PREFIX } = require("../../krampus");
 
 module.exports = {
-  name: "botonprueba",
-  description: "Prueba de botones en WhatsApp",
-  commands: ["vaka"],
-  usage: `${PREFIX}botonprueba`,
-  handle: async ({ socket, remoteJid, sendReply }) => {
+  name: "modificar",
+  description: "Envía un mensaje que se modifica después de 3 segundos",
+  commands: ["modificar"],
+  usage: `${PREFIX}modificar`,
+  handle: async ({ sendReply, socket, remoteJid }) => {
     try {
-      const buttons = [
-        { buttonId: "opcion_1", buttonText: { displayText: "Opción 1" }, type: 1 },
-        { buttonId: "opcion_2", buttonText: { displayText: "Opción 2" }, type: 1 },
-        { buttonId: "opcion_3", buttonText: { displayText: "Opción 3" }, type: 1 },
-      ];
+      // Enviar el mensaje inicial "Hola"
+      const mensajeOriginal = await socket.sendMessage(remoteJid, {
+        text: "Hola",
+      });
 
-      const buttonMessage = {
-        text: "Elige una opción:",
-        footer: "Mensaje de prueba",
-        buttons: buttons,
-        headerType: 1,
-      };
+      // Obtener el messageId del mensaje original
+      const messageId = mensajeOriginal.key.id;
 
-      await socket.sendMessage(remoteJid, buttonMessage);
+      // Esperar 3 segundos antes de modificar el mensaje
+      setTimeout(async () => {
+        // Modificar el mensaje
+        await socket.sendMessage(remoteJid, {
+          text: "Adiós",
+          quoted: mensajeOriginal, // Modificar el mensaje original
+        });
+
+        // Confirmar que el mensaje fue editado
+        await sendReply("El mensaje ha sido modificado a 'Adiós'.");
+      }, 3000); // 3000 milisegundos (3 segundos)
     } catch (error) {
-      console.error("Error al enviar el mensaje con botones:", error);
-      await sendReply("❌ Error al enviar el mensaje con botones.");
+      console.error("Error en el comando modificar:", error);
+      await sendReply("❌ Ocurrió un error al modificar el mensaje.");
     }
   },
 };
