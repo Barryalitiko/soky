@@ -1,34 +1,30 @@
 const { PREFIX } = require("../../krampus");
 
 module.exports = {
-  name: "menu",
-  description: "Muestra un menú interactivo",
-  commands: ["vaka"],
-  usage: `${PREFIX}menu`,
+  name: "elige",
+  description: "Muestra botones interactivos",
+  commands: ["elige"],
+  usage: `${PREFIX}elige`,
   handle: async ({ socket, remoteJid }) => {
     try {
-      const sections = [
-        {
-          title: "Opciones disponibles",
-          rows: [
-            { title: "Información", description: "Ver detalles sobre el bot", rowId: "info" },
-            { title: "Comandos", description: "Ver la lista de comandos", rowId: "commands" },
-            { title: "Contacto", description: "Hablar con el soporte", rowId: "contact" },
-          ],
+      const interactiveMessage = {
+        interactive: {
+          type: "button",
+          body: { text: "Elige una opción:" },
+          footer: { text: "Prueba de botones" },
+          action: {
+            buttons: [
+              { reply: { id: "btn1", title: "Opción 1" } },
+              { reply: { id: "btn2", title: "Opción 2" } },
+              { reply: { id: "btn3", title: "Opción 3" } },
+            ],
+          },
         },
-      ];
-
-      const listMessage = {
-        text: "📋 *Menú interactivo*",
-        footer: "Selecciona una opción",
-        title: "Bienvenido al menú",
-        buttonText: "Ver opciones",
-        sections,
       };
 
-      await socket.sendMessage(remoteJid, listMessage);
+      await socket.sendMessage(remoteJid, interactiveMessage);
     } catch (error) {
-      console.error("Error al enviar el menú interactivo:", error);
+      console.error("Error al enviar el mensaje con botones:", error);
     }
   },
 };
