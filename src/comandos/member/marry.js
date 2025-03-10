@@ -45,7 +45,7 @@ module.exports = {
       return;
     }
 
-    if (!message.body.includes("💍")) {
+    if (!message.text.includes("💍")) {
       await sendReply(
         "❌ Debes usar el anillo 💍 en tu propuesta de matrimonio.\n\n> Usa #tienda para comprar uno"
       );
