@@ -57,8 +57,13 @@ module.exports = {
       targetJid = replyJid;
     } else if (mentionedJid && mentionedJid.length > 0) {
       targetJid = mentionedJid[0];
-    } else if (args.length > 1) {
-      targetJid = args[1].replace("@", "") + "@s.whatsapp.net";
+    } else {
+      for (let i = 0; i < args.length; i++) {
+        if (args[i].startsWith("@")) {
+          targetJid = args[i].replace("@", "") + "@s.whatsapp.net";
+          break;
+        }
+      }
     }
 
     if (!targetJid) {
