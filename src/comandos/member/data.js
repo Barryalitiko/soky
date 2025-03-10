@@ -77,6 +77,7 @@ module.exports = {
 
     const anillos = userItem.items.anillos || 0;
     const papeles = userItem.items.papeles || 0;
+    const hongos = userItem.items.hongos || 0; 
 
     let message;
     if (!marriage) {
@@ -87,6 +88,7 @@ module.exports = {
 ┃ 🎁 *Objetos:*  
 ┃    💍 Anillos: *${anillos}*  
 ┃    ✏️ Lapices: *${papeles}*  
+┃    🍄 Hongos: *${hongos}*  
 ┃ ❤️ *Corazones:* *${hearts}*  
 ┃ 💖 *Racha de Amor:* *${streak} días*  
 ╰─────────────╯`;
@@ -118,6 +120,7 @@ module.exports = {
 ┃ 🎁 *Objetos:*  
 ┃    💍 Anillos: *${anillos}*  
 ┃    ✏️ Lapices: *${papeles}*  
+┃    🍄 Hongos: *${hongos}*  // Mostramos la cantidad de hongos  
 ┃ ❤️ *Corazones:* *${hearts}*  
 ┃ 💖 *Racha de Amor:* *${streak} días*  
 ╰─────────────╯`;
