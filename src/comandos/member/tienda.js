@@ -82,6 +82,6 @@ module.exports = {
     writeData(userItemsFilePath, userItems);
     writeData(krFilePath, krData);
 
-    await sendReply(`✅ ¡Has comprado ${objeto}!\nAhora tienes ${userKrEntry.kr} monedas y:\n- 💍: ${userItemEntry.items.anillos}\n- ✏️: ${userItemEntry.items.papeles}\n- 🏆: ${userItemEntry.items.trofeos\n- 🍄: ${userItemEntry.items.hongos}`);
+    await sendReply(`✅ ¡Has comprado ${objeto}!\nAhora tienes ${userKrEntry.kr} monedas y:\n 💍: ${userItemEntry.items.anillos}\n ✏️: ${userItemEntry.items.papeles}\n 🏆: ${userItemEntry.items.trofeos\n 🍄: ${userItemEntry.items.hongos}`);
   },
 };
