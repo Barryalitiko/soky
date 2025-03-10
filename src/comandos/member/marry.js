@@ -27,19 +27,33 @@ module.exports = {
   description: "Proponer matrimonio a alguien.",
   commands: ["boda"],
   usage: `${PREFIX}boda 💍 @usuario`,
-  handle: async ({ socket, sendReply, userJid, args, isReply, replyJid, mentionedJid, remoteJid }) => {
-    
+  handle: async ({
+    socket,
+    sendReply,
+    userJid,
+    args,
+    isReply,
+    replyJid,
+    mentionedJid,
+    remoteJid,
+    message,
+  }) => {
     if (!args || args.length === 0) {
-      await sendReply("❌ Debes incluir el anillo 💍 y etiquetar a la persona con quien quieres casarte.\nKrampus OM bot");
+      await sendReply(
+        "❌ Debes incluir el anillo 💍 y etiquetar a la persona con quien quieres casarte.\nKrampus OM bot"
+      );
       return;
     }
 
-    if (!args.includes("💍")) {
-      await sendReply("❌ Debes usar el anillo 💍 en tu propuesta de matrimonio.\n\n> Usa #tienda para comprar uno");
+    if (!message.body.includes("💍")) {
+      await sendReply(
+        "❌ Debes usar el anillo 💍 en tu propuesta de matrimonio.\n\n> Usa #tienda para comprar uno"
+      );
       return;
     }
 
     let targetJid;
+
     if (isReply) {
       targetJid = replyJid;
     } else if (mentionedJid && mentionedJid.length > 0) {
@@ -49,12 +63,16 @@ module.exports = {
     }
 
     if (!targetJid) {
-      await sendReply("❌ Debes etiquetar o responder a un usuario para proponer matrimonio.");
+      await sendReply(
+        "❌ Debes etiquetar o responder a un usuario para proponer matrimonio."
+      );
       return;
     }
 
     if (targetJid === userJid) {
-      await sendReply("💍 No puedes casarte contigo mismo, busca a alguien especial.\n> Krampus OM bot");
+      await sendReply(
+        "💍 No puedes casarte contigo mismo, busca a alguien especial.\n> Krampus OM bot"
+      );
       return;
     }
 
@@ -62,7 +80,9 @@ module.exports = {
     const userItem = userItems.find((entry) => entry.userJid === userJid);
 
     if (!userItem || userItem.items.anillos <= 0) {
-      await sendReply("💍 ¿Y el anillo pa' cuando?\nNo tienes anillos para proponer matrimonio.\n\n> Usa #tienda y compra uno");
+      await sendReply(
+        "💍 ¿Y el anillo pa' cuando?\nNo tienes anillos para proponer matrimonio.\n\n> Usa #tienda y compra uno"
+      );
       return;
     }
 
@@ -72,7 +92,9 @@ module.exports = {
     );
 
     if (existingMarriage) {
-      await sendReply("💔 Ya estás casado!!\nNo le pongas los cuernos a tu pareja 😞");
+      await sendReply(
+        "💔 Ya estás casado!!\nNo le pongas los cuernos a tu pareja 😞"
+      );
       return;
     }
 
@@ -86,32 +108,34 @@ module.exports = {
     }
 
     let pendingMarriages = readData(PENDING_MARRIAGES_FILE);
-    pendingMarriages = pendingMarriages.filter(entry => Date.now() - entry.timestamp < 60000);
+    pendingMarriages = pendingMarriages.filter(
+      (entry) => Date.now() - entry.timestamp < 60000
+    );
 
     const alreadyProposed = pendingMarriages.find(
       (entry) => entry.proposer === userJid && entry.proposedTo === targetJid
     );
 
     if (alreadyProposed) {
-      await sendReply("> Cual es la prisa?\n⏳ Ya le has hecho la propuesta, espera a que responda...");
+      await sendReply(
+        "> Cual es la prisa?\n⏳ Ya le has hecho la propuesta, espera a que responda..."
+      );
       return;
     }
 
     pendingMarriages.push({
       proposer: userJid,
       proposedTo: targetJid,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     writeData(PENDING_MARRIAGES_FILE, pendingMarriages);
 
     await socket.sendMessage(remoteJid, {
-      text: `💍 *@${userJid.split("@")[0]}* te propuso matrimonio ❤️ *@${targetJid.split("@")[0]}*!  
-      
-Responde con *#r si* para aceptar o *#r no* para rechazar.  
-
-> ⏳ *Tienes 1 minuto para decidir.*`,
-      mentions: [userJid, targetJid]
+      text: `💍 *@${userJid.split("@")[0]}* te propuso matrimonio ❤️ *@${targetJid.split("@")[0]}*! Responde con *#r si* para aceptar o *#r no* para rechazar. > ⏳ *Tienes 1 minuto para decidir.*`,
+      mentions: [userJid, targetJid],
     });
   },
 };
+
+
