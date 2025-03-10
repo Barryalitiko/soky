@@ -27,6 +27,7 @@ module.exports = {
       "💍": 6,
       "✏️": 7,
       "🏆": 10, // Añadimos el trofeo
+      "🍄": 300, // Añadimos el nuevo objeto
     };
 
     const objeto = args[0]?.toLowerCase();
@@ -62,7 +63,7 @@ module.exports = {
     let userItemEntry = userItems.find(entry => entry.userJid === userJid);
 
     if (!userItemEntry) {
-      userItemEntry = { userJid, items: { anillos: 0, papeles: 0, trofeos: 0 } };
+      userItemEntry = { userJid, items: { anillos: 0, papeles: 0, trofeos: 0, hongos: 0 } }; // Añadimos el hongo
       userItems.push(userItemEntry);
     }
 
@@ -72,6 +73,8 @@ module.exports = {
       userItemEntry.items.papeles += 1;
     } else if (objeto === "🏆") {
       userItemEntry.items.trofeos += 1;
+    } else if (objeto === "🍄") { // Lógica para el nuevo objeto
+      userItemEntry.items.hongos += 1;
     }
 
     userKrEntry.kr -= precios[objeto];
@@ -79,6 +82,6 @@ module.exports = {
     writeData(userItemsFilePath, userItems);
     writeData(krFilePath, krData);
 
-    await sendReply(`✅ ¡Has comprado ${objeto}!\nAhora tienes ${userKrEntry.kr} monedas y:\n- 💍: ${userItemEntry.items.anillos}\n- ✏️: ${userItemEntry.items.papeles}\n- 🏆: ${userItemEntry.items.trofeos}`);
+    await sendReply(`✅ ¡Has comprado ${objeto}!\nAhora tienes ${userKrEntry.kr} monedas y:\n- 💍: ${userItemEntry.items.anillos}\n- ✏️: ${userItemEntry.items.papeles}\n- 🏆: ${userItemEntry.items.trofeos\n- 🍄: ${userItemEntry.items.hongos}`);
   },
 };
