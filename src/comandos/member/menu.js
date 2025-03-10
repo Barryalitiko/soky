@@ -96,6 +96,15 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}tilapia
 ⌠⅏⌡➟ ${PREFIX}tokischa
 
+══════════.K.═
+*POKEMON*
+
+⌠⅏⌡➟ ${PREFIX}capturar
+⌠⅏⌡➟ ${PREFIX}shiny 
+      (400 monedas)
+⌠⅏⌡➟ ${PREFIX}pokedex
+⌠⅏⌡➟ ${PREFIX}evolucionar
+
 »»————- - ————-««
 > Operacion Marshall
 »»————- - ————-««`;
