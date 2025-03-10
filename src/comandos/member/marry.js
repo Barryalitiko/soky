@@ -26,7 +26,7 @@ module.exports = {
   name: "boda",
   description: "Proponer matrimonio a alguien.",
   commands: ["boda"],
-  usage: `${PREFIX}#boda 💍 @usuario`,
+  usage: `${PREFIX}#boda @usuario`,
   handle: async ({
     socket,
     sendReply,
@@ -39,14 +39,14 @@ module.exports = {
   }) => {
     if (!args || args.length === 0) {
       await sendReply(
-        "❌ Debes incluir el comando #boda 💍 y etiquetar a la persona con quien quieres casarte.\nKrampus OM bot"
+        "❌ Debes incluir el comando #boda y etiquetar a la persona con quien quieres casarte.\nKrampus OM bot"
       );
       return;
     }
 
-    if (!args.join(" ").includes("#boda 💍")) {
+    if (args[0].toLowerCase() !== "#boda") {
       await sendReply(
-        "❌ Debes usar el comando #boda 💍 para proponer matrimonio.\n\n> Usa #tienda para comprar un anillo"
+        "❌ Debes usar el comando #boda para proponer matrimonio.\n\n> Usa #tienda para comprar un anillo"
       );
       return;
     }
@@ -57,8 +57,8 @@ module.exports = {
       targetJid = replyJid;
     } else if (mentionedJid && mentionedJid.length > 0) {
       targetJid = mentionedJid[0];
-    } else if (args.length > 2) {
-      targetJid = args[2].replace("@", "") + "@s.whatsapp.net";
+    } else if (args.length > 1) {
+      targetJid = args[1].replace("@", "") + "@s.whatsapp.net";
     }
 
     if (!targetJid) {
