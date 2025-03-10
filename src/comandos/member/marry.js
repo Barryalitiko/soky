@@ -26,7 +26,7 @@ module.exports = {
   name: "boda",
   description: "Proponer matrimonio a alguien.",
   commands: ["boda"],
-  usage: `${PREFIX}boda 💍 @usuario`,
+  usage: `${PREFIX}#boda 💍 @usuario`,
   handle: async ({
     socket,
     sendReply,
@@ -44,7 +44,7 @@ module.exports = {
       return;
     }
 
-    if (args.join(" ") !== "#boda 💍") {
+    if (!args.join(" ").includes("#boda 💍")) {
       await sendReply(
         "❌ Debes usar el comando #boda 💍 para proponer matrimonio.\n\n> Usa #tienda para comprar un anillo"
       );
