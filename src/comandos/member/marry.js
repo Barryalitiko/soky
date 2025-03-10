@@ -28,13 +28,14 @@ module.exports = {
   commands: ["boda"],
   usage: `${PREFIX}boda 💍 @usuario`,
   handle: async ({ socket, sendReply, userJid, args, isReply, replyJid, mentionedJid, remoteJid }) => {
-    
+
     if (!args || args.length === 0) {
       await sendReply("❌ Debes incluir el anillo 💍 y etiquetar a la persona con quien quieres casarte.\nKrampus OM bot");
       return;
     }
 
-    if (!args.includes("💍")) {
+    // Verifica si el anillo 💍 está en los argumentos
+    if (!args.some(arg => arg.includes("💍"))) {
       await sendReply("❌ Debes usar el anillo 💍 en tu propuesta de matrimonio.\n\n> Usa #tienda para comprar uno");
       return;
     }
