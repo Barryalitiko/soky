@@ -56,7 +56,7 @@ module.exports = {
     const userItem = userItems.find((entry) => entry.userJid === userJid);
 
     if (!userItem || userItem.items.anillos <= 0) {
-      await sendReply("💍 ¿Y el anillo pa' cuando?\nNo tienes anillos para proponer matrimonio.\n\n> Usa #tienda y compra uno");
+      await sendReply("💍 ¿Y el anillo pa' cuando?\nNo tienes anillos para proponer matrimonio.\n\n> Usa #tienda 💍 y compra uno");
       return;
     }
 
