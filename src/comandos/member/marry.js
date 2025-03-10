@@ -34,10 +34,10 @@ module.exports = {
       return;
     }
 
-    if (!message.body.includes("💍")) {
-  await sendReply("❌ Debes usar el anillo 💍 en tu propuesta de matrimonio.\n\n> Usa #tienda para comprar uno");
-  return;
-}
+    if (!args.includes("💍")) {
+      await sendReply("❌ Debes usar el anillo 💍 en tu propuesta de matrimonio.\n\n> Usa #tienda para comprar uno");
+      return;
+    }
 
     let targetJid;
     if (isReply) {
