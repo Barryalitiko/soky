@@ -116,7 +116,7 @@ module.exports = {
 
     if (!objeto) {
       // Mostrar lista de objetos disponibles para comprar
-      let listaPrecios = "⚪️🔴 *Lista de pokemons disponibles*:\n\n> Usa #capturar nombredelpokemon para comprarlo";
+      let listaPrecios = "⚪️🔴 *Lista de pokemons disponibles*:\n\n> Usa #capturar nombredelpokemon para comprarlo\n";
       
       for (const [item, precio] of Object.entries(precios)) {
         listaPrecios += `- ${item}: ${precio} monedas\n`;
