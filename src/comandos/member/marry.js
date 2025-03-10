@@ -36,7 +36,6 @@ module.exports = {
     replyJid,
     mentionedJid,
     remoteJid,
-    message,
   }) => {
     if (!args || args.length === 0) {
       await sendReply(
@@ -45,7 +44,7 @@ module.exports = {
       return;
     }
 
-    if (!message.text.includes("💍")) {
+    if (!args.join(" ").includes("💍")) {
       await sendReply(
         "❌ Debes usar el anillo 💍 en tu propuesta de matrimonio.\n\n> Usa #tienda para comprar uno"
       );
@@ -137,5 +136,3 @@ module.exports = {
     });
   },
 };
-
-
