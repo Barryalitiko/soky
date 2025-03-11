@@ -62,11 +62,11 @@ module.exports = {
 
     // Aseguramos que las ganancias y pérdidas sean balanceadas
     if (result < 0.2) {
-      amount = 100; // Ganancia mayor
+      amount = 60; // Ganancia mayor
     } else if (result < 0.4) {
-      amount = 80; // Ganancia media
+      amount = 50; // Ganancia media
     } else if (result < 0.6) {
-      amount = 30; // Ganancia pequeña
+      amount = 1; // Ganancia pequeña
     } else if (result < 0.8) {
       amount = -10; // Pérdida pequeña
     } else {
