@@ -91,7 +91,7 @@ module.exports = {
         delete investmentIntervals[userJid];
       }
 
-      await sendReply(`⏳ @${userJid.split("@")[0]} Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\nTe quedan ${5 - tiempoTranscurrido} minutos.`);
+      await sendReply(`⏳ @${userJid.split("@")[0]} Han pasado ${tiempoTranscurrido} minuto(s) desde que invertiste en *${empresaElegida.nombre}*.\nTe quedan ${5 - tiempoTranscurrido} minutos.\n\n> Puedes usar #retirar si quieres abandonar la inversion`);
     }, 60000);
 
     investmentIntervals[userJid] = intervalo;
