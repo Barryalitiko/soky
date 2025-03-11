@@ -137,7 +137,7 @@ module.exports = {
   { msg: "💰 Le vendiste un celular a un turista y te ganaste 50 monedas.", coins: 50 },
   { msg: "🎶 Fuiste bailarín en un video de dembow y te pagaron 45 monedas.", coins: 45 },
   { msg: "🛒 Vendiste helados en la Duarte y te llevaste 20 monedas.", coins: 20 }
-];
+
     ];
 
     let vuelta = vueltas[Math.floor(Math.random() * vueltas.length)];
