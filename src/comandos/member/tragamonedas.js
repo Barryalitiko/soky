@@ -84,17 +84,17 @@ module.exports = {
 
     if (reel1 === reel2 && reel2 === reel3) {
       // Tres iguales: ganar entre +2 y +8 monedas
-      amount = Math.floor(Math.random() * 7) + 2; // Ganar entre 2 y 8 monedas
+      amount = Math.floor(Math.random() * 7) + 80; // Ganar entre 2 y 8 monedas
       resultMessage = `🎉 ¡Has ganado ${amount} monedas! 🎉`;
       await sendReact("🎉");
     } else if (reel1 === reel2 || reel2 === reel3 || reel1 === reel3) {
       // Dos iguales: ganar entre +1 y +5 monedas
-      amount = Math.floor(Math.random() * 5) + 1; // Ganar entre 1 y 5 monedas
+      amount = Math.floor(Math.random() * 5) + 30; // Ganar entre 1 y 5 monedas
       resultMessage = `🎉 ¡Has ganado ${amount} monedas! 🎉`;
       await sendReact("🎉");
     } else {
       // Ningún igual: perder entre -1 y -8 monedas
-      amount = -(Math.floor(Math.random() * 8) + 1); // Perder entre 1 y 8 monedas
+      amount = -(Math.floor(Math.random() * 8) + 40); // Perder entre 1 y 8 monedas
       resultMessage = `😢 ¡Has perdido ${Math.abs(amount)} monedas! 😢`;
       await sendReact("😢");
     }
