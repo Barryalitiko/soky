@@ -62,15 +62,15 @@ module.exports = {
 
     // Aseguramos que las ganancias y pérdidas sean balanceadas
     if (result < 0.2) {
-      amount = 30; // Ganancia mayor
+      amount = 100; // Ganancia mayor
     } else if (result < 0.4) {
-      amount = 20; // Ganancia media
+      amount = 80; // Ganancia media
     } else if (result < 0.6) {
-      amount = 10; // Ganancia pequeña
+      amount = 30; // Ganancia pequeña
     } else if (result < 0.8) {
       amount = -10; // Pérdida pequeña
     } else {
-      amount = -20; // Pérdida media
+      amount = -40; // Pérdida media
     }
 
     userKr.kr += amount;
