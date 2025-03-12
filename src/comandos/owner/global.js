@@ -3,7 +3,7 @@ const { PREFIX } = require("../../krampus");
 module.exports = {
   name: "broadcastGroups",
   description: "Envía un mensaje a todos los grupos donde está el bot.",
-  commands: ["broadcastgrupos", "bcg"],
+  commands: ["krampglobal"],
   usage: `${PREFIX}broadcastgrupos <mensaje>`,
   handle: async ({ args, socket, sendReply }) => {
     try {
