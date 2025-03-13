@@ -104,6 +104,8 @@ COMANDOS:
       (400 monedas)
 ⌠⅏⌡➟ ${PREFIX}pokedex
 ⌠⅏⌡➟ ${PREFIX}evolucionar
+⌠⅏⌡➟ ${PREFIX}legendario
+
 
 »»————- - ————-««
 > Operacion Marshall
