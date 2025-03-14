@@ -7,7 +7,7 @@ const ffmpeg = require("fluent-ffmpeg");
 module.exports = {
   name: "perfilVideo",
   description: "Genera un video donde varias imágenes aparecen gradualmente sobre la foto de perfil.",
-  commands: ["toro"],
+  commands: ["toro_out"],
   usage: `${PREFIX}perfilvideo @usuario`,
   handle: async ({
     args,
