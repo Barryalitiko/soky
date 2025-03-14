@@ -95,7 +95,7 @@ COMANDOS:
 ⌠⅏⌡➟ ${PREFIX}gay
 ⌠⅏⌡➟ ${PREFIX}tilapia
 ⌠⅏⌡➟ ${PREFIX}tokischa
-⌠⅏⌡➟ ${PREFIX}toro
+
 
 ══════════.K.═
 *POKEMON*
