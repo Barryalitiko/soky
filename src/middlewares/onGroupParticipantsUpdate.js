@@ -22,7 +22,7 @@ exports.onGroupParticipantsUpdate = async ({ groupParticipantsUpdate, socket }) 
                     ({ buffer, profileImage } = await getProfileImageData(socket, userJid));
                 }
 
-                const welcomeMessage = `¡𝗕𝗶𝗲𝗻𝘃𝗲𝗻𝗶𝗱@ 𝗮𝗹 𝗴𝗿𝘂𝗽𝗼! @${userJid ? onlyNumbers(userJid) : ''}\n\nPresentate ᶜᵒⁿ 𝐟𝐨𝐭𝐨 y 𝐧𝐨𝐦𝐛𝐫𝐞\n> Bot by Krampus OM Oᴘᴇʀᴀᴄɪᴏɴ Mᴀʀsʜᴀʟʟ ༴༎𝙾𝙼༎\n> https://www.instagram.com/p/DGjMug8shLI/?igsh=MXMzaGN0NjJ1MDkxMw==`;
+                const welcomeMessage = `Se acaba de unir @${userJid ? onlyNumbers(userJid) : ''} al grupo\n\nPresentate ᶜᵒⁿ 𝐟𝐨𝐭𝐨 y 𝐧𝐨𝐦𝐛𝐫𝐞\n> Soky OM bot\n> Oᴘᴇʀᴀᴄɪᴏɴ Mᴀʀsʜᴀʟʟ ༴༎𝙾𝙼༎\n> https://www.instagram.com/_vasquezemmanuel?igsh=MXNoNTk3aHR3dnRyeQ==`;
 
                 if (welcomeMode === "2") {
                     // Si el modo es 2, se envía con foto
@@ -43,7 +43,7 @@ exports.onGroupParticipantsUpdate = async ({ groupParticipantsUpdate, socket }) 
                     });
                 }
             } catch (error) {
-                warningLog("👻 𝙺𝚛𝚊𝚖𝚙𝚞𝚜.𝚋𝚘𝚝 👻 No se pudo enviar el mensaje de Bienvenida");
+                warningLog("Soky bot No se pudo enviar el mensaje de Bienvenida");
             }
         }
     }
@@ -52,7 +52,7 @@ exports.onGroupParticipantsUpdate = async ({ groupParticipantsUpdate, socket }) 
     if (isActiveGoodbyeGroup(remoteJid)) {
         if (groupParticipantsUpdate.action === "remove") {
             try {
-                const goodbyeMessage = `> ¿Que esta pasando aqui?\nDe tanto llorar @${userJid ? onlyNumbers(userJid) : ''} salio del grupo 💔😞`;
+                const goodbyeMessage = `@${userJid ? onlyNumbers(userJid) : ''} abandonó el grupo\n> Soky OM bot`;
 
                 // Solo enviamos el mensaje de texto, sin imágenes
                 await socket.sendMessage(remoteJid, {
@@ -60,7 +60,7 @@ exports.onGroupParticipantsUpdate = async ({ groupParticipantsUpdate, socket }) 
                     mentions: [userJid],
                 });
             } catch (error) {
-                warningLog("👻 𝙺𝚛𝚊𝚖𝚙𝚞𝚜.𝚋𝚘𝚝 👻 No se pudo enviar el mensaje de Despedida");
+                warningLog("Soky bot No se pudo enviar el mensaje de Despedida");
             }
         }
     }
