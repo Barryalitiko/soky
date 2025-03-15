@@ -40,7 +40,7 @@ antiLinkMode === "2" ||
 if (!(await isAdmin({ remoteJid, userJid, socket }))) {
 await socket.groupParticipantsUpdate(remoteJid, [userJid], "remove");
 await sendReply(
-"Baneado por enviar `link`\n\n> Krampus OM bot"
+"Baneado por enviar `link`\n\n> Soky Bot by OM"
 );
 await socket.sendMessage(remoteJid, {
 delete: {
@@ -67,7 +67,7 @@ return;
 
 if (!(await checkPermission({ type, ...paramsHandler }))) {
 await sendErrorReply(
-"No tienes permitido usar el comando\n\n> Krampus OM bot"
+"No tienes permitido usar el comando\n\n> Soky Bot by OM"
 );
 return;
 }
@@ -84,7 +84,7 @@ await sendErrorReply(error.message);
 } else {
 errorLog("Error al ejecutar el comando", error);
 await sendErrorReply(
-`👻 𝙺𝚛𝚊𝚖𝚙𝚞𝚜.𝚋𝚘𝚝 👻 Ocurrio un error al ejecutar el comando ${command.name}! 📄 *Detalles*: ${error.message}`
+`Ocurrio un error al ejecutar el comando ${command.name}! 📄 *Detalles*: ${error.message}`
 );
 }
 }
