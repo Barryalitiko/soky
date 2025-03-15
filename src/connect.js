@@ -8,9 +8,9 @@ const {
   isJidBroadcast,
   isJidStatusBroadcast,
   proto,
-  makeInMemoryStore,
+  makeCacheableSignalKeyStore,
   isJidNewsletter,
-} = require("baileys");
+} = require("@whiskeysockets/baileys");
 const NodeCache = require("node-cache");
 const pino = require("pino");
 const { load } = require("./loader");
@@ -24,9 +24,7 @@ const {
 
 const msgRetryCounterCache = new NodeCache();
 
-const store = makeInMemoryStore({
-  logger: pino().child({ level: "silent", stream: "store" }),
-});
+const store = makeCacheableSignalKeyStore(new NodeCache());
 
 async function getMessage(key) {
   if (!store) {
@@ -34,7 +32,6 @@ async function getMessage(key) {
   }
 
   const msg = await store.loadMessage(key.remoteJid, key.id);
-
   return msg ? msg.message : undefined;
 }
 
@@ -62,7 +59,6 @@ async function connect() {
 
   if (!socket.authState.creds.registered) {
     warningLog("Credenciales no configuradas!");
-
     infoLog('Ingrese su numero sin el + (ejemplo: "13733665556"):');
 
     const phoneNumber = await question("Ingresa el numero: ");
@@ -71,12 +67,10 @@ async function connect() {
       errorLog(
         'Numero de telefono inválido! Reinicia con el comando "npm start".'
       );
-
       process.exit(1);
     }
 
     const code = await socket.requestPairingCode(onlyNumbers(phoneNumber));
-
     sayLog(`Código de Emparejamiento: ${code}`);
   }
 
