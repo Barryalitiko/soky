@@ -47,7 +47,7 @@ module.exports = {
     }
 
     if (targetJid === userJid) {
-      await sendReply("💍 No puedes casarte contigo mismo, busca a alguien especial.\n> Krampus OM bot");
+      await sendReply("💍 No puedes casarte contigo mismo, busca a alguien especial.\n> Soky OM bot");
       return;
     }
 
@@ -77,7 +77,7 @@ module.exports = {
     );
 
     if (targetMarriage) {
-      await sendReply("💔 Esa persona ya está casada\n> Krampus OM bot");
+      await sendReply("💔 Esa persona ya está casada\n> Soky OM bot");
       return;
     }
 
