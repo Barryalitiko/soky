@@ -101,6 +101,6 @@ module.exports = {
     await sendReply(resultMessage);
 
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await sendReply(`> 💰 Tu saldo es *${userKr.kr} monedas* kr`);
+    await sendReply(`> 💰 Tu saldo es *${userKr.kr} monedas* $k`);
   },
 };
