@@ -13,7 +13,7 @@ module.exports = {
     handle: async ({ args, sendReply, sendSuccessReact, remoteJid }) => {
         if (!args.length) {
             throw new InvalidParameterError(
-                "\n> Krampus OM bot\nEscribe 0 o 1 para configurar la despedida:\n\n" +
+                "\n> Soky OM bot\nEscribe 0 o 1 para configurar la despedida:\n\n" +
                 "_0_: Desactivar\n" +
                 "_1_: Activar"
             );
@@ -23,7 +23,7 @@ module.exports = {
 
         if (!["0", "1"].includes(option)) {
             throw new InvalidParameterError(
-                "\n> Krampus OM bot\nOpción inválida. Usa:\n\n" +
+                "\n> Soky OM bot\nOpción inválida. Usa:\n\n" +
                 "*0*: Desactivar\n" +
                 "*1*: Activar"
             );
@@ -43,7 +43,7 @@ module.exports = {
                 : "*Activada*";
 
         await sendReply(
-            `La despedida ha sido ${context}\n> Krampus OM bot`
+            `La despedida ha sido ${context}\n> Soky OM bot`
         );
     },
 };
