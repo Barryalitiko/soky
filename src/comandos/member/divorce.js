@@ -34,7 +34,7 @@ module.exports = {
     );
 
     if (marriageIndex === -1) {
-      await sendReply("❌ No estás casado actualmente.\n> Krampus OM bot");
+      await sendReply("❌ No estás casado actualmente.\n> Soky OM bot");
       return;
     }
 
