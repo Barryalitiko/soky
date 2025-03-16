@@ -32,13 +32,13 @@ module.exports = {
     }
 
     if (memberToRemoveJid === userJid) {
-      throw new DangerError("𝙽𝚘 𝚜𝚎 𝚙𝚞𝚎𝚍𝚎 𝚛𝚎𝚊𝚕𝚒𝚣𝚊𝚛 𝚕𝚊 𝚊𝚌𝚌𝚒𝚘́𝚗\n> Krampus OM bot");
+      throw new DangerError("𝙽𝚘 𝚜𝚎 𝚙𝚞𝚎𝚍𝚎 𝚛𝚎𝚊𝚕𝚒𝚣𝚊𝚛 𝚕𝚊 𝚊𝚌𝚌𝚒𝚘́𝚗\n> Soky OM bot");
     }
 
     const botJid = toUserJid(BOT_NUMBER);
 
     if (memberToRemoveJid === botJid) {
-      throw new DangerError("No puedo hacerlo\n> Krampus OM bot");
+      throw new DangerError("No puedo hacerlo\n> Soky OM bot");
     }
 
     await socket.groupParticipantsUpdate(
