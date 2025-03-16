@@ -14,7 +14,7 @@ usage: `${PREFIX}anti-link (0/1/2)`,
 handle: async ({ args, sendReply, sendLinkReact, remoteJid }) => {
 if (!args.length) {
 throw new InvalidParameterError(
-"Activa el `antilink` con 1, 2 o 0.\n* #antilink 1: permite cualquier link excepto de otros grupos\n* #antilink 2: ningun link es permitido en el grupo\n* #antilink 0: apaga el antilink\n> Krampus OM bot"
+"Activa el `antilink` con 1, 2 o 0.\n* #antilink 1: permite cualquier link excepto de otros grupos\n* #antilink 2: ningun link es permitido en el grupo\n* #antilink 0: apaga el antilink\n> Soky OM bot"
 );
 }
 
@@ -22,7 +22,7 @@ const mode = args[0];
 
 if (!["0", "1", "2"].includes(mode)) {
   throw new InvalidParameterError(
-    "Activa el `antilink` con 1, 2 o 0.\n* #antilink 1: permite cualquier link excepto de otros grupos\n* #antilink 2: ningun link es permitido en el grupo\n* #antilink 0: apaga el antilink\n> Krampus OM bot"
+    "Activa el `antilink` con 1, 2 o 0.\n* #antilink 1: permite cualquier link excepto de otros grupos\n* #antilink 2: ningun link es permitido en el grupo\n* #antilink 0: apaga el antilink\n> Soky OM bot"
   );
 }
 
@@ -37,7 +37,7 @@ await sendLinkReact();
 
 const context =
   mode === "0"
-    ? "desactivado\n> Krampus OM bot"
+    ? "desactivado\n> Soky OM bot"
     : mode === "1"
     ? "activado\n> Modo 1"
     : "activado (completo)\n> Modo 2";
