@@ -24,7 +24,7 @@ module.exports = {
       forwardingScore: 2,
       externalAdReply: {
         title: "Soky Bot",
-        body: "Etiqueta a todos",
+        body: "Operacion Marshall",
         thumbnailUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/9.png",
         sourceUrl: link,
       },
