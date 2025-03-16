@@ -16,7 +16,7 @@ module.exports = {
       }
 
       // Responder con un mensaje de "procesando..."
-      await sendReply(`Buscando video en Facebook...\n> Krampus OM bot`);
+      await sendReply(`Buscando video en Facebook...\n> Soky OM bot`);
 
       // Reaccionar con ⏳ al recibir el comando
       await sendReact("⏳", webMessage.key);
@@ -30,7 +30,7 @@ module.exports = {
       // Enviar el video descargado
       await socket.sendMessage(remoteJid, {
         video: { url: videoPath },
-        caption: `> Krampus OM bot\n𝚅𝚒𝚍𝚎𝚘 𝚍𝚎 𝙵𝚊𝚌𝚎𝚋𝚘𝚘𝚔 𝚌𝚊𝚛𝚐𝚊𝚍𝚘.`,
+        caption: `> Soky OM bot\n𝚅𝚒𝚍𝚎𝚘 𝚍𝚎 𝙵𝚊𝚌𝚎𝚋𝚘𝚘𝚔 𝚌𝚊𝚛𝚐𝚊𝚍𝚘.`,
         quoted: webMessage, // Responde al mensaje original del usuario
         ptt: false, // Enviar como video normal, no como nota
       });
