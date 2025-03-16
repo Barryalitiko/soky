@@ -14,11 +14,35 @@ module.exports = {
     // Enviar reacción
     await sendReact("📎");
 
+    // Texto del mensaje
+    const mensaje = fullArgs.trim() || "Atención, grupo!";
+    const link = "https://www.instagram.com/_vasquezemmanuel/";
+
+    // Datos para la previsualización
+    const contextInfo = {
+      isForwarded: true,
+      forwardingScore: 2,
+      externalAdReply: {
+        title: "Soky Bot",
+        body: "Etiqueta a todos",
+        thumbnailUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/9.png",
+        sourceUrl: link,
+      },
+    };
+
     // Si el mensaje es una respuesta a otro, responder directamente
     if (quotedMessage) {
-      await sendReply(fullArgs, quotedMessage, mentions);
+      await socket.sendMessage(remoteJid, {
+        text: mensaje,
+        mentions,
+        contextInfo,
+      }, { quoted: quotedMessage });
     } else {
-      await sendText(`\n\n${fullArgs}`, mentions);
+      await socket.sendMessage(remoteJid, {
+        text: mensaje,
+        mentions,
+        contextInfo,
+      });
     }
   },
 };
