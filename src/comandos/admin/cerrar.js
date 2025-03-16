@@ -1,5 +1,4 @@
 const { PREFIX } = require("../../krampus");
-const path = require("path");
 
 module.exports = {
   name: "cerrar",
@@ -18,7 +17,7 @@ module.exports = {
       await socket.groupSettingUpdate(remoteJid, "announcement");
 
       const mensaje = "Grupo cerrado.\n> Solo los administradores pueden enviar mensajes.";
-      const link = "https://www.instagram.com/KrampusOM/";
+      const link = "https://www.instagram.com/_vasquezemmanuel/";
 
       await socket.sendMessage(remoteJid, {
         text: mensaje,
@@ -35,8 +34,8 @@ module.exports = {
           externalAdReply: {
             title: "Krampus OM bot",
             body: "Operación Marshall",
-            thumbnailUrl: `file://${path.resolve(__dirname, "../../../assets/images/celda2.png")}`, // Cambia la ruta de la imagen si es necesario
-            sourceUrl: link, // Puedes enlazarlo a la invitación o a otro sitio
+            thumbnailUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/9.png",
+            sourceUrl: link, // Enlace corregido sin parámetros adicionales
           },
         },
       });
