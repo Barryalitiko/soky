@@ -32,7 +32,7 @@ module.exports = {
           forwardingScore: 2, // Hace que parezca más reenviado
           participant: "0029Vb8jGB0JZg4FF8oQi83e@c.us", // Reemplaza con el JID del canal
           externalAdReply: {
-            title: "Krampus OM bot",
+            title: "Soky bot",
             body: "Operación Marshall",
             thumbnailUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/9.png",
             sourceUrl: link, // Enlace corregido sin parámetros adicionales
