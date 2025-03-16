@@ -84,7 +84,7 @@ try {
             await sendReact("🌈");
             await socket.sendMessage(remoteJid, {
               video: { url: videoWithAudioPath },
-              caption: `> EEEEEEEEEEH?\nComenzaron a salir del armario\n> Krampus OM bot`,
+              caption: `> EEEEEEEEEEH?\nComenzaron a salir del armario\n> Soky OM bot`,
             });
             resolve();
           })
