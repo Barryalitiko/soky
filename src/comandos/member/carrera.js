@@ -83,6 +83,6 @@ module.exports = {
 
     // Mostrar saldo actualizado
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await sendReply(`> 💰 Tu saldo actual es: *${userKr.kr} monedas* 𝙺𝚛`);
+    await sendReply(`> 💰 Tu saldo actual es: *${userKr.kr} monedas* $k`);
   },
 };
