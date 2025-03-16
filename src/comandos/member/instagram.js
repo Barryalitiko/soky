@@ -16,7 +16,7 @@ module.exports = {
       }
 
       // Responder con un mensaje de "procesando..."
-      await sendReply(`𝙸𝚗𝚒𝚌𝚒𝚊𝚗𝚍𝚘 𝚍𝚎𝚜𝚌𝚊𝚛𝚐𝚊...\n> Krampus OM bot`);
+      await sendReply(`𝙸𝚗𝚒𝚌𝚒𝚊𝚗𝚍𝚘 𝚍𝚎𝚜𝚌𝚊𝚛𝚐𝚊...\n> Soky OM bot`);
 
       // Reaccionar con ⏳ al recibir el comando
       await sendReact("⏳", webMessage.key);
@@ -30,7 +30,7 @@ module.exports = {
       // Enviar el video descargado
       await sendMessage(remoteJid, {
         video: { url: videoPath },
-        caption: `> Krampus OM bot\n𝚅𝚒𝚍𝚎𝚘 𝚍𝚎 𝙸𝚗𝚜𝚝𝚊𝚐𝚛𝚊𝚖 𝚌𝚊𝚛𝚐𝚊𝚍𝚘.`,
+        caption: `> Soky OM bot\n𝚅𝚒𝚍𝚎𝚘 𝚍𝚎 𝙸𝚗𝚜𝚝𝚊𝚐𝚛𝚊𝚖 𝚌𝚊𝚛𝚐𝚊𝚍𝚘.`,
         quoted: webMessage, // Responde al mensaje original del usuario
         ptt: false, // Enviar como video normal, no como nota
       });
