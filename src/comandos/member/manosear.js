@@ -39,7 +39,7 @@ module.exports = {
 
       // Si no hay destinatario, enviamos un mensaje de error
       if (!targetJid) {
-        await sendReply("❌ Debes etiquetar o responder a un usuario para enviarle un beso.");
+        await sendReply("❌ Debes etiquetar o responder a un usuario para interactuar.");
         return;
       }
 
