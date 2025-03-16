@@ -124,7 +124,7 @@ module.exports = {
     userKr.kr += gano ? 100 : -100;
     writeData(krFilePath, krData);
 
-    await sendReply((gano ? frasesGanar : frasesPerder)[Math.floor(Math.random() * 30)]);
-    await sendReply(`> 💰 Tu saldo actual es: *${userKr.kr} monedas* $k`);
+    // Enviar un solo mensaje con el resultado de la carrera y el saldo
+    await sendReply(`${gano ? frasesGanar : frasesPerder}[Math.floor(Math.random() * 30)]\n\n> 💰 Tu saldo actual es: *${userKr.kr} monedas* $k`);
   },
 };
