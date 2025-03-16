@@ -196,7 +196,7 @@ module.exports = {
       writeData(userPokemonsFilePath, userPokemons);
       writeData(userItemsFilePath, userItems);
 
-await sendReply(`¡Felicidades! tu *${pokemon}* ha evolucionado a *${evolucionElegida}*!\n\> Krampus OM bot`);
+await sendReply(`¡Felicidades! tu *${pokemon}* ha evolucionado a *${evolucionElegida}*!\n\> Soky OM bot`);
 
     } else if (pokemonEvoluciones[pokemon]) {
       const evolucion = pokemonEvoluciones[pokemon];
@@ -212,7 +212,7 @@ await sendReply(`¡Felicidades! tu *${pokemon}* ha evolucionado a *${evolucionEl
       writeData(userPokemonsFilePath, userPokemons);
       writeData(userItemsFilePath, userItems);
 
-      await sendReply(`¡Felicidades! Tu *${pokemon}* ha evolucionado a *${evolucion}*!\n\n> Krampus OM bot`);
+      await sendReply(`¡Felicidades! Tu *${pokemon}* ha evolucionado a *${evolucion}*!\n\n> Soky OM bot`);
     } else {
       await sendReply(`❌ *${pokemon}* no puede evolucionar.`);
     }
