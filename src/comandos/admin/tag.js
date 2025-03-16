@@ -2,16 +2,32 @@ const { PREFIX } = require("../../krampus");
 
 module.exports = {
   name: "hide-tag",
-  description: "Para mencionar a todos",
+  description: "Menciona a todos en el grupo",
   commands: ["tag", "t"],
-  usage: `${PREFIX}hidetag motivo`,
-  handle: async ({ fullArgs, sendText, socket, remoteJid, sendReact }) => {
-    const { participants } = await socket.groupMetadata(remoteJid);
+  usage: `${PREFIX}hidetag`,
 
-    const mentions = participants.map(({ id }) => id);
+  handle: async ({ fullArgs, sendText, socket, remoteJid, sendReact, quotedMessage, sendReply }) => {
+    try {
+      // Obtiene los participantes del grupo
+      const { participants } = await socket.groupMetadata(remoteJid);
+      const mentions = participants.map(({ id }) => id);
 
-    await sendReact("📎");
+      // Si no hay mensaje, usar un espacio vacío
+      const messageText = fullArgs.trim() || "";
 
-    await sendText(`\n\n${fullArgs}`, mentions);
+      // Envía reacción
+      await sendReact("📎");
+
+      if (quotedMessage) {
+        // Si el comando es una respuesta, responder al mensaje citado
+        await sendReply(messageText, quotedMessage, mentions);
+      } else {
+        // Si no es respuesta, enviar un mensaje normal
+        await sendText(messageText, mentions);
+      }
+    } catch (error) {
+      console.error("Error en hide-tag:", error);
+      await sendText("❌ Ocurrió un error al intentar mencionar a todos.");
+    }
   },
 };
