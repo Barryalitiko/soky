@@ -11,7 +11,7 @@ module.exports = {
     const endTime = Date.now();
     const latency = endTime - startTime;
     const speed = latency.toFixed(2) + "ms";
-    await sendReply(`Velocidad de respuesta: ${speed}\n> Krampus OM bot`);
+    await sendReply(`Velocidad de respuesta: ${speed}\n> Soky OM bot`);
   },
 };
 
