@@ -3,7 +3,6 @@ const { InvalidParameterError } = require("../../errors/InvalidParameterError");
 const path = require("path");
 const fs = require("fs");
 const { exec } = require("child_process");
-const { Sticker, StickerTypes } = require("wa-sticker-formatter");
 
 module.exports = {
   name: "sticker",
@@ -22,7 +21,7 @@ module.exports = {
   }) => {
     if (!isImage && !isVideo) {
       throw new InvalidParameterError(
-        "👻 Krampus 👻 Debes marcar imagen/gif/vídeo o responder a una imagen/gif/vídeo"
+        "Que quieres que convierta a sticker?\n\n> Soky OM bot"
       );
     }
 
@@ -31,19 +30,22 @@ module.exports = {
     if (isImage) {
       const inputPath = await downloadImage(webMessage, "input");
 
-      const sticker = new Sticker(inputPath, {
-        pack: "Krampus Pack",
-        author: "Krampus Bot",
-        type: StickerTypes.FULL, // Opciones: CIRCLE, CROP, FULL
-        quality: 70, // Calidad del sticker (1-100)
-      });
+      exec(
+        `ffmpeg -i ${inputPath} -vf "scale=512:512:force_original_aspect_ratio=decrease" ${outputPath}`,
+        async (error) => {
+          if (error) {
+            console.log(error);
+            fs.unlinkSync(inputPath);
+            throw new Error(error);
+          }
 
-      await sticker.toFile(outputPath);
-      await sendSuccessReact();
-      await sendStickerFromFile(outputPath);
+          await sendSuccessReact();
+          await sendStickerFromFile(outputPath);
 
-      fs.unlinkSync(inputPath);
-      fs.unlinkSync(outputPath);
+          fs.unlinkSync(inputPath);
+          fs.unlinkSync(outputPath);
+        }
+      );
     } else {
       const inputPath = await downloadVideo(webMessage, "input");
 
@@ -56,7 +58,7 @@ module.exports = {
       if (seconds > sizeInSeconds) {
         fs.unlinkSync(inputPath);
         await sendErrorReply(
-          `👻 Krampus 👻 Este video tiene más de ${sizeInSeconds} segundos! Envía un video más corto!`
+          `Este video tiene más de ${sizeInSeconds} segundos! Envía un video más corto!`
         );
         return;
       }
