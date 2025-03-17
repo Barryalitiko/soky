@@ -8,8 +8,8 @@ const {
   isJidBroadcast,
   isJidStatusBroadcast,
   proto,
-  makeCacheableSignalKeyStore,
   isJidNewsletter,
+  makeInMemoryStore,
 } = require("@whiskeysockets/baileys");
 const NodeCache = require("node-cache");
 const pino = require("pino");
@@ -24,14 +24,18 @@ const {
 
 const msgRetryCounterCache = new NodeCache();
 
-const store = makeCacheableSignalKeyStore(new NodeCache());
+// **Nuevo store para manejar mensajes en memoria**
+const store = makeInMemoryStore(pino().child({ level: "silent" }));
+store.readFromFile("./baileys_store.json"); // Opcional, para persistencia
 
+// Guardar el estado del store cada 10 segundos
+setInterval(() => {
+  store.writeToFile("./baileys_store.json");
+}, 10000);
+
+// **Corrección de getMessage para recuperar mensajes correctamente**
 async function getMessage(key) {
-  if (!store) {
-    return proto.Message.fromObject({});
-  }
-
-  const msg = await store.loadMessage(key.remoteJid, key.id);
+  const msg = store.messages[key.remoteJid]?.get(key.id);
   return msg ? msg.message : undefined;
 }
 
@@ -57,15 +61,18 @@ async function connect() {
     getMessage,
   });
 
+  // **Vincular store con el socket**
+  store.bind(socket.ev);
+
   if (!socket.authState.creds.registered) {
     warningLog("Credenciales no configuradas!");
-    infoLog('Ingrese su numero sin el + (ejemplo: "13733665556"):');
+    infoLog('Ingrese su número sin el + (ejemplo: "13733665556"):');
 
-    const phoneNumber = await question("Ingresa el numero: ");
+    const phoneNumber = await question("Ingresa el número: ");
 
     if (!phoneNumber) {
       errorLog(
-        'Numero de telefono inválido! Reinicia con el comando "npm start".'
+        'Número de teléfono inválido! Reinicia con el comando "npm start".'
       );
       process.exit(1);
     }
@@ -86,22 +93,22 @@ async function connect() {
       } else {
         switch (statusCode) {
           case DisconnectReason.badSession:
-            warningLog("Sesion no válida!");
+            warningLog("Sesión no válida!");
             break;
           case DisconnectReason.connectionClosed:
-            warningLog("Conexion cerrada!");
+            warningLog("Conexión cerrada!");
             break;
           case DisconnectReason.connectionLost:
-            warningLog("Conexion perdida!");
+            warningLog("Conexión perdida!");
             break;
           case DisconnectReason.connectionReplaced:
-            warningLog("Conexion de reemplazo!");
+            warningLog("Conexión de reemplazo!");
             break;
           case DisconnectReason.multideviceMismatch:
             warningLog("Dispositivo incompatible!");
             break;
           case DisconnectReason.forbidden:
-            warningLog("Conexion prohibida!");
+            warningLog("Conexión prohibida!");
             break;
           case DisconnectReason.restartRequired:
             infoLog('Krampus reiniciado! Reinicia con "npm start".');
@@ -115,7 +122,7 @@ async function connect() {
         load(newSocket);
       }
     } else if (connection === "open") {
-      successLog("Operacion Marshall");
+      successLog("Operación Marshall");
     } else {
       infoLog("Cargando datos...");
     }
