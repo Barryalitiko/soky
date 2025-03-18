@@ -1,4 +1,3 @@
-
 const fs = require("fs");
 const path = require("path");
 const { PREFIX } = require("../../krampus");
@@ -10,13 +9,14 @@ module.exports = {
   description: "Muestra los Pokémon comprados por el usuario.",
   commands: ["pokedex"],
   usage: `${PREFIX}pokédex`,
-  handle: async ({ socket, remoteJid, userJid }) => {
+  handle: async ({ socket, remoteJid, userJid, quoted }) => {
     let userPokemons = readData(userPokemonsFilePath);
 
     // Verificar si el usuario tiene Pokémon
     if (!userPokemons[userJid] || userPokemons[userJid].length === 0) {
       await socket.sendMessage(remoteJid, {
-        text: "❌ No tienes Pokémon en tu colección."
+        text: "❌ No tienes Pokémon en tu colección.",
+        quoted: quoted // Responde al mensaje del usuario
       });
       return;
     }
@@ -30,11 +30,12 @@ module.exports = {
       pokedexMessage += `🔹 *${pokemon}*\n`;
     });
 
-    // Enviar el mensaje con el GIF de la Pokédex
+    // Enviar el mensaje con el GIF de la Pokédex como respuesta
     await socket.sendMessage(remoteJid, {
       video: fs.readFileSync("assets/sx/pokedex.mp4"),
       caption: pokedexMessage,
-      gifPlayback: true
+      gifPlayback: true,
+      quoted: quoted // Responde al mensaje del usuario
     });
   },
 };
@@ -47,5 +48,3 @@ const readData = (filePath) => {
     return {}; // Si hay un error, devolvemos un objeto vacío
   }
 };
-
-
