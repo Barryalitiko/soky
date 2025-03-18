@@ -1,6 +1,3 @@
-Para enviar el GIF pokedex.mp4 junto con el mensaje de la Pokédex, debes modificar sendReply para que envíe un mensaje con el video. Aquí está el código actualizado:
-
-Código modificado:
 
 const fs = require("fs");
 const path = require("path");
@@ -51,10 +48,4 @@ const readData = (filePath) => {
   }
 };
 
-Cambios realizados:
-	1.	Agregué socket y remoteJid en handle para poder enviar el video.
-	2.	Cambié sendReply por socket.sendMessage, ya que sendReply solo envía texto.
-	3.	Incluí el GIF pokedex.mp4 con gifPlayback: true para que se reproduzca como GIF en WhatsApp.
-	4.	Mejoré el formato del mensaje, agregando un título y emojis para que se vea mejor.
 
-Ahora, cuando un usuario use !pokedex, verá su lista de Pokémon junto con la animación de la Pokédex.
