@@ -1,3 +1,7 @@
+Para enviar el GIF pokedex.mp4 junto con el mensaje de la Pokédex, debes modificar sendReply para que envíe un mensaje con el video. Aquí está el código actualizado:
+
+Código modificado:
+
 const fs = require("fs");
 const path = require("path");
 const { PREFIX } = require("../../krampus");
@@ -9,12 +13,14 @@ module.exports = {
   description: "Muestra los Pokémon comprados por el usuario.",
   commands: ["pokedex"],
   usage: `${PREFIX}pokédex`,
-  handle: async ({ sendReply, userJid }) => {
+  handle: async ({ socket, remoteJid, userJid }) => {
     let userPokemons = readData(userPokemonsFilePath);
 
     // Verificar si el usuario tiene Pokémon
     if (!userPokemons[userJid] || userPokemons[userJid].length === 0) {
-      await sendReply("❌ No tienes Pokémon en tu colección.");
+      await socket.sendMessage(remoteJid, {
+        text: "❌ No tienes Pokémon en tu colección."
+      });
       return;
     }
 
@@ -22,12 +28,17 @@ module.exports = {
     const pokemons = userPokemons[userJid];
 
     // Crear un mensaje con los Pokémon comprados
-    let pokedexMessage = "¡Estos son los Pokémon que tienes en tu Pokédex!\n\n";
+    let pokedexMessage = "📜 *Pokédex del entrenador*\n\n";
     pokemons.forEach((pokemon) => {
-      pokedexMessage += `*${pokemon}*\n`;
+      pokedexMessage += `🔹 *${pokemon}*\n`;
     });
 
-    await sendReply(pokedexMessage);
+    // Enviar el mensaje con el GIF de la Pokédex
+    await socket.sendMessage(remoteJid, {
+      video: fs.readFileSync("assets/sx/pokedex.mp4"),
+      caption: pokedexMessage,
+      gifPlayback: true
+    });
   },
 };
 
@@ -39,3 +50,11 @@ const readData = (filePath) => {
     return {}; // Si hay un error, devolvemos un objeto vacío
   }
 };
+
+Cambios realizados:
+	1.	Agregué socket y remoteJid en handle para poder enviar el video.
+	2.	Cambié sendReply por socket.sendMessage, ya que sendReply solo envía texto.
+	3.	Incluí el GIF pokedex.mp4 con gifPlayback: true para que se reproduzca como GIF en WhatsApp.
+	4.	Mejoré el formato del mensaje, agregando un título y emojis para que se vea mejor.
+
+Ahora, cuando un usuario use !pokedex, verá su lista de Pokémon junto con la animación de la Pokédex.
