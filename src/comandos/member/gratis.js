@@ -19,7 +19,7 @@ const writeData = (filePath, data) => {
 module.exports = {
   name: "dar-monedas",
   description: "Añade 1000 monedas al usuario.",
-  commands: ["dar-monedas"],
+  commands: ["88888"],
   usage: `${PREFIX}dar-monedas`,
   handle: async ({ sendReply, userJid }) => {
     let krData = readData(krFilePath);
