@@ -37,11 +37,11 @@ module.exports = {
       console.log("Ruta de salida del video:", outputPath);
 
       // Texto base
-      let text = "Krampus OM\\nOperacion Marshall";
+      let text = "SOKY bot\nOperacion Marshall";
       // Si hay texto adicional del usuario, se añade
       if (args.length > 0) {
         const userText = args.join(" ").replace(/'/g, ""); // eliminar comillas para evitar errores
-        text += `\\n${userText}`;
+        text += `\n${userText}`;
       }
 
       console.log("Texto a mostrar en el video:", text);
