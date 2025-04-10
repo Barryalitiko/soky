@@ -20,11 +20,13 @@ module.exports = {
         remoteJid: remoteJid,
         fromMe: false,
         id: "FAKE-QUOTE-SOKY",
-        participant: `0${numero}@s.whatsapp.net`, // Agrega el número de teléfono con el formato correcto
+        participant: `0${numero}@s.whatsapp.net`,
       },
       message: {
         conversation: mensajeCitado,
       },
+      messageTimestamp: new Date(), // Agrega la fecha y hora actual
+      pushName: await socket.getContact(remoteJid).then((contact) => contact.pushname), // Agrega el nombre del contacto
     };
 
     await socket.sendMessage(remoteJid, { text: "soky bot" }, { quoted: fakeQuoted });
