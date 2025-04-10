@@ -2,9 +2,9 @@ const { PREFIX } = require("../../krampus");
 
 module.exports = {
   name: "fake",
-  description: "Falsifica una cita de la persona a la que respondes con el texto que escribas.",
+  description: "Cita falsamente a la persona a la que se responde, usando el texto indicado.",
   commands: ["fake"],
-  usage: `${PREFIX}fake [texto] (responde al mensaje de alguien)`,
+  usage: `${PREFIX}fake [mensaje a citar] (responde al mensaje de alguien)`,
   handle: async ({ args, socket, remoteJid, quoted }) => {
     if (!args.length || !quoted) {
       await socket.sendMessage(remoteJid, {
@@ -15,24 +15,20 @@ module.exports = {
 
     const mensajeCitado = args.join(" ");
 
-    // Mostrar qué viene en quoted
-    console.log("quoted.key:", quoted.key);
-    console.log("quoted.key.participant:", quoted.key.participant);
-    console.log("quoted.key.remoteJid:", quoted.key.remoteJid);
+    // Extraer el número de quien fue citado
+    let numero = quoted.key.participant || quoted.key.remoteJid;
 
-    const numeroRespondido =
-      quoted.key.participant || // En grupos
-      quoted.key.remoteJid ||   // En privados
-      "0@s.whatsapp.net";       // Fallback de seguridad
-
-    console.log("Número detectado:", numeroRespondido);
+    // En caso de que venga en formato JID (por ejemplo, en grupos)
+    if (numero.includes(":")) {
+      numero = numero.split(":")[0] + "@s.whatsapp.net";
+    }
 
     const fakeQuoted = {
       key: {
         remoteJid: remoteJid,
         fromMe: false,
         id: "FAKE-QUOTE-SOKY",
-        participant: numeroRespondido,
+        participant: numero,
       },
       message: {
         conversation: mensajeCitado,
