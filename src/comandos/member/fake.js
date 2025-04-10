@@ -2,41 +2,31 @@ const { PREFIX } = require("../../krampus");
 
 module.exports = {
   name: "fake",
-  description: "Cita falsamente a la persona a la que se responde, usando el texto indicado.",
+  description: "Cita falsamente un mensaje del usuario y responde con 'soky bot'.",
   commands: ["fake"],
-  usage: `${PREFIX}fake [mensaje a citar] (responde al mensaje de alguien)`,
-  handle: async ({ args, socket, remoteJid, quoted }) => {
-    if (!args.length || !quoted) {
+  usage: `${PREFIX}fake [mensaje a citar]`,
+  handle: async ({ args, socket, remoteJid }) => {
+    if (!args.length) {
       await socket.sendMessage(remoteJid, {
-        text: "Debes responder al mensaje de alguien y escribir el texto a citar.\nEjemplo: (responde a un mensaje) #fake esto dijiste tú",
+        text: "Escribe el mensaje que se usará como cita falsa.\nEjemplo: #fake este mensaje será citado",
       });
       return;
     }
 
     const mensajeCitado = args.join(" ");
-
-    // Extraer el número de quien fue citado
-    let numero = quoted.key.participant || quoted.key.remoteJid;
-
-    // En caso de que venga en formato JID (por ejemplo, en grupos)
-    if (numero.includes(":")) {
-      numero = numero.split(":")[0] + "@s.whatsapp.net";
-    }
-
+    const numero = remoteJid.split("@")[0];
     const fakeQuoted = {
       key: {
         remoteJid: remoteJid,
         fromMe: false,
         id: "FAKE-QUOTE-SOKY",
-        participant: numero,
+        participant: `0${numero}@s.whatsapp.net`, // Agrega el número de teléfono con el formato correcto
       },
       message: {
         conversation: mensajeCitado,
       },
     };
 
-    await socket.sendMessage(remoteJid, {
-      text: "soky bot",
-    }, { quoted: fakeQuoted });
+    await socket.sendMessage(remoteJid, { text: "soky bot" }, { quoted: fakeQuoted });
   },
 };
