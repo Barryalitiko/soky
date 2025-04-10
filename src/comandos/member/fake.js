@@ -2,26 +2,26 @@ const { PREFIX } = require("../../krampus");
 
 module.exports = {
   name: "fake",
-  description: "Cita falsamente un mensaje del usuario y responde con 'soky bot'.",
+  description: "Cita falsamente a la persona respondida, usando el texto que escribas.",
   commands: ["fake"],
-  usage: `${PREFIX}fake [mensaje a citar]`,
-  handle: async ({ args, socket, remoteJid }) => {
-    if (!args.length) {
+  usage: `${PREFIX}fake [mensaje a citar] (responde al mensaje de alguien)`,
+  handle: async ({ args, socket, remoteJid, quoted }) => {
+    if (!args.length || !quoted) {
       await socket.sendMessage(remoteJid, {
-        text: "Escribe el mensaje que se usará como cita falsa.\nEjemplo: #fake este mensaje será citado",
+        text: "Debes responder al mensaje de alguien y escribir el texto a citar.\nEjemplo: (responde a un mensaje) #fake esto dijiste tú",
       });
       return;
     }
 
     const mensajeCitado = args.join(" ");
-    const numero = remoteJid.split("@")[0] + "@s.whatsapp.net";
+    const numeroRespondido = quoted.key.participant || quoted.participant || quoted.key.remoteJid;
 
     const fakeQuoted = {
       key: {
         remoteJid: remoteJid,
         fromMe: false,
         id: "FAKE-QUOTE-SOKY",
-        participant: numero,
+        participant: numeroRespondido,
       },
       message: {
         conversation: mensajeCitado,
