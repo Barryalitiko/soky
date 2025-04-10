@@ -2,9 +2,9 @@ const { PREFIX } = require("../../krampus");
 
 module.exports = {
   name: "fake",
-  description: "Cita falsamente a la persona respondida, usando el texto que escribas.",
+  description: "Falsifica una cita de la persona a la que respondes con el texto que escribas.",
   commands: ["fake"],
-  usage: `${PREFIX}fake [mensaje a citar] (responde al mensaje de alguien)`,
+  usage: `${PREFIX}fake [texto] (responde al mensaje de alguien)`,
   handle: async ({ args, socket, remoteJid, quoted }) => {
     if (!args.length || !quoted) {
       await socket.sendMessage(remoteJid, {
@@ -14,7 +14,18 @@ module.exports = {
     }
 
     const mensajeCitado = args.join(" ");
-    const numeroRespondido = quoted.key.participant || quoted.participant || quoted.key.remoteJid;
+
+    // Mostrar qué viene en quoted
+    console.log("quoted.key:", quoted.key);
+    console.log("quoted.key.participant:", quoted.key.participant);
+    console.log("quoted.key.remoteJid:", quoted.key.remoteJid);
+
+    const numeroRespondido =
+      quoted.key.participant || // En grupos
+      quoted.key.remoteJid ||   // En privados
+      "0@s.whatsapp.net";       // Fallback de seguridad
+
+    console.log("Número detectado:", numeroRespondido);
 
     const fakeQuoted = {
       key: {
