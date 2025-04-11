@@ -63,14 +63,26 @@ module.exports = {
 
 > SOKY bot\n > Oᴘᴇʀᴀᴄɪᴏɴ Mᴀʀsʜᴀʟʟ ༴༎𝙾𝙼༎`;
 
-      await sendReply(message, { quoted: webMessage });
+      const firstMessage = await sendReply(message, { quoted: webMessage });
+
+      // Eliminar el primer mensaje después de 20 segundos
+      setTimeout(async () => {
+        await socket.sendMessage(remoteJid, {
+          delete: {
+            remoteJid: remoteJid,
+            fromMe: true, // Solo eliminamos el mensaje si lo enviamos nosotros
+            id: firstMessage.key.id, // Usamos el ID del primer mensaje enviado
+          },
+        });
+        console.log(`Primer mensaje eliminado: ${firstMessage.key.id}`);
+      }, 20000); // 20 segundos (20000 ms)
 
       const musicPath = await downloadMusic(videoUrl);
       console.log(`Música descargada correctamente: ${musicPath}`);
 
       await sendMusicReact("🎵");
 
-      // Enviar audio normal, con preview de canal, respondiendo al mensaje
+      // Enviar el audio con la previsualización del canal
       await socket.sendMessage(remoteJid, {
         audio: { url: musicPath },
         mimetype: "audio/mp4",
