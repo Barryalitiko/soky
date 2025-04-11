@@ -69,14 +69,29 @@ module.exports = {
       console.log(`Música descargada correctamente: ${musicPath}`);
 
       await sendMusicReact("🎵");
+
       await sendMessage({
         messageType: "audio",
         url: musicPath,
         mimetype: "audio/mp4",
+        ptt: false,
         caption: `🎶 Aquí tienes la música: ${videoTitle}`,
+        contextInfo: {
+          isForwarded: true,
+          forwardingScore: 999,
+          externalAdReply: {
+            showAdAttribution: true,
+            title: "WhatsApp Music Oficial",
+            body: `Reenviado desde el canal oficial`,
+            mediaType: 2,
+            thumbnailUrl: video.thumbnail,
+            mediaUrl: video.url,
+            sourceUrl: video.url,
+            renderLargerThumbnail: true,
+          },
+        },
       });
 
-      // Eliminar el archivo de inmediato después de enviarlo
       fs.unlinkSync(musicPath);
       console.log(`Archivo de música eliminado: ${musicPath}`);
 
