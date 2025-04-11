@@ -96,7 +96,7 @@ module.exports = {
             thumbnailUrl: "https://i.imgur.com/7ZxbyXj.png", // miniatura del canal
             renderLargerThumbnail: true,
             showAdAttribution: true,
-            sourceUrl: "https://whatsapp.com/channel/1234567890", // link del canal (ficticio o real)
+            sourceUrl: "Oᴘᴇʀᴀᴄɪᴏɴ Mᴀʀsʜᴀʟʟ ༴༎𝙾𝙼༎", // link del canal (ficticio o real)
           },
         },
       }, { quoted: webMessage });
