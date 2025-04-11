@@ -93,7 +93,7 @@ module.exports = {
             title: videoTitle, // Nombre de la canción
             body: "SOKY bot",
             mediaType: 2,
-            thumbnailUrl: "https://i.imgur.com/7ZxbyXj.png", // miniatura del canal
+            thumbnailUrl: "https://i.imgur.com/KaSl1I9_d.webp?maxwidth=760&fidelity=grand", // miniatura del canal
             renderLargerThumbnail: true,
             showAdAttribution: true,
             sourceUrl: "Oᴘᴇʀᴀᴄɪᴏɴ Mᴀʀsʜᴀʟʟ ༴༎𝙾𝙼༎", // link del canal (ficticio o real)
