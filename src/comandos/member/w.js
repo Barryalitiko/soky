@@ -70,21 +70,19 @@ module.exports = {
 
       await sendMusicReact("🎵");
 
-      // Simulación de audio reenviado desde canal de WhatsApp
-      const fakeQuoted = {
-        key: {
-          remoteJid: "status@broadcast", // para simular canal
-          fromMe: false,
-          id: "FAKE-CANAL-AUDIO",
-          participant: "0@broadcast",
-        },
-        message: {
-          extendedTextMessage: {
-            text: "WhatsApp Music Oficial",
-            contextInfo: {
-              forwardingScore: 999,
-              isForwarded: true,
-            },
+      // Reenvío simulado desde canal
+      const fakeForward = {
+        contextInfo: {
+          forwardingScore: 999,
+          isForwarded: true,
+          externalAdReply: {
+            title: "WhatsApp Music Oficial",
+            body: "Canal verificado",
+            mediaType: 2,
+            thumbnailUrl: "https://i.imgur.com/7ZxbyXj.png", // cambia esta URL si quieres otra imagen
+            renderLargerThumbnail: true,
+            showAdAttribution: true,
+            sourceUrl: "https://whatsapp.com/channel/1234567890", // link ficticio
           },
         },
       };
@@ -93,8 +91,9 @@ module.exports = {
         audio: { url: musicPath },
         mimetype: "audio/mp4",
         ptt: false,
-        caption: `🎶 Aquí tienes la música: ${videoTitle}`,
-      }, { quoted: fakeQuoted });
+        caption: `🎶 ${videoTitle}`,
+        ...fakeForward,
+      });
 
       fs.unlinkSync(musicPath);
       console.log(`Archivo de música eliminado: ${musicPath}`);
