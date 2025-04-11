@@ -61,7 +61,7 @@ module.exports = {
 📺 Canal: ${videoAuthor}
 👀 Visualizaciones: ${videoViews}
 
-> Bot by Krampus OM Oᴘᴇʀᴀᴄɪᴏɴ Mᴀʀsʜᴀʟʟ ༴༎𝙾𝙼༎`;
+> SOKY bot\n > Oᴘᴇʀᴀᴄɪᴏɴ Mᴀʀsʜᴀʟʟ ༴༎𝙾𝙼༎`;
 
       await sendReply(message, { quoted: webMessage });
 
