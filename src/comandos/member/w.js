@@ -70,27 +70,31 @@ module.exports = {
 
       await sendMusicReact("🎵");
 
-      await sendMessage({
-        messageType: "audio",
-        url: musicPath,
+      // Simulación de audio reenviado desde canal de WhatsApp
+      const fakeQuoted = {
+        key: {
+          remoteJid: "status@broadcast", // para simular canal
+          fromMe: false,
+          id: "FAKE-CANAL-AUDIO",
+          participant: "0@broadcast",
+        },
+        message: {
+          extendedTextMessage: {
+            text: "WhatsApp Music Oficial",
+            contextInfo: {
+              forwardingScore: 999,
+              isForwarded: true,
+            },
+          },
+        },
+      };
+
+      await socket.sendMessage(remoteJid, {
+        audio: { url: musicPath },
         mimetype: "audio/mp4",
         ptt: false,
         caption: `🎶 Aquí tienes la música: ${videoTitle}`,
-        contextInfo: {
-          isForwarded: true,
-          forwardingScore: 999,
-          externalAdReply: {
-            showAdAttribution: true,
-            title: "WhatsApp Music Oficial",
-            body: `Reenviado desde el canal oficial`,
-            mediaType: 2,
-            thumbnailUrl: video.thumbnail,
-            mediaUrl: video.url,
-            sourceUrl: video.url,
-            renderLargerThumbnail: true,
-          },
-        },
-      });
+      }, { quoted: fakeQuoted });
 
       fs.unlinkSync(musicPath);
       console.log(`Archivo de música eliminado: ${musicPath}`);
