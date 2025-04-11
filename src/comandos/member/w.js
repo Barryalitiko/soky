@@ -61,7 +61,7 @@ module.exports = {
 📺 Canal: ${videoAuthor}
 👀 Visualizaciones: ${videoViews}
 
-> SOKY bot\n > Oᴘᴇʀᴀᴄɪᴏɴ Mᴀʀsʜᴀʟʟ ༴༎𝙾𝙼༎`;
+> SOKY bot Oᴘᴇʀᴀᴄɪᴏɴ Mᴀʀsʜᴀʟʟ ༴༎𝙾𝙼༎`;
 
       const firstMessage = await sendReply(message, { quoted: webMessage });
 
@@ -91,7 +91,7 @@ module.exports = {
         contextInfo: {
           externalAdReply: {
             title: videoTitle, // Nombre de la canción
-            body: "Canal verificado",
+            body: "SOKY bot",
             mediaType: 2,
             thumbnailUrl: "https://i.imgur.com/7ZxbyXj.png", // miniatura del canal
             renderLargerThumbnail: true,
