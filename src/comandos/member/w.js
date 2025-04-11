@@ -78,7 +78,7 @@ module.exports = {
         caption: `🎶 ${videoTitle}`,
         contextInfo: {
           externalAdReply: {
-            title: "WhatsApp Music Oficial",
+            title: videoTitle, // Nombre de la canción
             body: "Canal verificado",
             mediaType: 2,
             thumbnailUrl: "https://i.imgur.com/7ZxbyXj.png", // miniatura del canal
