@@ -42,7 +42,24 @@ module.exports = {
         return;
       }
 
-      await sendReply(`ᴏᴘᴇʀᴀᴄɪᴏɴ ᴍᴀʀsʜᴀʟʟ\n> Krampus OM bot procesando...`);
+      // Enviar primer mensaje y guardarlo para eliminarlo luego
+      const processingMessage = await sendReply(`ᴏᴘᴇʀᴀᴄɪᴏɴ ᴍᴀʀsʜᴀʟʟ\n> Krampus OM bot procesando...`, { quoted: webMessage });
+
+      // Eliminar mensaje a los 20 segundos
+      setTimeout(async () => {
+        try {
+          await socket.sendMessage(remoteJid, {
+            delete: {
+              remoteJid: remoteJid,
+              fromMe: true,
+              id: processingMessage.key.id,
+            },
+          });
+          console.log(`Mensaje eliminado: ${processingMessage.key.id}`);
+        } catch (err) {
+          console.error("Error al eliminar el mensaje:", err);
+        }
+      }, 20000);
 
       await sendReact("⏳", webMessage.key);
 
@@ -56,22 +73,32 @@ module.exports = {
       const videoUrl = video.url;
       const title = video.title;
       const channelName = video.author.name;
-      const duration = video.timestamp; // Duración en formato de tiempo (ej. "3:30")
+      const duration = video.timestamp;
+      const thumbnail = video.thumbnail;
+
       console.log(`Video encontrado: ${title}, URL: ${videoUrl}`);
 
       const videoPath = await downloadVideo(videoUrl);
 
       await sendReact("🎬", webMessage.key);
 
-      const videoCaption = `> Krampus OM bot\n\n*Título:* ${title}\n\n*Canal:* ${channelName}\n\n*Duración:* ${duration}`;
-
-      await sendMessage({
-        messageType: "video",
-        url: videoPath,
+      await socket.sendMessage(remoteJid, {
+        video: { url: videoPath },
         mimetype: "video/mp4",
-        caption: videoCaption,
-      });
+        caption: `🎬 ${title}`,
+        contextInfo: {
+          externalAdReply: {
+            title: title,
+            body: channelName,
+            thumbnailUrl: thumbnail,
+            mediaType: 2,
+            renderLargerThumbnail: true,
+            sourceUrl: videoUrl,
+          },
+        },
+      }, { quoted: webMessage });
 
+      // Borrar archivo del sistema luego de 1 min
       setTimeout(() => {
         fs.unlink(videoPath, (err) => {
           if (err) {
@@ -80,7 +107,8 @@ module.exports = {
             console.log(`Archivo de video eliminado: ${videoPath}`);
           }
         });
-      }, 1 * 60 * 1000);
+      }, 60000);
+
     } catch (error) {
       console.error("Error al buscar o enviar el video:", error);
       await sendReply("❌ Hubo un error al procesar el video.");
