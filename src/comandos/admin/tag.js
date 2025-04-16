@@ -2,47 +2,50 @@ const { PREFIX } = require("../../krampus");
 
 module.exports = {
   name: "hide-tag",
-  description: "Para mencionar a todos",
+  description: "Para mencionar a todos, incluso si se responde a un mensaje.",
   commands: ["tag", "t"],
   usage: `${PREFIX}hidetag motivo`,
+  handle: async ({ fullArgs, sendText, socket, remoteJid, sendReact, message, sendMediaMessage }) => {
+    try {
+      const { participants } = await socket.groupMetadata(remoteJid);
+      const mentions = participants.map(({ id }) => id);
 
-  handle: async ({ fullArgs, sendText, sendReply, socket, remoteJid, sendReact, quotedMessage }) => {
-    // Obtener los participantes del grupo
-    const { participants } = await socket.groupMetadata(remoteJid);
-    const mentions = participants.map(({ id }) => id);
+      await sendReact("📎");
 
-    // Enviar reacción
-    await sendReact("📎");
+      const fakeQuoted = {
+        key: {
+          remoteJid,
+          fromMe: false,
+          id: "FAKE-QUOTE-HIDETAG",
+          participant: "0@s.whatsapp.net",
+        },
+        message: {
+          conversation: "SOKY bot" ,
+        },
+      };
 
-    // Texto del mensaje
-    const mensaje = fullArgs.trim() || "Atención, grupo!";
-    const link = "https://www.instagram.com/_vasquezemmanuel/";
+      if (message?.quotedMessage) {
+        if (message.quotedMessage.type === 'text') {
+          await socket.sendMessage(remoteJid, {
+            text: `\n\n${message.quotedMessage.text}`,
+            mentions,
+          }, { quoted: fakeQuoted });
+        } else if (message.quotedMessage.type === 'image') {
+          await sendMediaMessage(remoteJid, message.quotedMessage.imageMessage, {
+            caption: `Etiquetando a todos:\n\n${fullArgs}`,
+            mentions,
+            quoted: fakeQuoted,
+          });
+        }
+      } else {
+        await socket.sendMessage(remoteJid, {
+          text: `\n\n${fullArgs}`,
+          mentions,
+        }, { quoted: fakeQuoted });
+      }
 
-    // Datos para la previsualización
-    const contextInfo = {
-      isForwarded: true,
-      forwardingScore: 2,
-      externalAdReply: {
-        title: "Soky Bot",
-        body: "Operacion Marshall",
-        thumbnailUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/9.png",
-        sourceUrl: link,
-      },
-    };
-
-    // Si el mensaje es una respuesta a otro, responder directamente
-    if (quotedMessage) {
-      await socket.sendMessage(remoteJid, {
-        text: mensaje,
-        mentions,
-        contextInfo,
-      }, { quoted: quotedMessage });
-    } else {
-      await socket.sendMessage(remoteJid, {
-        text: mensaje,
-        mentions,
-        contextInfo,
-      });
+    } catch (error) {
+      console.error("Error en hide-tag:", error);
     }
   },
 };
