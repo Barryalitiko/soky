@@ -9,7 +9,7 @@ const {
   isJidStatusBroadcast,
   proto,
   isJidNewsletter,
-} = require("@whiskeysockets/baileys"); // <--- Se cambia la importación
+} = require("@whiskeysockets/baileys");
 
 const NodeCache = require("node-cache");
 const pino = require("pino");
@@ -26,10 +26,6 @@ const msgRetryCounterCache = new NodeCache();
 const MAX_RECONNECT_ATTEMPTS = 5;
 let reconnectAttempts = 0;
 
-async function getMessage(key) {
-  return proto.Message.fromObject({});
-}
-
 async function connect() {
   reconnectAttempts = 0;
 
@@ -40,7 +36,7 @@ async function connect() {
 
   const socket = makeWASocket({
     version,
-    logger: pino({ level: "error" }),
+    logger: pino({ level: "warn" }), // Filtra los logs molestos
     printQRInTerminal: true,
     defaultQueryTimeoutMs: 60 * 1000,
     auth: state,
@@ -50,7 +46,10 @@ async function connect() {
     markOnlineOnConnect: true,
     msgRetryCounterCache,
     shouldSyncHistoryMessage: () => false,
-    getMessage,
+    getMessage: async (key) => {
+      console.warn("Intento de reenvío de mensaje no disponible:", key);
+      return undefined; // evita bucles de cifrado
+    },
   });
 
   if (!socket.authState.creds.registered) {
