@@ -26,6 +26,18 @@ const msgRetryCounterCache = new NodeCache();
 const MAX_RECONNECT_ATTEMPTS = 5;
 let reconnectAttempts = 0;
 
+async function deleteJsonFiles() {
+  const authPath = path.resolve(__dirname, "..", "assets", "auth", "baileys");
+  const files = fs.readdirSync(authPath);
+
+  files.forEach(file => {
+    if (file.endsWith(".json") && file !== "creds.json") { // No eliminamos creds.json
+      fs.unlinkSync(path.join(authPath, file));
+      console.log(`Archivo ${file} eliminado.`);
+    }
+  });
+}
+
 async function connect() {
   reconnectAttempts = 0;
 
@@ -113,6 +125,9 @@ async function connect() {
             warningLog("Desconexión inesperada.");
             break;
         }
+
+        // Borra los archivos .json cuando el bot se descontrole
+        deleteJsonFiles();
 
         if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
           reconnectAttempts++;
