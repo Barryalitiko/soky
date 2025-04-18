@@ -37,8 +37,15 @@ module.exports = {
       }
 
       const filename = `voz_${Date.now()}`;
-      const mp3Path = path.join(__dirname, "../../temp", `${filename}.mp3`);
-      const opusPath = path.join(__dirname, "../../temp", `${filename}.opus`);
+      const tempDir = path.join(__dirname, "../../temp");
+
+      // Crear carpeta temp si no existe
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
+
+      const mp3Path = path.join(tempDir, `${filename}.mp3`);
+      const opusPath = path.join(tempDir, `${filename}.opus`);
 
       const gtts = new gTTS(texto, lang);
       gtts.save(mp3Path, async (err) => {
