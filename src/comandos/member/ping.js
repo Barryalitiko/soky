@@ -7,11 +7,11 @@ module.exports = {
   usage: `${PREFIX}ping`,
   handle: async ({ sendReply, sendReact }) => {
     const startTime = Date.now();
-    await sendReact("👻");
+    await sendReact("om");
     const endTime = Date.now();
     const latency = endTime - startTime;
     const speed = latency.toFixed(2) + "ms";
-    await sendReply(`Velocidad de respuesta: ${speed}\n> Soky OM bot`);
+    await sendReply(`Velocidad de respuesta: ${speed}`);
   },
 };
 
